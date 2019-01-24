@@ -110,7 +110,7 @@ namespace Surgery_1
                 settings.GeneratorSettings.DefaultPropertyNameHandling =
                     PropertyNameHandling.CamelCase;
 
-                settings.GeneratorSettings.Title = "My Pham USA API";
+                settings.GeneratorSettings.Title = "Surgery Management Api";
 
                 settings.GeneratorSettings.OperationProcessors.Add(new OperationSecurityScopeProcessor("Bearer"));
 

@@ -16,6 +16,10 @@ namespace Surgery_1.Data.Context
 
         }
 
+        #region Database Tables
+
+        #endregion
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
