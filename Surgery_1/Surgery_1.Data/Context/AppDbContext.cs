@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Surgery_1.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,7 +18,7 @@ namespace Surgery_1.Data.Context
         }
 
         #region Database Tables
-
+        public DbSet<Account> Accounts { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder builder)
