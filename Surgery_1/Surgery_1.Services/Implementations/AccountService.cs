@@ -17,11 +17,6 @@ namespace Surgery_1.Services.Implementations
         }
         public string Login(LoginViewModel loginViewModel)
         {
-            _context.Accounts.Add(new Account()
-            {
-
-            });
-            _context.SaveChanges();
             return "";
         }
     }

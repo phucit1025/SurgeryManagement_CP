@@ -18,7 +18,18 @@ namespace Surgery_1.Data.Context
         }
 
         #region Database Tables
-        public DbSet<Account> Accounts { get; set; }
+        public DbSet<HealthCareReport> HealthCareReports { get; set; }
+        public DbSet<MedicalSupply> MedicalSupplies { get; set; }
+        public DbSet<Patient> Patients { get; set; }
+        public DbSet<PatientSurgeryCatalog> patientSurgeryCatalogs { get; set; }
+        public DbSet<Speciality> Specialities { get; set; }
+        public DbSet<Status> Statuses { get; set; }
+        public DbSet<Surgeon> Surgeons { get; set; }
+        public DbSet<SurgeryCatalog> SurgeryCatalogs { get; set; }
+        public DbSet<SurgeryInformation> SurgeryInformation { get; set; }
+        public DbSet<SurgeryRoom> SurgeryRooms { get; set; }
+        public DbSet<SurgeryShift> SurgeryShifts { get; set; }
+        public DbSet<SurgeryShiftMedicalSupply> SurgeryShiftMedicalSupplies { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder builder)

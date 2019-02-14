@@ -12,9 +12,4 @@
     <ProjectReference Include="..\Surgery_1.Repositories\Surgery_1.Repositories.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Implementations\" />
-  </ItemGroup>
-
 </Project>
