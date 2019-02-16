@@ -17,10 +17,10 @@ namespace Surgery_1.Data.Entities
         public DateTime ActualEndDateTime { get; set; }
         public DateTime EstimatedStartDateTime { get; set; }
         public DateTime EstimatedEndDateTime { get; set; }
+        public string SurgeryInformation { get; set; }
         public int PatientId { get; set; }
         public int SurgeonId { get; set; }
         public int RoomId { get; set; }
-        public int SurgeryInformationId { get; set; }
         public int StatusId { get; set; }
 
         [ForeignKey("PatientId")]
@@ -29,9 +29,7 @@ namespace Surgery_1.Data.Entities
         public virtual Surgeon Surgeon { get; set; }
         [ForeignKey("RoomId")]
         public virtual SurgeryRoom SurgeryRoom { get; set; }
-        [ForeignKey("SurgeryInformationId")]
-        public virtual SurgeryInformation SurgeryInformation { get; set; }
-        [ForeignKey("Status")]
+        [ForeignKey("StatusId")]
         public virtual Status Status { get; set; }
 
         public virtual ICollection<SurgeryShiftMedicalSupply> SurgeryShiftMedicalSupplies { get; set; }

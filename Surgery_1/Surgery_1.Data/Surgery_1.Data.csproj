@@ -17,4 +17,7 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Entities\SurgeryInformation.cs" />
+  </ItemGroup>
 </Project>

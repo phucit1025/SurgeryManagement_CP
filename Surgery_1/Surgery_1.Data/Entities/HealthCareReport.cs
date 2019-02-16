@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Surgery_1.Data.Entities
 {
-    public class HealthCareReport
+    public class HealthCareReport:BaseEntity
     {
         public int SurgeryShiftId { get; set; }
         public int BedNumber { get; set; }
