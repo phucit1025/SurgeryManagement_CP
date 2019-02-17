@@ -94,12 +94,15 @@ namespace Surgery_1
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider,AppDbContext dbContext)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider, AppDbContext dbContext)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                dbContext.Database.EnsureDeleted();
                 dbContext.Database.EnsureCreated();
+
             }
             else
             {

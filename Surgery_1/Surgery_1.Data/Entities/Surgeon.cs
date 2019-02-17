@@ -8,12 +8,12 @@ namespace Surgery_1.Data.Entities
     {
         public Surgeon()
         {
-            SurgeryShifts = new HashSet<SurgeryShift>();
+            SurgeryShiftSurgeons = new HashSet<SurgeryShiftSurgeon>();
         }
         public string FullName { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
 
-        public virtual ICollection<SurgeryShift> SurgeryShifts { get; set; }
+        public virtual ICollection<SurgeryShiftSurgeon> SurgeryShiftSurgeons { get; set; }
     }
 }

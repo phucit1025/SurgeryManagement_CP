@@ -4,9 +4,10 @@ using System.Text;
 
 namespace Surgery_1.Data.Entities
 {
-    public class HealthCareReport:BaseEntity
+    public class HealthCareReport : BaseEntity
     {
         public int SurgeryShiftId { get; set; }
+        public int RoomNumber { get; set; }
         public int BedNumber { get; set; }
         public string EventContent { get; set; }
         public string CareContent { get; set; }
