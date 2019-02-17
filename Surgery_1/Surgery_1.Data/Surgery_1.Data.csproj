@@ -19,6 +19,6 @@
 
   <ItemGroup>
     <Folder Include="ViewModels\" />
+    <Compile Remove="Entities\SurgeryInformation.cs" />
   </ItemGroup>
-
 </Project>
