@@ -21,7 +21,8 @@ namespace Surgery_1.Services.Implementations
         private readonly AppDbContext _context;
         public SurgeryService(AppDbContext _context)
         {
-            this._context = _context;
+            var doctor = _surgeryRepo.GetSurgeon();
+            return DateTime.Now;
         }
         public void MakeSchedule(ScheduleViewModel scheduleViewModel)
         {
