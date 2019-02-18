@@ -17,6 +17,9 @@ namespace Surgery_1.Repositories.Implementations
             _context = context;
         }
 
-
+        public Surgeon GetSurgeon()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

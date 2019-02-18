@@ -18,6 +18,7 @@ namespace Surgery_1.Services.Implementations
         public DateTime MakeSchedule(int a)
         {
             var doctor = _surgeryRepo.GetSurgeon();
+            return DateTime.Now;
         }
     }
 }
