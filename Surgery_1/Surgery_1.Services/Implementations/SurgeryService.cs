@@ -1,4 +1,6 @@
-﻿using Surgery_1.Repositories.Interfaces;
+﻿using Surgery_1.Data.Context;
+using Surgery_1.Data.ViewModels;
+using Surgery_1.Repositories.Interfaces;
 using Surgery_1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -10,14 +12,29 @@ namespace Surgery_1.Services.Implementations
     {
         private readonly ISurgeryRepository _surgeryRepo;
 
+        
         public SurgeryService(ISurgeryRepository surgeryRepository)
         {
             _surgeryRepo = surgeryRepository;
         }
 
-        public DateTime MakeSchedule(int a)
+        private readonly AppDbContext _context;
+        public SurgeryService(AppDbContext _context)
         {
-            var doctor = _surgeryRepo.GetSurgeon();
+            this._context = _context;
         }
+        public void MakeSchedule(ScheduleViewModel scheduleViewModel)
+        {
+            
+        }
+
+        public int GetRoomByMaxSurgeryTime(ScheduleViewModel scheduleViewModel)
+        {
+            //Lấy ngày cần thêm lịch
+            return 1;
+            
+        }
+
+        
     }
 }

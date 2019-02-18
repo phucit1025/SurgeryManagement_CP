@@ -18,6 +18,17 @@ namespace Surgery_1.Data.Entities
         public DateTime ActualEndDateTime { get; set; }
         public DateTime EstimatedStartDateTime { get; set; }
         public DateTime EstimatedEndDateTime { get; set; }
+        //Thời gian kiến nghị của bác sĩ
+        public DateTime ProposedStartDateTime { get; set; }
+        public DateTime ProposedEndDateTime { get; set; }
+        //Working hour of hospital: 7 - 11h; 13 - 17
+        public DateTime StartAMWorkingHour { get; set; }
+        public DateTime EndAMWorkingHour { get; set; }
+        public DateTime StartPMWorkingHour { get; set; }
+        public DateTime EndPMWorkingHour { get; set; }
+        //Thời gian hoàn thành ca mổ dự kiến
+        public float ExpectedSurgeryDuration { get; set; }
+
         public bool IsAvailableMedicalSupplies { get; set; }
         public string SurgeryProcedureContent { get; set; }
         public int PriorityNumber { get; set; }

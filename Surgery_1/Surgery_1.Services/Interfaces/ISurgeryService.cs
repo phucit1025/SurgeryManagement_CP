@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Surgery_1.Data.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,6 +7,8 @@ namespace Surgery_1.Services.Interfaces
 {
     public interface ISurgeryService
     {
-        DateTime MakeSchedule(int a);
+        void MakeSchedule(ScheduleViewModel scheduleViewModel);
+        //Lấy phòng có thời gian phẫu thuật trễ nhất (EndStart
+        int GetRoomByMaxSurgeryTime();
     }
 }
