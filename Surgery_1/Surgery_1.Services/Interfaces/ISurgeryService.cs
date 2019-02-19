@@ -8,7 +8,7 @@ namespace Surgery_1.Services.Interfaces
     public interface ISurgeryService
     {
         void MakeSchedule(ScheduleViewModel scheduleViewModel);
-        //Lấy phòng có thời gian phẫu thuật trễ nhất (EndStart
-        int GetRoomByMaxSurgeryTime();
+        //Lấy phòng có thời gian phẫu thuật trễ nhất (EndStart)
+        string GetRoomByMaxSurgeryTime(ScheduleViewModel scheduleViewModel);
     }
 }

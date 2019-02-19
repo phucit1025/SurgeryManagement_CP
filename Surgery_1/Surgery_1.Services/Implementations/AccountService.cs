@@ -17,7 +17,7 @@ namespace Surgery_1.Services.Implementations
         }
         public string Login(LoginViewModel loginViewModel)
         {
-            return "";
+            return loginViewModel.Username;
         }
     }
 }

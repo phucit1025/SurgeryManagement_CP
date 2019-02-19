@@ -12,6 +12,8 @@ using NSwag;
 using NSwag.AspNetCore;
 using NSwag.SwaggerGeneration.Processors.Security;
 using Surgery_1.Data.Context;
+using Surgery_1.Services.Implementations;
+using Surgery_1.Services.Interfaces;
 using System;
 using System.Text;
 using System.Threading.Tasks;
@@ -57,7 +59,7 @@ namespace Surgery_1
             #endregion
 
             #region Register Services
-
+            services.AddScoped<ISurgeryService, SurgeryService>();
             #endregion
 
             #region JWT Config

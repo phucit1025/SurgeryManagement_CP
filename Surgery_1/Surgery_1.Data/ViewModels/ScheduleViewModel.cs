@@ -6,6 +6,7 @@ namespace Surgery_1.Data.ViewModels
 {
     public class ScheduleViewModel
     {
+        public int SurgeryShiftId { get; set; }
         public DateTime ProposedStartDateTime { get; set; }
         public DateTime ProposedEndDateTime { get; set; }
         //Working hour of hospital: 7 - 11h; 13 - 17

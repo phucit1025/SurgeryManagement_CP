@@ -8,7 +8,6 @@ namespace Surgery_1.Data.Entities
     {
         public Patient()
         {
-            PatientSurgeryCatalogs = new HashSet<PatientSurgeryCatalog>();
             SurgeryShifts = new HashSet<SurgeryShift>();
         }
 
@@ -18,7 +17,6 @@ namespace Surgery_1.Data.Entities
         public int Gender { get; set; }
         public int YearOfBirth { get; set; }
 
-        public virtual ICollection<PatientSurgeryCatalog> PatientSurgeryCatalogs { get; set; }
         public virtual ICollection<SurgeryShift> SurgeryShifts { get; set; }
     }
 }

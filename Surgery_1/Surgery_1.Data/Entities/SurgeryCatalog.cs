@@ -9,7 +9,8 @@ namespace Surgery_1.Data.Entities
     {
         public SurgeryCatalog()
         {
-            PatientSurgeryCatalogs = new HashSet<PatientSurgeryCatalog>();
+            SurgeryShifts = new HashSet<SurgeryShift>();
+            
         }
 
         public string Code { get; set; }
@@ -24,6 +25,6 @@ namespace Surgery_1.Data.Entities
 
         [ForeignKey("SpecialityId")]
         public virtual Speciality Speciality { get; set; }
-        public virtual ICollection<PatientSurgeryCatalog> PatientSurgeryCatalogs { get; set; }
+        public virtual ICollection<SurgeryShift> SurgeryShifts { get; set; }
     }
 }

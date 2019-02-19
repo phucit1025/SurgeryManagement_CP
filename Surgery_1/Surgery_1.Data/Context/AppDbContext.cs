@@ -21,7 +21,6 @@ namespace Surgery_1.Data.Context
         public DbSet<HealthCareReport> HealthCareReports { get; set; }
         public DbSet<MedicalSupply> MedicalSupplies { get; set; }
         public DbSet<Patient> Patients { get; set; }
-        public DbSet<PatientSurgeryCatalog> PatientSurgeryCatalogs { get; set; }
         public DbSet<Speciality> Specialities { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Surgeon> Surgeons { get; set; }
