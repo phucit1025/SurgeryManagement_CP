@@ -78,7 +78,7 @@ namespace Surgery_1.Services.Implementations
                 "StartPMWorkingHour, EndPMWorkingHour, ExpectedSurgeryDuration, " +
                 "IsAvailableMedicalSupplies, PriorityNumber from SurgeryShifts " +
                 "where IsAvailableMedicalSupplies = {0} and SurgeryRoomId is null", 1);
-            return surgeryShifts;   
+            return surgeryShifts;
         }
         //TODO: Import file
         public void insertFileToSurgeryShift(ScheduleViewModel scheduleViewModel)
@@ -94,6 +94,38 @@ namespace Surgery_1.Services.Implementations
             };
             _context.SurgeryShifts.Add(surgeryShift);
             _context.SaveChanges();
+        }
+
+        public ICollection<SurgeryRoomViewModel> GetSurgeryRooms()
+        {
+            var results = new List<SurgeryRoomViewModel>();
+            foreach (var room in _context.SurgeryRooms)
+            {
+                results.Add(new SurgeryRoomViewModel()
+                {
+                    Id = room.Id,
+                    Name = room.Name
+                });
+            }
+            return results;
+        }
+
+        public ICollection<SurgeryShiftViewModel> GetSurgeryShifts()
+        {
+            var results = new List<SurgeryShiftViewModel>();
+            foreach (var shift in _context.SurgeryShifts)
+            {
+                results.Add(new SurgeryShiftViewModel()
+                {
+                    Id = shift.Id,
+                    CatalogName = shift.SurgeryRoomCatalog.Name,
+                    EstimatedEndDateTime = $"{shift.EstimatedEndDateTime.ToShortDateString()} {shift.EstimatedEndDateTime.ToShortTimeString()}",
+                    EstimatedStartDateTime = $"{shift.EstimatedStartDateTime.ToShortDateString()} {shift.EstimatedStartDateTime.ToShortTimeString()}",
+                    PatientName = shift.Patient.FullName,
+                    SurgeonNames = shift.SurgeryShiftSurgeons.Select(s => s.Surgeon.FullName).ToList()
+                });
+            }
+            return results;
         }
     }
 }
