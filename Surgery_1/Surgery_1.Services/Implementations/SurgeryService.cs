@@ -44,25 +44,26 @@ namespace Surgery_1.Services.Implementations
             TimeSpan hour = TimeSpan.FromHours(scheduleViewModel.ExpectedSurgeryDuration);
             //Đổi estimasted thành result. j đó
             DateTime endEstimatedTime = estimatedDate + hour;
-            if (endEstimatedTime <= scheduleViewModel.EndAMWorkingHour)
+            if (endEstimatedTime <= scheduleViewModel.EndAMWorkingHour) //buổi sáng
             {
-                var surgeryShift = _context.SurgeryShifts.Find(scheduleViewModel.SurgeryShiftId);
-                surgeryShift.EstimatedStartDateTime = estimatedDate;
-                surgeryShift.EstimatedEndDateTime = endEstimatedTime;
-                _context.SaveChanges();
-            } else if (endEstimatedTime <= scheduleViewModel.EndPMWorkingHour)
+                InsertDateTimeToSurgeryShift(scheduleViewModel.SurgeryShiftId, estimatedDate, endEstimatedTime);
+            } else if (endEstimatedTime <= scheduleViewModel.EndPMWorkingHour) //buổi chiều
             {
-
+                InsertDateTimeToSurgeryShift(scheduleViewModel.SurgeryShiftId, estimatedDate, endEstimatedTime);
             }
-
             return scheduleViewModel.StartAMWorkingHour.ToString();
         }
-        public void InsertDateTimeToSurgeryShift(int id, DateTime startTime, DateTime endTime)
+        public void InsertDateTimeToSurgeryShift(int surgeryId, DateTime startTime, DateTime endTime)
         {
-            var surgeryShift = _context.SurgeryShifts.Find(scheduleViewModel.SurgeryShiftId);
-            surgeryShift.EstimatedStartDateTime = estimatedDate;
-            surgeryShift.EstimatedEndDateTime = endEstimatedTime;
+            var surgeryShift = _context.SurgeryShifts.Find(surgeryId);
+            surgeryShift.EstimatedStartDateTime = startTime;
+            surgeryShift.EstimatedEndDateTime = endTime;
             _context.SaveChanges();
+        }
+
+        public int GetEmptyRoomForDate()
+        {
+            return 1;
         }
 
     }
