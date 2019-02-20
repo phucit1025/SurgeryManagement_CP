@@ -41,9 +41,7 @@ namespace Surgery_1.Services.Implementations
             // List những phòng có thời gian phẫu thuật trễ nhất, giảm dần
             //max(EstimatedEndDateTime) as [Datetime], SurgeryRoomId
             var result = _context.SurgeryShifts.FromSql("select SurgeryRoomId from dbo.SurgeryShifts ")
-                            .Where(s => s.EstimatedStartDateTime.Value.Date.ToString() == "2019-02-20").GroupBy(s => s.SurgeryRoomId)
-                            //.Max(s => s.EstimatedEndDateTime).ToString();
-
+                            .Where(s => s.EstimatedStartDateTime.Value.Date.ToString() == "2019-02-20").GroupBy(s => s.SurgeryRoomId).ToString();
             //var result = _context.SurgeryShifts.FromSql("Select * from dbo.SurgeryShifts").Select(s => s.Id).ToList();
 
             //TimeSpan hour = TimeSpan.FromHours(scheduleViewModel.ExpectedSurgeryDuration);
@@ -80,7 +78,8 @@ namespace Surgery_1.Services.Implementations
             return surgeryShifts;   
         }
         //TODO: Import file
-        public void insertFileToSurgeryShift(ScheduleViewModel scheduleViewModel)
+
+        public void InsertFileToSurgeryShift(ScheduleViewModel scheduleViewModel)
         {
             var surgeryShift = new SurgeryShift
             {

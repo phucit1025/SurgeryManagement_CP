@@ -10,6 +10,6 @@ namespace Surgery_1.Services.Interfaces
         void MakeSchedule(ScheduleViewModel scheduleViewModel);
         //Lấy phòng có thời gian phẫu thuật trễ nhất (EndStart)
         string GetRoomByMaxSurgeryTime(ScheduleViewModel scheduleViewModel);
-        void insertFileToSurgeryShift(ScheduleViewModel scheduleViewModel);
+        void InsertFileToSurgeryShift(ScheduleViewModel scheduleViewModel);
     }
 }
