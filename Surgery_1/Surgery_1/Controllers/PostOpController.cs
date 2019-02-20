@@ -8,7 +8,7 @@ using Surgery_1.Services.Interfaces;
 
 namespace Surgery_1.Controllers
 {
-    [Route("api/postop")]
+    [Route("api/postop/[action]")]
     [ApiController]
     public class PostOpController : ControllerBase
     {
