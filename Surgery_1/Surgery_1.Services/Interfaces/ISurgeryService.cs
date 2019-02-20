@@ -12,6 +12,6 @@ namespace Surgery_1.Services.Interfaces
         string GetRoomByMaxSurgeryTime(ScheduleViewModel scheduleViewModel);
         void InsertFileToSurgeryShift(ScheduleViewModel scheduleViewModel);
         ICollection<SurgeryRoomViewModel> GetSurgeryRooms();
-        ICollection<SurgeryShiftViewModel> GetSurgeryShifts();
+        ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int surgeryRoomId, int dateNumber);
     }
 }
