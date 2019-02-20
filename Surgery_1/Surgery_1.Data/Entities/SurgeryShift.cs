@@ -14,13 +14,13 @@ namespace Surgery_1.Data.Entities
             SurgeryShiftSurgeons = new HashSet<SurgeryShiftSurgeon>();
         }
 
-        public DateTime ActualStartDateTime { get; set; }
-        public DateTime ActualEndDateTime { get; set; }
-        public DateTime EstimatedStartDateTime { get; set; }
-        public DateTime EstimatedEndDateTime { get; set; }
+        public DateTime? ActualStartDateTime { get; set; }
+        public DateTime? ActualEndDateTime { get; set; }
+        public DateTime? EstimatedStartDateTime { get; set; }
+        public DateTime? EstimatedEndDateTime { get; set; }
         //Thời gian kiến nghị của bác sĩ
-        public DateTime ProposedStartDateTime { get; set; }
-        public DateTime ProposedEndDateTime { get; set; }
+        public DateTime? ProposedStartDateTime { get; set; }
+        public DateTime? ProposedEndDateTime { get; set; }
         //Working hour of hospital: 7 - 11h; 13 - 17
         public DateTime StartAMWorkingHour { get; set; }
         public DateTime EndAMWorkingHour { get; set; }
@@ -32,13 +32,13 @@ namespace Surgery_1.Data.Entities
         public bool IsAvailableMedicalSupplies { get; set; }
         public string SurgeryProcedureContent { get; set; }
         public int PriorityNumber { get; set; }
-        public int PriorityNumberAlt { get; set; }
+        public int? PriorityNumberAlt { get; set; }
 
         public int PatientId { get; set; }
-        public int SurgeryRoomId { get; set; }
-        public int SurgeryCatalogId { get; set; }
-        public int StatusId { get; set; }
-        public int EkipId { get; set; }
+        public int? SurgeryRoomId { get; set; }
+        public int? SurgeryCatalogId { get; set; }
+        public int? StatusId { get; set; }
+        public int? EkipId { get; set; }
 
         public string EkipIndex { get; set; }
 

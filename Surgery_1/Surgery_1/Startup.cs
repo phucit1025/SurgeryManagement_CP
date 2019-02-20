@@ -103,8 +103,8 @@ namespace Surgery_1
             {
                 app.UseDeveloperExceptionPage();
 
-                // dbContext.Database.EnsureDeleted();
-                // dbContext.Database.EnsureCreated();
+                //dbContext.Database.EnsureDeleted();
+                //dbContext.Database.EnsureCreated();
 
             }
             else
