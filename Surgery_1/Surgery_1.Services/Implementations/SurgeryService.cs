@@ -33,18 +33,21 @@ namespace Surgery_1.Services.Implementations
         }
         public string GetRoomByMaxSurgeryTime(ScheduleViewModel scheduleViewModel)
         {
-            GetSurgeryShiftNoScheduleByDay();
-            //sau này EstimatedTime sẽ đổi thành ActualTime
-            //list những phòng có thời gian phẫu thuật trễ nhất, giảm dần
-            //DateTime estimatedDate = scheduleViewModel.StartAMWorkingHour.Date;
 
-            //var result = _context.SurgeryShifts
-            //    .FromSql("select top 1 max(EstimatedEndDateTime) as [Datetime], SurgeryRoomId " +
-            //                "from SurgeryShifts " +
-            //                "where cast(EstimatedStartDateTime as date) = {0} " +
-            //                "group by SurgeryRoomId", estimatedDate).ToList();
+            scheduleViewModel.StartAMWorkingHour = Convert.ToDateTime("2019-02-20 07:00:00");
+            // Lấy ngày cần lên lịch mổ (mổ bình thường)
+            DateTime estimatedDate = scheduleViewModel.StartAMWorkingHour.Date;
+
+            // List những phòng có thời gian phẫu thuật trễ nhất, giảm dần
+            //max(EstimatedEndDateTime) as [Datetime], SurgeryRoomId
+            var result = _context.SurgeryShifts.FromSql("select SurgeryRoomId from dbo.SurgeryShifts ")
+                            .Where(s => s.EstimatedStartDateTime.Value.Date.ToString() == "2019-02-20").GroupBy(s => s.SurgeryRoomId)
+                            //.Max(s => s.EstimatedEndDateTime).ToString();
+
+            //var result = _context.SurgeryShifts.FromSql("Select * from dbo.SurgeryShifts").Select(s => s.Id).ToList();
+
             //TimeSpan hour = TimeSpan.FromHours(scheduleViewModel.ExpectedSurgeryDuration);
-            ////Đổi estimasted thành result. j đó
+            //Đổi estimasted thành result. j đó
             //DateTime endEstimatedTime = estimatedDate + hour;
             //if (endEstimatedTime <= scheduleViewModel.EndAMWorkingHour) //buổi sáng
             //{
@@ -68,16 +71,12 @@ namespace Surgery_1.Services.Implementations
         {
             return 1;
         }
-        //TODO: Lấy những ca mổ chưa lên lịch theo ngày
+        //TODO: Lấy danh sách ca mổ chưa lên lịch theo ngày
         public List<SurgeryShift> GetSurgeryShiftNoScheduleByDay()
         {
-            var surgeryShifts = _context.SurgeryShifts.ToList();
-            //    .Where(s => (s.IsAvailableMedicalSupplies == true) && (s.SurgeryRoomId == null)).ToList();
-            var result = _context.SurgeryShifts
-                .FromSql("select StartAMWorkingHour, EndAMWorkingHour, " +
-                "StartPMWorkingHour, EndPMWorkingHour, ExpectedSurgeryDuration, " +
-                "IsAvailableMedicalSupplies, PriorityNumber from SurgeryShifts " +
-                "where IsAvailableMedicalSupplies = {0} and SurgeryRoomId is null", 1);
+            var surgeryShifts = _context.SurgeryShifts
+                .Where(s => (s.IsAvailableMedicalSupplies == true) && (s.SurgeryRoomId == null))
+                .OrderBy(s => s.StartAMWorkingHour).ToList();
             return surgeryShifts;   
         }
         //TODO: Import file
