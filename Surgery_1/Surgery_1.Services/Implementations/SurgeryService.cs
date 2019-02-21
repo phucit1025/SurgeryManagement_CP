@@ -31,18 +31,27 @@ namespace Surgery_1.Services.Implementations
         {
 
         }
-        public string GetRoomByMaxSurgeryTime(ScheduleViewModel scheduleViewModel)
+        public RoomDateViewModel GetRoomByMaxSurgeryTime(ScheduleViewModel scheduleViewModel)
         {
-
             // Lấy ngày cần lên lịch mổ (mổ bình thường), dạng số giảm dần theo thời gian
-            int estimatedDateNumber = ConvertDateToNumber(scheduleViewModel.StartAMWorkingHour);
-
+            int estimatedDateNumber = ConvertDateToNumber(scheduleViewModel.StartAMWorkingHour.Date);
             // List những phòng có thời gian phẫu thuật trễ nhất, giảm dần
-            //max(EstimatedEndDateTime) as [Datetime], SurgeryRoomId
-            var result = _context.SurgeryShifts.FromSql("select SurgeryRoomId from dbo.SurgeryShifts ")
-                            .Where(s => s.EstimatedStartDateTime.Value.Date.ToString() == "2019-02-20").GroupBy(s => s.SurgeryRoomId).ToString();
-            //var result = _context.SurgeryShifts.FromSql("Select * from dbo.SurgeryShifts").Select(s => s.Id).ToList();
+            var result1 = _context.SurgeryShifts
+                .FromSql("select * from SurgeryShifts where cast(EstimatedEndDateTime as date) = {0}", ConvertDateToString(scheduleViewModel.StartAMWorkingHour.Date))
+                .OrderBy(s => s.EstimatedEndDateTime)
+                .Select(s => new { s.EstimatedEndDateTime, s.SurgeryRoomId }).ToList();
 
+            var result2 = result1.GroupBy(s => s.SurgeryRoomId).ToList();
+            var result3 = new List<RoomDateViewModel>();
+            foreach (var item in result2)
+            {
+                result3.Add(new RoomDateViewModel()
+                {
+                    SurgeryRoomId = int.Parse(item.Key.Value.ToString()),
+                    EarlyEndDateTime = item.Max(s => s.EstimatedEndDateTime).ToString(),
+                });
+            }
+            var availableRoom = result3.First();
             //TimeSpan hour = TimeSpan.FromHours(scheduleViewModel.ExpectedSurgeryDuration);
             //Đổi estimasted thành result. j đó
             //DateTime endEstimatedTime = estimatedDate + hour;
@@ -54,7 +63,7 @@ namespace Surgery_1.Services.Implementations
             //{
             //    InsertDateTimeToSurgeryShift(scheduleViewModel.SurgeryShiftId, estimatedDate, endEstimatedTime);
             //}
-            return "";
+            return result3.First();
         }
         public void InsertDateTimeToSurgeryShift(int surgeryId, DateTime startTime, DateTime endTime)
         {
@@ -143,6 +152,14 @@ namespace Surgery_1.Services.Implementations
             string yearNum = day.Year.ToString();
             string date = yearNum + monthNum + dayNum;
             return int.Parse(date);
+        }
+        public string ConvertDateToString(DateTime day)
+        {
+            string dayNum = day.Day < 10 ? "0" + day.Day.ToString() : day.Day.ToString();
+            string monthNum = day.Month < 10 ? "0" + day.Month.ToString() : day.Month.ToString(); ;
+            string yearNum = day.Year.ToString();
+            string dateString = yearNum + "-" + monthNum + "-" + dayNum;
+            return dateString;
         }
         public string GetTimeFromDate(DateTime day)
         {
