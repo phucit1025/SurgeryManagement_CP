@@ -47,7 +47,7 @@ namespace Surgery_1.Data.Entities
         [ForeignKey("SurgeryRoomId")]
         public virtual SurgeryRoom SurgeryRoom { get; set; }
         [ForeignKey("SurgeryCatalogId")]
-        public virtual SurgeryCatalog SurgeryRoomCatalog { get; set; }
+        public virtual SurgeryCatalog SurgeryCatalog { get; set; }
         [ForeignKey("StatusId")]
         public virtual Status Status { get; set; }
         [ForeignKey("EkipId")]
