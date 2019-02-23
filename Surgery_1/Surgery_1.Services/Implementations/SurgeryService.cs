@@ -291,5 +291,28 @@ namespace Surgery_1.Services.Implementations
             }
             return surgeryShiftList;
         }
+
+        public SurgeryShiftDetailViewModel GetShiftDetail(int shiftId)
+        {
+            var shift = _context.SurgeryShifts.Find(shiftId);
+            if (shift != null)
+            {
+                var result = new SurgeryShiftDetailViewModel()
+                {
+                    Id = shift.Id,
+                    Gender = shift.Patient.Gender == -1 ? "Nam" : "Nữ",
+                    Age = DateTime.Now.Year - shift.Patient.YearOfBirth,
+                    Speciality = shift.SurgeryRoomCatalog.Speciality.Name,
+                    SurgeryName = shift.SurgeryRoomCatalog.Name,
+                    SurgeryType = shift.SurgeryRoomCatalog.Type,
+                    StartTime = $"{shift.EstimatedStartDateTime.Value.ToShortTimeString()} {shift.EstimatedStartDateTime.Value.ToShortDateString()}",
+                    EndTime = $"{shift.EstimatedEndDateTime.Value.ToShortTimeString()} {shift.EstimatedEndDateTime.Value.ToShortDateString()}",
+                    EkipMembers = shift.Ekip.Members.Select(m=>new EkipMemberViewModel() {Name = m.Name,WorkJob = m.WorkJob }).ToList(),
+                    Procedure = shift.SurgeryRoomCatalog.Procedure
+                };
+                return result;
+            }
+            return null;
+        }
     }
 }

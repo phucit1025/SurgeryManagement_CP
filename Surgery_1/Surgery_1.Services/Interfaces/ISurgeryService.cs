@@ -19,5 +19,6 @@ namespace Surgery_1.Services.Interfaces
         ICollection<ScheduleViewModel> GetSurgeryShiftsNoSchedule(int dateNumber);
 
         RoomDateViewModel GetRoomByMax(int dayNumber); 
+        SurgeryShiftDetailViewModel GetShiftDetail(int shiftId);
     }
 }

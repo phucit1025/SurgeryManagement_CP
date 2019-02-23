@@ -66,5 +66,14 @@ namespace Surgery_1.Controllers
             var result = _surgeryService.GetSurgeryRooms();
             return StatusCode(200, result);
         }
+
+        [HttpGet]
+        public IActionResult GetSurgeryShiftDetail(int shiftId)
+        {
+            var result = _surgeryService.GetShiftDetail(shiftId);
+
+            if(result!=null)return StatusCode(200, result);
+            return StatusCode(400);
+        }
     }
 }
