@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Surgery_1.Services.Interfaces
 {
-    public interface ISurgeryShift
+    public interface ISurgeryShiftService
     {
         bool ImportSurgeryShift();
     }
