@@ -39,7 +39,7 @@ namespace Surgery_1.Services.Implementations
                 {
                     Id = r.Id,
                     PatientName = r.Patient.FullName,
-                    SurgeryName = r.SurgeryRoomCatalog.Name,
+                    SurgeryName = r.SurgeryCatalog.Name,
                     SurgeryCatalogId = r.SurgeryCatalogId.ToString(),
                     CreatedDate = r.DateCreated.ToString()
                 });

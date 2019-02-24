@@ -7,6 +7,6 @@ namespace Surgery_1.Data.ViewModels
     public class RoomDateViewModel
     {
         public int SurgeryRoomId { get; set; }
-        public string EarlyEndDateTime { get; set; } // Thời gian kết thúc sớm
+        public DateTime? EarlyEndDateTime { get; set; } // Thời gian kết thúc sớm
     }
 }
