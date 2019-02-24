@@ -33,7 +33,7 @@ namespace Surgery_1.Services.Implementations
                 results.Add(new SurgeryShiftViewModel()
                 {
                     Id = shift.Id,
-                    CatalogName = shift.SurgeryRoomCatalog.Name,
+                    CatalogName = shift.SurgeryCatalog.Name,
                     //EstimatedEndDateTime = $"{shift.EstimatedEndDateTime.ToShortDateString()} {shift.EstimatedEndDateTime.ToShortTimeString()}",
                     //EstimatedStartDateTime = $"{shift.EstimatedStartDateTime.ToShortDateString()} {shift.EstimatedStartDateTime.ToShortTimeString()}",
                     PatientName = shift.Patient.FullName,

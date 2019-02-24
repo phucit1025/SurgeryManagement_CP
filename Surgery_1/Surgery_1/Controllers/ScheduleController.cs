@@ -25,6 +25,12 @@ namespace Surgery_1.Controllers
             var result = _surgeryService.GetRoomByMax(dayNumber);
             return StatusCode(200, result);
         }
+        [HttpGet]
+        public IActionResult GetSurgeryShiftNoScheduleByProposedTime()
+        {
+            var result = _surgeryService.GetSurgeryShiftNoScheduleByProposedTime();
+            return StatusCode(200, result);
+        }
 
         [HttpGet]
         public IActionResult MakeScheduleList()

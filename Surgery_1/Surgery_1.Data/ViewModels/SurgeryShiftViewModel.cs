@@ -22,6 +22,7 @@ namespace Surgery_1.Data.ViewModels
         public int Id { get; set; }
         public string Gender { get; set; }
         public int Age { get; set; }
+        public string PatientName { get; set; }
         public string Speciality { get; set; }
         public string SurgeryName { get; set; }
         public string SurgeryType { get; set; }

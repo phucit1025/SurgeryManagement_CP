@@ -28,6 +28,8 @@ namespace Surgery_1.Services.Implementations
         {
             this._context = _context;
         }
+
+
         public void MakeScheduleList()
         {
             //var result = GetSurgeryShiftsNoSchedule(1);
@@ -204,14 +206,7 @@ namespace Surgery_1.Services.Implementations
             }
             return roomIds.First();
         }
-        //TODO: Lấy danh sách ca mổ chưa lên lịch theo ngày
-        public List<SurgeryShift> GetSurgeryShiftNoScheduleByDay()
-        {
-            var surgeryShifts = _context.SurgeryShifts
-                .Where(s => (s.IsAvailableMedicalSupplies == true) && (s.SurgeryRoomId == null))
-                .OrderBy(s => s.StartAMWorkingHour).ToList();
-            return surgeryShifts;   
-        }
+
         //TODO: Import file
 
         public void InsertFileToSurgeryShift(ScheduleViewModel scheduleViewModel)
@@ -243,6 +238,7 @@ namespace Surgery_1.Services.Implementations
             return results;
         }
 
+        // TODO: Xem lịch theo ngày
         public ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int surgeryRoomId, int dateNumber)
         {
             var results = new List<SurgeryShiftViewModel>();
@@ -271,7 +267,9 @@ namespace Surgery_1.Services.Implementations
         //TODO: Lấy danh sách ca mổ chưa lên lịch theo độ ưu tiên và ngày
         public ICollection<ScheduleViewModel> GetSurgeryShiftsNoSchedule(int dateNumber)
         {
-            var result = _context.SurgeryShifts.Where(s => s.EstimatedStartDateTime == null)
+            var result = _context.SurgeryShifts
+                .Where(s => (s.EstimatedStartDateTime == null) && s.EstimatedEndDateTime == null
+                && s.IsAvailableMedicalSupplies == true && s.SurgeryRoomId == null)
                 .OrderBy(s => s.StartAMWorkingHour).OrderBy(s => s.PriorityNumber).OrderBy(s => s.ExpectedSurgeryDuration).ToList();
             var surgeryShiftList = new List<ScheduleViewModel>();
             foreach (var shift in result)
@@ -292,6 +290,29 @@ namespace Surgery_1.Services.Implementations
             return surgeryShiftList;
         }
 
+        // TODO: Lấy những ca mổ chưa lên lịch theo thời gian chỉ điịnh
+        public ICollection<ScheduleViewModel> GetSurgeryShiftNoScheduleByProposedTime()
+        {
+            var result = new List<ScheduleViewModel>();
+            var surgeryShifts = _context.SurgeryShifts
+                .Where(s => (s.IsAvailableMedicalSupplies == true) && (s.SurgeryRoomId == null)
+                && s.EstimatedStartDateTime == null && s.EstimatedEndDateTime == null
+                && s.ProposedStartDateTime != null && s.ProposedEndDateTime != null)
+                .OrderBy(s => s.ProposedStartDateTime)
+                .OrderBy(s => s.PriorityNumber)
+                .OrderBy(s => s.ExpectedSurgeryDuration).ToList();
+            foreach(var index in surgeryShifts)
+            {
+                result.Add(new ScheduleViewModel()
+                {
+                    SurgeryShiftId = index.Id,
+                    ProposedStartDateTime = index.ProposedStartDateTime,
+                    ProposedEndDateTime = index.ProposedEndDateTime,
+                });
+            }
+            return result;
+        }
+
         public SurgeryShiftDetailViewModel GetShiftDetail(int shiftId)
         {
             var shift = _context.SurgeryShifts.Find(shiftId);
@@ -299,16 +320,31 @@ namespace Surgery_1.Services.Implementations
             {
                 var result = new SurgeryShiftDetailViewModel()
                 {
+                    //Id = shift.Id,
+                    //Gender = shift.Patient.Gender == -1 ? "Nam" : "Nữ",
+                    //Age = DateTime.Now.Year - shift.Patient.YearOfBirth,
+                    //Speciality = shift.SurgeryCatalog.Speciality.Name,
+                    //SurgeryName = shift.SurgeryCatalog.Name,
+                    //SurgeryType = shift.SurgeryCatalog.Type,
+                    //StartTime = $"{shift.EstimatedStartDateTime.Value.ToShortTimeString()} {shift.EstimatedStartDateTime.Value.ToShortDateString()}",
+                    //EndTime = $"{shift.EstimatedEndDateTime.Value.ToShortTimeString()} {shift.EstimatedEndDateTime.Value.ToShortDateString()}",
+                    //EkipMembers = shift.Ekip.Members.Select(m=>new EkipMemberViewModel() {Name = m.Name,WorkJob = m.WorkJob }).ToList(),
+                    //Procedure = shift.SurgeryCatalog.Procedure
+
                     Id = shift.Id,
-                    Gender = shift.Patient.Gender == -1 ? "Nam" : "Nữ",
-                    Age = DateTime.Now.Year - shift.Patient.YearOfBirth,
-                    Speciality = shift.SurgeryRoomCatalog.Speciality.Name,
-                    SurgeryName = shift.SurgeryRoomCatalog.Name,
-                    SurgeryType = shift.SurgeryRoomCatalog.Type,
+                    Gender = "Nam",
+                    Age = 59,
+                    PatientName = "Lê Văn Đạt",
+                    Speciality = "Phụ sản",
+                    SurgeryName = "Phẫu thuật tiệt căn xương chũm",
+                    SurgeryType = "P1",
                     StartTime = $"{shift.EstimatedStartDateTime.Value.ToShortTimeString()} {shift.EstimatedStartDateTime.Value.ToShortDateString()}",
                     EndTime = $"{shift.EstimatedEndDateTime.Value.ToShortTimeString()} {shift.EstimatedEndDateTime.Value.ToShortDateString()}",
-                    EkipMembers = shift.Ekip.Members.Select(m=>new EkipMemberViewModel() {Name = m.Name,WorkJob = m.WorkJob }).ToList(),
-                    Procedure = shift.SurgeryRoomCatalog.Procedure
+                    Procedure = "bn nằm nghiêng dưới mê NKQ" +
+                                "Tiên cầm máu tại chỗ bằng nước cất và Addrenailin" +
+                                "Rạch da theo hình L" +
+                                "bóc tách cơ dưới gai bộc lộ ố gãy xương bả vai" +
+                                "Thấy gãy cạnh tròng và cạnh ngoài xương bả vai"
                 };
                 return result;
             }
