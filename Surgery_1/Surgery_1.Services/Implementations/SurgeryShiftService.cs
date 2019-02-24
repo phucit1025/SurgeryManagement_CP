@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Surgery_1.Services.Implementations
 {
-    class SurgeryShiftService : ISurgeryShift
+    class SurgeryShiftService : ISurgeryShiftService
     {
         private readonly AppDbContext _context;
         public SurgeryShiftService(AppDbContext _context)
