@@ -30,23 +30,32 @@ namespace Surgery_1.Services.Implementations
         }
 
 
-        //public void MakeScheduleList()
-        //{
-        //    //var result = GetSurgeryShiftsNoSchedule(1);
-        //    //foreach (var index in result)
-        //    //{
-        //    //    MakeSchedule(index);
-        //    //}
+        public void MakeScheduleList()
+        {
+            //var result = GetSurgeryShiftsNoSchedule(1);
+            //foreach (var index in result)
+            //{
+            //    MakeSchedule(index);
+            //}
 
-        //    var result = GetSurgeryShiftsNoSchedule(1).First();
-        //    //foreach (var index in result)
-        //    //{
-        //        MakeSchedule(result);
-        //    //}
-        //}
+            var result = GetSurgeryShiftsNoSchedule(1).First();
+            //foreach (var index in result)
+            //{
+            MakeSchedule(result);
+            //}
+        }
         public void MakeSchedule(ScheduleViewModel scheduleViewModel)
         {
-            string selectedDay = UtilitiesDate.ConvertDateToString(scheduleViewModel.StartAMWorkingHour);
+            scheduleViewModel.StartAMWorkingHour 
+                = (scheduleViewModel.ScheduleDate + TimeSpan.FromHours(ConstantVariable.StartAMWorkingHour));
+            scheduleViewModel.EndAMWorkingHour
+                = (scheduleViewModel.ScheduleDate + TimeSpan.FromHours(ConstantVariable.EndAMWorkingHour));
+            scheduleViewModel.StartPMWorkingHour
+                = (scheduleViewModel.ScheduleDate + TimeSpan.FromHours(ConstantVariable.StartPMWorkingHour));
+            scheduleViewModel.EndPMWorkingHour
+                = (scheduleViewModel.ScheduleDate + TimeSpan.FromHours(ConstantVariable.EndPMWorkingHour));
+
+            string selectedDay = UtilitiesDate.ConvertDateToString(scheduleViewModel.ScheduleDate);
             // Tìm những phòng còn trống theo ngày
             // Parse số thành giờ: 1.5 => 1h30
             TimeSpan hour = TimeSpan.FromHours(scheduleViewModel.ExpectedSurgeryDuration);
@@ -92,13 +101,13 @@ namespace Surgery_1.Services.Implementations
 
         public RoomDateViewModel GetRoomByMaxSurgeryTime(ScheduleViewModel scheduleViewModel)
         {
-            // Lấy ngày cần lên lịch mổ (mổ bình thường), dạng số giảm dần theo thời gian
-            // TODO: List những phòng có thời gian phẫu thuật trễ nhất, giảm dần
+            // TODO: List những phòng có thời gian phẫu thuật sớm nhất, tăng dần
+            // Chon thời gian ca mổ gần nhất theo phòng
             // Chọn các phòng theo ngày
 
             var result1 = _context.SurgeryShifts
-                .Where(s => (s.EstimatedStartDateTime != null) 
-                && (UtilitiesDate.ConvertDateToNumber(s.EstimatedEndDateTime.Value) == UtilitiesDate.ConvertDateToNumber(scheduleViewModel.StartAMWorkingHour)))
+                .Where(s => (s.EstimatedStartDateTime != null) && (s.EstimatedEndDateTime != null)
+                && (UtilitiesDate.ConvertDateToNumber(s.EstimatedEndDateTime.Value) == UtilitiesDate.ConvertDateToNumber(scheduleViewModel.ScheduleDate)))
                 .Select(s => new { s.EstimatedEndDateTime, s.SurgeryRoomId }).ToList();
             // Nhóm các phòng cùng tên
             var result2 = result1.GroupBy(s => s.SurgeryRoomId).ToList();
@@ -154,35 +163,6 @@ namespace Surgery_1.Services.Implementations
         //}
 
 
-        //public RoomDateViewModel GetRoomByMax(int dateNumber)
-        //{
-        //    // Lấy ngày cần lên lịch mổ (mổ bình thường), dạng số giảm dần theo thời gian
-        //    // TODO: List những phòng có thời gian phẫu thuật trễ nhất, giảm dần
-        //    // Chọn các phòng theo ngày
-
-        //    var result1 = _context.SurgeryShifts
-        //        .Where(s => (s.EstimatedStartDateTime != null) && (UtilitiesDate.ConvertDateToNumber(s.StartAMWorkingHour) == dateNumber))
-        //        .Select(s => new { s.EstimatedEndDateTime, s.SurgeryRoomId }).ToList();
-        //    // Nhóm các phòng cùng tên
-        //    var result2 = result1.GroupBy(s => s.SurgeryRoomId).ToList();
-        //    // Lấy thời điểm ca mổ gần nhất của phòng
-        //    var result3 = new List<RoomDateViewModel>();
-        //    foreach (var item in result2)
-        //    {
-        //        result3.Add(new RoomDateViewModel()
-        //        {
-        //            SurgeryRoomId = int.Parse(item.Key.Value.ToString()),
-        //            EarlyEndDateTime = item.Max(s => s.EstimatedEndDateTime),
-        //        });
-        //    }
-        //    if (result3 == null || result3.Count == 0)
-        //    {
-        //        return null;
-        //    }
-        //    result3 = result3.OrderBy(s => s.EarlyEndDateTime).ToList();
-        //    // Lấy phòng hợp lý nhất
-        //    return result3.First();
-        //}
         public void InsertDateTimeToSurgeryShift(int surgeryId, DateTime startTime, DateTime endTime, int roomId)
         {
             var surgeryShift = _context.SurgeryShifts.Find(surgeryId);
@@ -193,10 +173,12 @@ namespace Surgery_1.Services.Implementations
         }
 
         // TODO: Tim những phòng (RoomId) theo ngày còn đang trống lịch
+        //string scheduleDateString
         public int GetEmptyRoomForDate(string scheduleDateString)
         {
             var parentRoomIds = _context.SurgeryRooms.Select(r => r.Id).ToList();
             var childRoomIds = _context.SurgeryShifts
+                //.Where(s => UtilitiesDate.ConvertDateToNumber(s.ScheduleDate) == scheduleDateNumber)
                 .FromSql("select * from SurgeryShifts where cast(EstimatedStartDateTime as date) = {0}", scheduleDateString)
                 .Select(s => s.SurgeryRoomId).ToList();
             ICollection<int> roomIds = parentRoomIds.Where(p => !childRoomIds.Contains(p)).ToList();
@@ -206,24 +188,7 @@ namespace Surgery_1.Services.Implementations
             }
             return roomIds.First();
         }
-
-        //TODO: Import file
-
-        //public void InsertFileToSurgeryShift(ScheduleViewModel scheduleViewModel)
-        //{
-        //    var surgeryShift = new SurgeryShift
-        //    {
-        //        StartAMWorkingHour = scheduleViewModel.StartAMWorkingHour,
-        //        EndAMWorkingHour = scheduleViewModel.EndAMWorkingHour,
-        //        StartPMWorkingHour = scheduleViewModel.StartPMWorkingHour,
-        //        EndPMWorkingHour = scheduleViewModel.EndPMWorkingHour,
-        //        ExpectedSurgeryDuration = scheduleViewModel.ExpectedSurgeryDuration,
-        //        PriorityNumber = scheduleViewModel.PriorityNumber
-        //    };
-        //    _context.SurgeryShifts.Add(surgeryShift);
-        //    _context.SaveChanges();
-        //}
-
+        // TODO: Lấy các phòng phẫu thuật 
         public ICollection<SurgeryRoomViewModel> GetSurgeryRooms()
         {
             var results = new List<SurgeryRoomViewModel>();
@@ -251,7 +216,7 @@ namespace Surgery_1.Services.Implementations
                 results.Add(new SurgeryShiftViewModel()
                 {
                     Id = shift.Id,
-                    //CatalogName = shift.SurgeryRoomCatalog.Name,
+                    //CatalogName = shift.SurgeryCatalog.Name,
                     //EstimatedEndDateTime = $"{shift.EstimatedEndDateTime.ToShortDateString()} {shift.EstimatedEndDateTime.ToShortTimeString()}",
                     //EstimatedStartDateTime = $"{shift.EstimatedStartDateTime.ToShortDateString()} {shift.EstimatedStartDateTime.ToShortTimeString()}",
                     PriorityNumber = shift.PriorityNumber,
@@ -263,32 +228,29 @@ namespace Surgery_1.Services.Implementations
             }
             return results;
         }
-        
+
         //TODO: Lấy danh sách ca mổ chưa lên lịch theo độ ưu tiên và ngày
-        //public ICollection<ScheduleViewModel> GetSurgeryShiftsNoSchedule(int dateNumber)
-        //{
-        //    var result = _context.SurgeryShifts
-        //        .Where(s => (s.EstimatedStartDateTime == null) && s.EstimatedEndDateTime == null
-        //        && s.IsAvailableMedicalSupplies == true && s.SurgeryRoomId == null)
-        //        .OrderBy(s => s.StartAMWorkingHour).OrderBy(s => s.PriorityNumber).OrderBy(s => s.ExpectedSurgeryDuration).ToList();
-        //    var surgeryShiftList = new List<ScheduleViewModel>();
-        //    foreach (var shift in result)
-        //    {
-        //        surgeryShiftList.Add(new ScheduleViewModel()
-        //        {
-        //            SurgeryShiftId = shift.Id,
-        //            ProposedStartDateTime = shift.ProposedStartDateTime,
-        //            ProposedEndDateTime = shift.ProposedEndDateTime,
-        //            StartAMWorkingHour = shift.StartAMWorkingHour,
-        //            EndAMWorkingHour = shift.EndAMWorkingHour,
-        //            StartPMWorkingHour = shift.StartPMWorkingHour,
-        //            EndPMWorkingHour = shift.EndPMWorkingHour,
-        //            ExpectedSurgeryDuration = shift.ExpectedSurgeryDuration,
-        //            PriorityNumber = shift.PriorityNumber
-        //        });
-        //    }
-        //    return surgeryShiftList;
-        //}
+        public ICollection<ScheduleViewModel> GetSurgeryShiftsNoSchedule(int dateNumber)
+        {
+            var result = _context.SurgeryShifts
+                .Where(s => (s.EstimatedStartDateTime == null) && s.EstimatedEndDateTime == null
+                && s.IsAvailableMedicalSupplies == true && s.SurgeryRoomId == null)
+                .OrderBy(s => s.ScheduleDate).OrderBy(s => s.PriorityNumber).OrderBy(s => s.ExpectedSurgeryDuration).ToList();
+            var surgeryShiftList = new List<ScheduleViewModel>();
+            foreach (var shift in result)
+            {
+                surgeryShiftList.Add(new ScheduleViewModel()
+                {
+                    SurgeryShiftId = shift.Id,
+                    ProposedStartDateTime = shift.ProposedStartDateTime,
+                    ProposedEndDateTime = shift.ProposedEndDateTime,
+                    ScheduleDate = shift.ScheduleDate.Value,
+                    ExpectedSurgeryDuration = shift.ExpectedSurgeryDuration,
+                    PriorityNumber = shift.PriorityNumber
+                });
+            }
+            return surgeryShiftList;
+        }
 
         // TODO: Lấy những ca mổ chưa lên lịch theo thời gian chỉ điịnh
         public ICollection<ScheduleViewModel> GetSurgeryShiftNoScheduleByProposedTime()
@@ -350,5 +312,6 @@ namespace Surgery_1.Services.Implementations
             }
             return null;
         }
+
     }
 }
