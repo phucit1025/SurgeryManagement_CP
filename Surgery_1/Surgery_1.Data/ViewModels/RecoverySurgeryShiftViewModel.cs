@@ -11,7 +11,8 @@ namespace Surgery_1.Data.ViewModels
         public int PatientAge { get; set; }
         public int PatientGender { get; set; }
         public string Diagnose { get; set; }
-
+        public string PostOpRooom { get; set; }
+        public string PostOpBed { get; set; }
         public List<HealthCareReportViewModel> CareReports { get; set; }
     }
 
