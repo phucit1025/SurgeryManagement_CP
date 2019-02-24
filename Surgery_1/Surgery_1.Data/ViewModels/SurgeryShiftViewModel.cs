@@ -31,4 +31,21 @@ namespace Surgery_1.Data.ViewModels
         public List<EkipMemberViewModel> EkipMembers { get; set; }
         public string Procedure { get; set; }
     }
+    
+    //Import surgery profile view models
+    public class ImportSurgeryShirftViewModel
+    {
+        public float ExpectedSurgeryDuration { get; set; }
+        public int PriorityNumber { get; set; }
+        public int PatientIDNumber { get; set; }
+        public int SurgeryCatalogID { get; set; }
+        public String SurgeryShiftCode { get; set; }
+    }
+
+    public class ImportMedicalSupplyViewModel
+    {
+        public int MedicalSupplyId { get; set; }
+        public String SurgeryShiftCode { get; set; }
+        public int Quantity { get; set; }
+    }
 }
