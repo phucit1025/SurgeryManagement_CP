@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
@@ -39,6 +40,9 @@ namespace Surgery_1.Data.Entities
         public int? SurgeryCatalogId { get; set; }
         public int? StatusId { get; set; }
         public int? EkipId { get; set; }
+
+        [MaxLength(250)]
+        public String SurgeryShiftCode { get; set; }
 
         public string EkipIndex { get; set; }
 
