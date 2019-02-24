@@ -39,15 +39,24 @@ namespace Surgery_1.Data.ViewModels
     {
         public float ExpectedSurgeryDuration { get; set; }
         public int PriorityNumber { get; set; }
-        public int PatientIDNumber { get; set; }
+
+        //Patient Info
+        public string PatientID { get; set; }
+        public string PatientName { get; set; }
+        public int Gender { get; set; }
+        public int YearOfBirth { get; set; }
+
         public int SurgeryCatalogID { get; set; }
         public String SurgeryShiftCode { get; set; }
+        public int SurgoenId { get; set; }
+        public DateTime ProposedStartDateTime { get; set; }
+        public DateTime ProposedEndDateTime { get; set; }
+
     }
 
     public class ImportMedicalSupplyViewModel
     {
         public int MedicalSupplyId { get; set; }
         public String SurgeryShiftCode { get; set; }
-        public int Quantity { get; set; }
     }
 }

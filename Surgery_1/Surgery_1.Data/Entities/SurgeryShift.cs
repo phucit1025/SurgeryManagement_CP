@@ -53,9 +53,6 @@ namespace Surgery_1.Data.Entities
         public int? StatusId { get; set; }
         public int? EkipId { get; set; }
 
-        [MaxLength(250)]
-        public String SurgeryShiftCode { get; set; }
-
         public string EkipIndex { get; set; }
 
         [ForeignKey("PatientId")]

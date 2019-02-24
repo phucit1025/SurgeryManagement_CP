@@ -22,17 +22,32 @@ namespace Surgery_1.Services.Implementations
             var list = surgeryShift;
             foreach (var s in surgeryShift)
             {
-
                 var shift = new SurgeryShift();
                 shift.IsDeleted = false;
                 shift.DateCreated = DateTime.Today;
                 shift.IsAvailableMedicalSupplies = false;
                 shift.StatusId = 1;
+
                 shift.ExpectedSurgeryDuration = s.ExpectedSurgeryDuration;
                 shift.PriorityNumber = s.PriorityNumber;
-                shift.PatientId = s.PatientIDNumber;
+                var patient = _context.Patients.Where(p => p.IdentityNumber == s.PatientID).FirstOrDefault();
+                if (patient == null)
+                {
+                    patient = new Patient();
+                    patient.IdentityNumber = s.PatientID;
+                    patient.YearOfBirth = s.YearOfBirth;
+                    patient.FullName = s.PatientName;
+                    patient.Gender = s.Gender;
+                    _context.Patients.Add(patient);
+                    _context.SaveChanges();
+                    patient = _context.Patients.Where(p => p.IdentityNumber == s.PatientID).Single();
+                }
+                shift.PatientId = patient.Id;
                 shift.SurgeryCatalogId = s.SurgeryCatalogID;
-                //shift.SurgeryShiftCode = s.SurgeryShiftCode;
+                shift.SurgeryShiftCode = s.SurgeryShiftCode;
+                shift.SurgeryCatalogId = s.SurgeryCatalogID;
+                shift.ProposedStartDateTime = s.ProposedStartDateTime;
+                shift.ProposedEndDateTime = s.ProposedEndDateTime;
                 _context.SurgeryShifts.Add(shift);
             }
             _context.SaveChanges();

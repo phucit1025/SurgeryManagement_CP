@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Surgery_1.Data.ViewModels;
 using Surgery_1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -17,8 +18,17 @@ namespace Surgery_1.Controllers
             _surgeryShiftService = surgeryShiftService;
         }
 
-        public bool ImportSurgeryShift()
+        [HttpPost]
+        public bool ImportSurgeryShift([FromBody]ICollection<ImportSurgeryShirftViewModel> surgeryShift)
         {
+            _surgeryShiftService.ImportSurgeryShift(surgeryShift);
+            return true;
+        }
+
+        [HttpPost]
+        public bool ImportSurgeryShiftMedicalSupply([FromBody]ICollection<ImportMedicalSupplyViewModel> surgeryShiftSupply)
+        {
+            _surgeryShiftService.ImportSurgeryShiftMedicalSupply(surgeryShiftSupply);
             return true;
         }
     }
