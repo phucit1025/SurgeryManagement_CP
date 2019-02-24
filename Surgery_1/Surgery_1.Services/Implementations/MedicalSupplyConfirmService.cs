@@ -22,6 +22,7 @@ namespace Surgery_1.Services.Implementations
             foreach (var r in request)
             {
                 r.IsAvailableMedicalSupplies = true;
+                r.ConfirmDate = new DateTime();
             }
             _context.SaveChanges();
         }
@@ -50,6 +51,7 @@ namespace Surgery_1.Services.Implementations
             if (shift == null)
                 return false;
             shift.IsAvailableMedicalSupplies = true;
+            shift.ConfirmDate = new DateTime();
             _context.SaveChanges();
             return true;
         }
