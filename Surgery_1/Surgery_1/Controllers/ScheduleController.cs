@@ -76,5 +76,37 @@ namespace Surgery_1.Controllers
             if (result != null) return StatusCode(200, result);
             return StatusCode(400);
         }
+
+        #region Change Schedules
+        [HttpPost]
+        public IActionResult GetAvailableRoom([FromBody]AvailableRoomParamViewModel param)
+        {
+            var results = _surgeryService.GetAvailableRoom(param.StartDate, param.EndDate);
+            return StatusCode(200, results);
+        }
+
+        [HttpGet]
+        public IActionResult GetAvailableRoomForDuration(int hour, int minute)
+        {
+            var results = _surgeryService.GetAvailableRoom(hour, minute);
+            return StatusCode(200, results);
+        }
+
+        [HttpPost]
+        public IActionResult ChangeSchedule([FromBody] ShiftScheduleChangeViewModel newShift)
+        {
+            var result = _surgeryService.ChangeSchedule(newShift);
+            if (result) return StatusCode(200);
+            return StatusCode(400);
+        }
+
+        [HttpPost]
+        public IActionResult ChangeScheduleForDuration([FromBody] ShiftScheduleChangeViewModel newShift)
+        {
+            var result = _surgeryService.ChangeSchedule(newShift);
+            if (result) return StatusCode(200);
+            return StatusCode(400);
+        }
+        #endregion
     }
 }

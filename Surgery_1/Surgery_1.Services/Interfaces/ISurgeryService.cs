@@ -20,5 +20,12 @@ namespace Surgery_1.Services.Interfaces
         ICollection<ScheduleViewModel> GetSurgeryShiftNoScheduleByProposedTime();
 
         SurgeryShiftDetailViewModel GetShiftDetail(int shiftId);
+
+        #region Change Surgery Business
+        bool ChangeFirstPriority(ShiftChangeViewModel newShift);
+        bool ChangeSchedule(ShiftScheduleChangeViewModel newShift);
+        List<int> GetAvailableRoom(DateTime start, DateTime end);
+        List<AvailableRoomViewModel> GetAvailableRoom(int hour, int minute);
+        #endregion 
     }
 }
