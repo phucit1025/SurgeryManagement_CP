@@ -41,7 +41,7 @@ namespace Surgery_1.Services.Implementations
                 results.Add(new SurgeryShiftViewModel()
                 {
                     Id = shift.Id,
-                    CatalogName = shift.SurgeryRoomCatalog.Name,
+                    CatalogName = shift.SurgeryCatalog.Name,
                     PatientName = shift.Patient.FullName
                 });
             }
@@ -68,7 +68,7 @@ namespace Surgery_1.Services.Implementations
         {
             var surgeryShift = _appDbContext.SurgeryShifts.Find(id);
             var patient = surgeryShift.Patient;
-            var surgeryCatalog = surgeryShift.SurgeryRoomCatalog;
+            var surgeryCatalog = surgeryShift.SurgeryCatalog;
 
             var healthCareReports = _appDbContext.HealthCareReports
                 .Where(a => a.SurgeryShiftId == surgeryShift.Id && a.IsDeleted == false)
@@ -106,10 +106,7 @@ namespace Surgery_1.Services.Implementations
                 //DateCreated = DateTime.ParseExact(healthCareReportViewModel.DateCreated, "ddd, dd-MM-yyyy hh:mm", provider),
                 EventContent = healthCareReportViewModel.EventContent,
                 CareContent = healthCareReportViewModel.CareContent,
-                RoomNumber = 1,
-                BedNumber = 1,
                 IsDeleted = false,
-                IsInRecoveryState = true,
                 SurgeryShiftId = healthCareReportViewModel.SurgeryShiftId
             };
             try

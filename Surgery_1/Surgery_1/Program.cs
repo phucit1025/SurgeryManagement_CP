@@ -16,6 +16,10 @@ namespace Surgery_1
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args).Build().Run();
+
+            //var config = new ConfigurationBuilder()
+            //    .AddCommandLine(args)
+            //    .Build();
             //var configuration = new ConfigurationBuilder()
             //    .AddCommandLine(args)
             //    .Build();
@@ -26,11 +30,11 @@ namespace Surgery_1
 
             //var host = new WebHostBuilder()
             //    .UseKestrel()
-            //    .UseUrls(hostUrl)   // <!-- this 
+            //    .UseUrls($"http://+:50794", $"https://+:44372")   // <!-- this 
             //    .UseContentRoot(Directory.GetCurrentDirectory())
             //    .UseIISIntegration()
             //    .UseStartup<Startup>()
-            //    .UseConfiguration(configuration)
+            //    .UseConfiguration(config)
             //    .Build();
 
             //host.Run();

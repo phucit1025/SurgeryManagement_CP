@@ -19,33 +19,67 @@ namespace Surgery_1.Controllers
         {
             this._surgeryService = _surgeryService;
         }
+        //[HttpGet]
+        //public IActionResult GetRoomByMax(int dayNumber)
+        //{
+        //    var result = _surgeryService.GetRoomByMax(dayNumber);
+        //    return StatusCode(200, result);
+        //}
+        //[HttpGet]
+        //public IActionResult GetSurgeryShiftNoScheduleByProposedTime()
+        //{
+        //    var result = _surgeryService.GetSurgeryShiftNoScheduleByProposedTime();
+        //    return StatusCode(200, result);
+        //}
 
-        [HttpPost]
-        public IActionResult GetSurgeryMaxTime([FromBody] ScheduleViewModel scheduleViewModel)
-        {
-            var result = _surgeryService.GetRoomByMaxSurgeryTime(scheduleViewModel);
-            return StatusCode(200, result);
-        }
-        [HttpGet]
-        public IActionResult GetSurgeryShiftsByRoomAndDate(int roomId, int dayNumber)
-        {
-            var result = _surgeryService.GetSurgeryShiftsByRoomAndDate(roomId, dayNumber);
-            return StatusCode(200, result);
-        }
-        [HttpGet]
-        public IActionResult GetSurgeryRooms()
-        {
-            var result = _surgeryService.GetSurgeryRooms();
-            return StatusCode(200, result);
-        }
+        //[HttpGet]
+        //public IActionResult MakeScheduleList()
+        //{
+        //    _surgeryService.MakeScheduleList();
+        //    return StatusCode(200);
+        //}
 
-        [HttpGet]
-        public IActionResult GetSurgeryShiftDetail(int shiftId)
-        {
-            var result = _surgeryService.GetShiftDetail(shiftId);
+        //[HttpPost]
+        //public IActionResult MakeSchedule([FromBody] ScheduleViewModel scheduleViewModel)
+        //{
+        //    _surgeryService.MakeSchedule(scheduleViewModel);
+        //    return StatusCode(200);
+        //}
+        //[HttpGet]
+        //public IActionResult GetSurgeryShiftsNoSchedule(int dateNumber)
+        //{
+        //    var result = _surgeryService.GetSurgeryShiftsNoSchedule(dateNumber);
+        //    return StatusCode(200, result);
+        //}
 
-            if(result!=null)return StatusCode(200, result);
-            return StatusCode(400);
-        }
+        //[HttpPost]
+        //public IActionResult GetSurgeryMaxTime([FromBody] ScheduleViewModel scheduleViewModel)
+        //{
+        //    var result = _surgeryService.GetRoomByMaxSurgeryTime(scheduleViewModel);
+        //    return StatusCode(200, result);
+        //}
+
+
+        //[HttpGet]
+        //public IActionResult GetSurgeryShiftsByRoomAndDate(int roomId, int dayNumber)
+        //{
+        //    var result = _surgeryService.GetSurgeryShiftsByRoomAndDate(roomId, dayNumber);
+        //    return StatusCode(200, result);
+        //}
+        //[HttpGet]
+        //public IActionResult GetSurgeryRooms()
+        //{
+        //    var result = _surgeryService.GetSurgeryRooms();
+        //    return StatusCode(200, result);
+        //}
+
+        //[HttpGet]
+        //public IActionResult GetSurgeryShiftDetail(int shiftId)
+        //{
+        //    var result = _surgeryService.GetShiftDetail(shiftId);
+
+        //    if(result!=null)return StatusCode(200, result);
+        //    return StatusCode(400);
+        //}
     }
 }
