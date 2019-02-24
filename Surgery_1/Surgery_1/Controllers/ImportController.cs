@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Surgery_1.Data.ViewModels;
 using Surgery_1.Services.Interfaces;
 using System;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Surgery_1.Controllers
 {
+    [EnableCors("AllowAll")]
     [Route("api/Import/[action]")]
     [ApiController]
     public class ImportController : ControllerBase
@@ -26,7 +28,7 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public bool ImportSurgeryShiftMedicalSupply([FromBody]ICollection<ImportMedicalSupplyViewModel> surgeryShiftSupply)
+        public bool ImportSurgeryShiftMedicalSupply([FromBody]List<ImportMedicalSupplyViewModel> surgeryShiftSupply)
         {
             _surgeryShiftService.ImportSurgeryShiftMedicalSupply(surgeryShiftSupply);
             return true;
