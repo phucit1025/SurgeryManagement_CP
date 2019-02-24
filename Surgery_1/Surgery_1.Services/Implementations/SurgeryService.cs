@@ -30,20 +30,20 @@ namespace Surgery_1.Services.Implementations
         }
 
 
-        public void MakeScheduleList()
-        {
-            //var result = GetSurgeryShiftsNoSchedule(1);
-            //foreach (var index in result)
-            //{
-            //    MakeSchedule(index);
-            //}
+        //public void MakeScheduleList()
+        //{
+        //    //var result = GetSurgeryShiftsNoSchedule(1);
+        //    //foreach (var index in result)
+        //    //{
+        //    //    MakeSchedule(index);
+        //    //}
 
-            var result = GetSurgeryShiftsNoSchedule(1).First();
-            //foreach (var index in result)
-            //{
-                MakeSchedule(result);
-            //}
-        }
+        //    var result = GetSurgeryShiftsNoSchedule(1).First();
+        //    //foreach (var index in result)
+        //    //{
+        //        MakeSchedule(result);
+        //    //}
+        //}
         public void MakeSchedule(ScheduleViewModel scheduleViewModel)
         {
             string selectedDay = UtilitiesDate.ConvertDateToString(scheduleViewModel.StartAMWorkingHour);
@@ -121,68 +121,68 @@ namespace Surgery_1.Services.Implementations
             return result3.First();
         }
 
-        public RoomDateViewModel GetRoomByMaxSurgeryTimeBeforeStartAM(ScheduleViewModel scheduleViewModel)
-        {
-            // Lấy ngày cần lên lịch mổ (mổ bình thường), dạng số giảm dần theo thời gian
-            // TODO: List những phòng có thời gian phẫu thuật trễ nhất, giảm dần
-            // Chọn các phòng theo ngày
+        //public RoomDateViewModel GetRoomByMaxSurgeryTimeBeforeStartAM(ScheduleViewModel scheduleViewModel)
+        //{
+        //    // Lấy ngày cần lên lịch mổ (mổ bình thường), dạng số giảm dần theo thời gian
+        //    // TODO: List những phòng có thời gian phẫu thuật trễ nhất, giảm dần
+        //    // Chọn các phòng theo ngày
 
-            var result1 = _context.SurgeryShifts
-                .Where(s => (s.EstimatedStartDateTime != null)
-                && (UtilitiesDate.ConvertDateToNumber(s.EstimatedEndDateTime.Value) == UtilitiesDate.ConvertDateToNumber(scheduleViewModel.StartAMWorkingHour))
-                && s.EstimatedEndDateTime < s.EndAMWorkingHour)
-                .Select(s => new { s.EstimatedEndDateTime, s.SurgeryRoomId }).ToList();
-            // Nhóm các phòng cùng tên
-            var result2 = result1.GroupBy(s => s.SurgeryRoomId).ToList();
-            // Lấy thời điểm ca mổ gần nhất của phòng
-            var result3 = new List<RoomDateViewModel>();
-            foreach (var item in result2)
-            {
-                result3.Add(new RoomDateViewModel()
-                {
-                    SurgeryRoomId = int.Parse(item.Key.Value.ToString()),
-                    EarlyEndDateTime = item.Max(s => s.EstimatedEndDateTime),
-                });
-            }
-            if (result3 == null || result3.Count == 0)
-            {
-                return null;
-            }
-            result3 = result3.OrderByDescending(s => s.EarlyEndDateTime).ToList();
-            // Lấy phòng hợp lý nhất
-            return result3.First();
-        }
+        //    var result1 = _context.SurgeryShifts
+        //        .Where(s => (s.EstimatedStartDateTime != null)
+        //        && (UtilitiesDate.ConvertDateToNumber(s.EstimatedEndDateTime.Value) == UtilitiesDate.ConvertDateToNumber(scheduleViewModel.StartAMWorkingHour))
+        //        && s.EstimatedEndDateTime < s.EndAMWorkingHour)
+        //        .Select(s => new { s.EstimatedEndDateTime, s.SurgeryRoomId }).ToList();
+        //    // Nhóm các phòng cùng tên
+        //    var result2 = result1.GroupBy(s => s.SurgeryRoomId).ToList();
+        //    // Lấy thời điểm ca mổ gần nhất của phòng
+        //    var result3 = new List<RoomDateViewModel>();
+        //    foreach (var item in result2)
+        //    {
+        //        result3.Add(new RoomDateViewModel()
+        //        {
+        //            SurgeryRoomId = int.Parse(item.Key.Value.ToString()),
+        //            EarlyEndDateTime = item.Max(s => s.EstimatedEndDateTime),
+        //        });
+        //    }
+        //    if (result3 == null || result3.Count == 0)
+        //    {
+        //        return null;
+        //    }
+        //    result3 = result3.OrderByDescending(s => s.EarlyEndDateTime).ToList();
+        //    // Lấy phòng hợp lý nhất
+        //    return result3.First();
+        //}
 
 
-        public RoomDateViewModel GetRoomByMax(int dateNumber)
-        {
-            // Lấy ngày cần lên lịch mổ (mổ bình thường), dạng số giảm dần theo thời gian
-            // TODO: List những phòng có thời gian phẫu thuật trễ nhất, giảm dần
-            // Chọn các phòng theo ngày
+        //public RoomDateViewModel GetRoomByMax(int dateNumber)
+        //{
+        //    // Lấy ngày cần lên lịch mổ (mổ bình thường), dạng số giảm dần theo thời gian
+        //    // TODO: List những phòng có thời gian phẫu thuật trễ nhất, giảm dần
+        //    // Chọn các phòng theo ngày
 
-            var result1 = _context.SurgeryShifts
-                .Where(s => (s.EstimatedStartDateTime != null) && (UtilitiesDate.ConvertDateToNumber(s.StartAMWorkingHour) == dateNumber))
-                .Select(s => new { s.EstimatedEndDateTime, s.SurgeryRoomId }).ToList();
-            // Nhóm các phòng cùng tên
-            var result2 = result1.GroupBy(s => s.SurgeryRoomId).ToList();
-            // Lấy thời điểm ca mổ gần nhất của phòng
-            var result3 = new List<RoomDateViewModel>();
-            foreach (var item in result2)
-            {
-                result3.Add(new RoomDateViewModel()
-                {
-                    SurgeryRoomId = int.Parse(item.Key.Value.ToString()),
-                    EarlyEndDateTime = item.Max(s => s.EstimatedEndDateTime),
-                });
-            }
-            if (result3 == null || result3.Count == 0)
-            {
-                return null;
-            }
-            result3 = result3.OrderBy(s => s.EarlyEndDateTime).ToList();
-            // Lấy phòng hợp lý nhất
-            return result3.First();
-        }
+        //    var result1 = _context.SurgeryShifts
+        //        .Where(s => (s.EstimatedStartDateTime != null) && (UtilitiesDate.ConvertDateToNumber(s.StartAMWorkingHour) == dateNumber))
+        //        .Select(s => new { s.EstimatedEndDateTime, s.SurgeryRoomId }).ToList();
+        //    // Nhóm các phòng cùng tên
+        //    var result2 = result1.GroupBy(s => s.SurgeryRoomId).ToList();
+        //    // Lấy thời điểm ca mổ gần nhất của phòng
+        //    var result3 = new List<RoomDateViewModel>();
+        //    foreach (var item in result2)
+        //    {
+        //        result3.Add(new RoomDateViewModel()
+        //        {
+        //            SurgeryRoomId = int.Parse(item.Key.Value.ToString()),
+        //            EarlyEndDateTime = item.Max(s => s.EstimatedEndDateTime),
+        //        });
+        //    }
+        //    if (result3 == null || result3.Count == 0)
+        //    {
+        //        return null;
+        //    }
+        //    result3 = result3.OrderBy(s => s.EarlyEndDateTime).ToList();
+        //    // Lấy phòng hợp lý nhất
+        //    return result3.First();
+        //}
         public void InsertDateTimeToSurgeryShift(int surgeryId, DateTime startTime, DateTime endTime, int roomId)
         {
             var surgeryShift = _context.SurgeryShifts.Find(surgeryId);
@@ -209,20 +209,20 @@ namespace Surgery_1.Services.Implementations
 
         //TODO: Import file
 
-        public void InsertFileToSurgeryShift(ScheduleViewModel scheduleViewModel)
-        {
-            var surgeryShift = new SurgeryShift
-            {
-                StartAMWorkingHour = scheduleViewModel.StartAMWorkingHour,
-                EndAMWorkingHour = scheduleViewModel.EndAMWorkingHour,
-                StartPMWorkingHour = scheduleViewModel.StartPMWorkingHour,
-                EndPMWorkingHour = scheduleViewModel.EndPMWorkingHour,
-                ExpectedSurgeryDuration = scheduleViewModel.ExpectedSurgeryDuration,
-                PriorityNumber = scheduleViewModel.PriorityNumber
-            };
-            _context.SurgeryShifts.Add(surgeryShift);
-            _context.SaveChanges();
-        }
+        //public void InsertFileToSurgeryShift(ScheduleViewModel scheduleViewModel)
+        //{
+        //    var surgeryShift = new SurgeryShift
+        //    {
+        //        StartAMWorkingHour = scheduleViewModel.StartAMWorkingHour,
+        //        EndAMWorkingHour = scheduleViewModel.EndAMWorkingHour,
+        //        StartPMWorkingHour = scheduleViewModel.StartPMWorkingHour,
+        //        EndPMWorkingHour = scheduleViewModel.EndPMWorkingHour,
+        //        ExpectedSurgeryDuration = scheduleViewModel.ExpectedSurgeryDuration,
+        //        PriorityNumber = scheduleViewModel.PriorityNumber
+        //    };
+        //    _context.SurgeryShifts.Add(surgeryShift);
+        //    _context.SaveChanges();
+        //}
 
         public ICollection<SurgeryRoomViewModel> GetSurgeryRooms()
         {
@@ -265,30 +265,30 @@ namespace Surgery_1.Services.Implementations
         }
         
         //TODO: Lấy danh sách ca mổ chưa lên lịch theo độ ưu tiên và ngày
-        public ICollection<ScheduleViewModel> GetSurgeryShiftsNoSchedule(int dateNumber)
-        {
-            var result = _context.SurgeryShifts
-                .Where(s => (s.EstimatedStartDateTime == null) && s.EstimatedEndDateTime == null
-                && s.IsAvailableMedicalSupplies == true && s.SurgeryRoomId == null)
-                .OrderBy(s => s.StartAMWorkingHour).OrderBy(s => s.PriorityNumber).OrderBy(s => s.ExpectedSurgeryDuration).ToList();
-            var surgeryShiftList = new List<ScheduleViewModel>();
-            foreach (var shift in result)
-            {
-                surgeryShiftList.Add(new ScheduleViewModel()
-                {
-                    SurgeryShiftId = shift.Id,
-                    ProposedStartDateTime = shift.ProposedStartDateTime,
-                    ProposedEndDateTime = shift.ProposedEndDateTime,
-                    StartAMWorkingHour = shift.StartAMWorkingHour,
-                    EndAMWorkingHour = shift.EndAMWorkingHour,
-                    StartPMWorkingHour = shift.StartPMWorkingHour,
-                    EndPMWorkingHour = shift.EndPMWorkingHour,
-                    ExpectedSurgeryDuration = shift.ExpectedSurgeryDuration,
-                    PriorityNumber = shift.PriorityNumber
-                });
-            }
-            return surgeryShiftList;
-        }
+        //public ICollection<ScheduleViewModel> GetSurgeryShiftsNoSchedule(int dateNumber)
+        //{
+        //    var result = _context.SurgeryShifts
+        //        .Where(s => (s.EstimatedStartDateTime == null) && s.EstimatedEndDateTime == null
+        //        && s.IsAvailableMedicalSupplies == true && s.SurgeryRoomId == null)
+        //        .OrderBy(s => s.StartAMWorkingHour).OrderBy(s => s.PriorityNumber).OrderBy(s => s.ExpectedSurgeryDuration).ToList();
+        //    var surgeryShiftList = new List<ScheduleViewModel>();
+        //    foreach (var shift in result)
+        //    {
+        //        surgeryShiftList.Add(new ScheduleViewModel()
+        //        {
+        //            SurgeryShiftId = shift.Id,
+        //            ProposedStartDateTime = shift.ProposedStartDateTime,
+        //            ProposedEndDateTime = shift.ProposedEndDateTime,
+        //            StartAMWorkingHour = shift.StartAMWorkingHour,
+        //            EndAMWorkingHour = shift.EndAMWorkingHour,
+        //            StartPMWorkingHour = shift.StartPMWorkingHour,
+        //            EndPMWorkingHour = shift.EndPMWorkingHour,
+        //            ExpectedSurgeryDuration = shift.ExpectedSurgeryDuration,
+        //            PriorityNumber = shift.PriorityNumber
+        //        });
+        //    }
+        //    return surgeryShiftList;
+        //}
 
         // TODO: Lấy những ca mổ chưa lên lịch theo thời gian chỉ điịnh
         public ICollection<ScheduleViewModel> GetSurgeryShiftNoScheduleByProposedTime()

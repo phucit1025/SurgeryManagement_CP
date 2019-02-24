@@ -8,7 +8,7 @@ namespace Surgery_1.Data.Entities
     public class SurgeryCatalog : BaseEntity
     {
         public SurgeryCatalog()
-        {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+        {
             SurgeryShifts = new HashSet<SurgeryShift>();
             
         }
