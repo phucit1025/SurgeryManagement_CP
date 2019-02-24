@@ -42,9 +42,9 @@ namespace Surgery_1.Controllers
         }
 
         [HttpGet]
-        public IActionResult ChangeSurgeryShiftToRecovery(int surgeryShiftId)
+        public IActionResult ChangeSurgeryShiftToRecovery(int surgeryShiftId, string postOpRoom, string postOpBed)
         {
-            var result = _postOpService.ChangeSurgeryShiftToRecovery(surgeryShiftId);
+            var result = _postOpService.ChangeSurgeryShiftToRecovery(surgeryShiftId, postOpRoom, postOpBed);
             if (result)
             {
                 return Ok(result);

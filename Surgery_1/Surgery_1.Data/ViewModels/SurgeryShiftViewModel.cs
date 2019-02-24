@@ -33,4 +33,14 @@ namespace Surgery_1.Data.ViewModels
         public List<EkipMemberViewModel> EkipMembers { get; set; }
         public string Procedure { get; set; }
     }
+
+    public class PostOpSurgeryShiftViewModel
+    {
+        public int Id { get; set; }
+        public string CatalogName { get; set; }
+        public string PatientName { get; set; }
+        public string PostOpBed { get; set; }
+        public int PatientGender { get; set; }
+        public int PatientAge { get; set; }
+    }
 }
