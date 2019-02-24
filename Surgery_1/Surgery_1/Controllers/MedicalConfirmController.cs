@@ -37,5 +37,10 @@ namespace Surgery_1.Controllers
             return Ok(result);
         }
 
+        [HttpGet]
+        public void ConfirmedAllSupplyRequest()
+        {
+            _confirmService.ConfirmedAllSupplyRequest();
+        }
     }
 }
