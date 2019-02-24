@@ -42,9 +42,9 @@ namespace Surgery_1.Data.ViewModels
         public string PostOpBed { get; set; }
         public int PatientGender { get; set; }
         public int PatientAge { get; set; }
-    
+    }
     //Import surgery profile view models
-    public class ImportSurgeryShirftViewModel
+    public class ImportSurgeryShiftViewModel
     {
         public float ExpectedSurgeryDuration { get; set; }
         public int PriorityNumber { get; set; }

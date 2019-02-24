@@ -2,12 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static Surgery_1.Data.ViewModels.PostOpSurgeryShiftViewModel;
 
 namespace Surgery_1.Services.Interfaces
 {
     public interface ISurgeryShiftService
     {
-        void ImportSurgeryShift(ICollection<ImportSurgeryShirftViewModel> surgeryShift);
+        void ImportSurgeryShift(ICollection<ImportSurgeryShiftViewModel> surgeryShift);
         void ImportSurgeryShiftMedicalSupply(ICollection<ImportMedicalSupplyViewModel> medicalSupply);
     }
 }
