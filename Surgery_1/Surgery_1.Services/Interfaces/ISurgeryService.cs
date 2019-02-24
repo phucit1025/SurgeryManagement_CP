@@ -16,7 +16,7 @@ namespace Surgery_1.Services.Interfaces
         ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int surgeryRoomId, int dateNumber);
 
         // Lấy những ca mổ cần lên lịch theo ngày
-        ICollection<ScheduleViewModel> GetSurgeryShiftsNoSchedule(int dateNumber);
+        ICollection<ScheduleViewModel> GetSurgeryShiftsNoSchedule();
         ICollection<ScheduleViewModel> GetSurgeryShiftNoScheduleByProposedTime();
 
         SurgeryShiftDetailViewModel GetShiftDetail(int shiftId);

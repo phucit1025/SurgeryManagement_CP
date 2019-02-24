@@ -32,17 +32,17 @@ namespace Surgery_1.Services.Implementations
 
         public void MakeScheduleList()
         {
-            //var result = GetSurgeryShiftsNoSchedule(1);
-            //foreach (var index in result)
-            //{
-            //    MakeSchedule(index);
-            //}
+            var result = GetSurgeryShiftsNoSchedule();
+            foreach (var index in result)
+            {
+                MakeSchedule(index);
+            }
 
-            var result = GetSurgeryShiftsNoSchedule(1).First();
-            //foreach (var index in result)
-            //{
-            MakeSchedule(result);
-            //}
+            //var result = GetSurgeryShiftsNoSchedule().First();
+            ////foreach (var index in result)
+            ////{
+            //MakeSchedule(result);
+            ////}
         }
         public void MakeSchedule(ScheduleViewModel scheduleViewModel)
         {
@@ -81,7 +81,7 @@ namespace Surgery_1.Services.Implementations
                         InsertDateTimeToSurgeryShift
                             (scheduleViewModel.SurgeryShiftId, availableRoom.EarlyEndDateTime.Value, endEstimatedTime, availableRoom.SurgeryRoomId);
                     }
-                    else if (endEstimatedTime >= scheduleViewModel.EndAMWorkingHour && endEstimatedTime <= scheduleViewModel.StartPMWorkingHour)
+                    else if (endEstimatedTime >= scheduleViewModel.EndAMWorkingHour)
                     {// Nếu thời gian ước tính nằm trong giờ nghỉ trưa thì lấy thời gian đầu của buổi chiều + ExpectedSurgeryDuration
                         endEstimatedTime = scheduleViewModel.StartPMWorkingHour + hour;
                         InsertDateTimeToSurgeryShift
@@ -230,12 +230,15 @@ namespace Surgery_1.Services.Implementations
         }
 
         //TODO: Lấy danh sách ca mổ chưa lên lịch theo độ ưu tiên và ngày
-        public ICollection<ScheduleViewModel> GetSurgeryShiftsNoSchedule(int dateNumber)
+        public ICollection<ScheduleViewModel> GetSurgeryShiftsNoSchedule()
         {
             var result = _context.SurgeryShifts
-                .Where(s => (s.EstimatedStartDateTime == null) && s.EstimatedEndDateTime == null
-                && s.IsAvailableMedicalSupplies == true && s.SurgeryRoomId == null)
-                .OrderBy(s => s.ScheduleDate).OrderBy(s => s.PriorityNumber).OrderBy(s => s.ExpectedSurgeryDuration).ToList();
+                .Where(s => (s.EstimatedStartDateTime == null) && (s.EstimatedEndDateTime == null)
+                && (s.IsAvailableMedicalSupplies == true) && (s.SurgeryRoomId == null))              
+                .OrderBy(s => s.ExpectedSurgeryDuration)
+                .OrderBy(s => s.PriorityNumber)
+                .OrderBy(s => s.ScheduleDate)
+                .ToList();
             var surgeryShiftList = new List<ScheduleViewModel>();
             foreach (var shift in result)
             {

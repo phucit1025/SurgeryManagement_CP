@@ -41,9 +41,9 @@ namespace Surgery_1.Controllers
             return StatusCode(200);
         }
         [HttpGet]
-        public IActionResult GetSurgeryShiftsNoSchedule(int dateNumber)
+        public IActionResult GetSurgeryShiftsNoSchedule()
         {
-            var result = _surgeryService.GetSurgeryShiftsNoSchedule(dateNumber);
+            var result = _surgeryService.GetSurgeryShiftsNoSchedule();
             return StatusCode(200, result);
         }
 
