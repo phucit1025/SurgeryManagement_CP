@@ -13,5 +13,6 @@ namespace Surgery_1.Services.Interfaces
         void InsertFileToSurgeryShift(ScheduleViewModel scheduleViewModel);
         ICollection<SurgeryRoomViewModel> GetSurgeryRooms();
         ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int surgeryRoomId, int dateNumber);
+        SurgeryShiftDetailViewModel GetShiftDetail(int shiftId);
     }
 }
