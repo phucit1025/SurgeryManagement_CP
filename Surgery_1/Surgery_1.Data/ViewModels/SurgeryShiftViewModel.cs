@@ -68,4 +68,20 @@ namespace Surgery_1.Data.ViewModels
         public int MedicalSupplyId { get; set; }
         public String SurgeryShiftCode { get; set; }
     }
+
+    public class ShiftScheduleChangeViewModel
+    {
+        public int Id { get; set; }
+        public DateTime EstimatedStartDateTime { get; set; }
+        public DateTime EstimatedEndDateTime { get; set; }
+        public string ChangeLogDescription { get; set; }
+        public int RoomId { get; set; }
+    }
+
+    public class ShiftChangeViewModel
+    {
+        public int Id { get; set; }
+        public string ChangeLogDescription { get; set; }
+        public int NewPriority { get; set; }
+    }
 }

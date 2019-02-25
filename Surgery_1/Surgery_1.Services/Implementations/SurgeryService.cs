@@ -353,5 +353,197 @@ namespace Surgery_1.Services.Implementations
             return null;
         }
 
+        #region Change Shift
+        public bool ChangeFirstPriority(ShiftChangeViewModel newShift)
+        {
+            var shift = _context.SurgeryShifts.Find(newShift.Id);
+            if (shift != null)
+            {
+                var tracker = _context.Database.BeginTransaction();
+                try
+                {
+                    #region Update Shift
+                    shift.PriorityNumber = newShift.NewPriority;
+                    shift.DateUpdated = DateTime.Now;
+                    _context.Update(shift);
+                    _context.SaveChanges();
+                    #endregion
+
+                    //#region Create Log
+                    //_context.SurgeryShiftChangeLogs.Add(new ShiftChangeLog()
+                    //{
+                    //    Description = newShift.ChangeLogDescription,
+                    //    ShiftId = shift.Id
+                    //});
+                    //_context.SaveChanges();
+                    //#endregion
+
+                    tracker.Commit();
+                    return true;
+                }
+                catch (DbUpdateException)
+                {
+                    tracker.Rollback();
+                    return false;
+                }
+
+            }
+            return false;
+        }
+
+        public bool ChangeSchedule(ShiftScheduleChangeViewModel newShift)
+        {
+            var shift = _context.SurgeryShifts.Find(newShift.Id);
+            if (shift != null)
+            {
+                var tracker = _context.Database.BeginTransaction();
+
+                try
+                {
+                    #region Change Schedule
+                    shift.EstimatedStartDateTime = newShift.EstimatedStartDateTime;
+                    shift.EstimatedEndDateTime = newShift.EstimatedEndDateTime;
+                    shift.SurgeryRoomId = newShift.RoomId;
+                    shift.DateUpdated = DateTime.Now;
+                    _context.Update(shift);
+                    _context.SaveChanges();
+                    #endregion
+
+                    //#region Create Log
+                    //_context.SurgeryShiftChangeLogs.Add(new ShiftChangeLog()
+                    //{
+                    //    Description = newShift.ChangeLogDescription,
+                    //    ShiftId = shift.Id
+                    //});
+                    //_context.SaveChanges();
+                    //#endregion
+
+                    tracker.Commit();
+                    return true;
+                }
+                catch (DbUpdateException)
+                {
+                    tracker.Rollback();
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        public List<int> GetAvailableRoom(DateTime start, DateTime end)
+        {
+            var rooms = _context.SurgeryRooms.Where(r => !r.IsDeleted);
+            var roomId = new List<int>();
+            foreach (var room in rooms)
+            {
+                var shifts = room.SurgeryShifts.Where(s =>
+                !s.IsDeleted
+                );
+                if (shifts.ToList().Count() != 0)
+                {
+                    var onScheduleShifts = shifts.Where(s => start < s.EstimatedEndDateTime);
+                    if (onScheduleShifts.ToList().Any())
+                    {
+                        onScheduleShifts = onScheduleShifts.OrderByDescending(s => s.EstimatedStartDateTime);
+                        if (end < onScheduleShifts.FirstOrDefault().EstimatedStartDateTime)
+                        {
+                            roomId.Add(room.Id);
+                        }
+                    }
+                }
+                else
+                {
+                    roomId.Add(room.Id);
+                }
+
+            }
+            return roomId;
+        }
+
+        public List<AvailableRoomViewModel> GetAvailableRoom(int hour, int minute)
+        {
+            var rooms = _context.SurgeryRooms.Where(r => !r.IsDeleted).ToList();
+            var availableRooms = new List<AvailableRoomViewModel>();
+            foreach (var room in rooms)
+            {
+                var shifts = room.SurgeryShifts.Where(s =>
+                !s.IsDeleted);
+                if (shifts.ToList().Count !=0)
+                {
+                    shifts = shifts.OrderByDescending(s => s.EstimatedStartDateTime);
+                    if (shifts.Count() == 1)
+                    {
+                        var shift = shifts.FirstOrDefault();
+                        var timeCondition = (shift.EstimatedStartDateTime.Value.AddHours(-hour).AddMinutes(-minute - 1).Hour >= 7); //TODO : Explain + 1  minute
+
+                        if (timeCondition)
+                        {
+                            availableRooms.Add(new AvailableRoomViewModel()
+                            {
+                                RoomId = room.Id,
+                                StartDateTime = shift.EstimatedStartDateTime.Value.AddHours(-hour).AddMinutes(-minute - 1),
+                                EndDateTime = shift.EstimatedStartDateTime.Value.AddMinutes(-1)
+                            });
+                        }
+                        timeCondition = (shift.EstimatedEndDateTime.Value.Hour <= 17);
+                        if (timeCondition)
+                        {
+                            availableRooms.Add(new AvailableRoomViewModel()
+                            {
+                                RoomId = room.Id,
+                                StartDateTime = shift.EstimatedEndDateTime.Value.AddMinutes(1), //TODO : Explain + 1  minute
+                                EndDateTime = shift.EstimatedEndDateTime.Value.AddHours(hour).AddMinutes(minute + 1)
+                            });
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < shifts.Count(); i++)
+                        {
+                            var shift = shifts.ElementAt(i);
+                            if (i == (shifts.Count() - 1))
+                            {
+                                if (shift.EstimatedEndDateTime.Value.Hour <= 17)
+                                {
+                                    availableRooms.Add(new AvailableRoomViewModel()
+                                    {
+                                        RoomId = room.Id,
+                                        StartDateTime = shift.EstimatedEndDateTime.Value,
+                                        EndDateTime = shift.EstimatedEndDateTime.Value.AddHours(hour).AddMinutes(minute)
+                                    });
+                                }
+                            }
+                            else
+                            {
+                                var shiftAfter = shifts.ElementAt(i + 1);
+                                if (shiftAfter.EstimatedStartDateTime.Value - shift.EstimatedEndDateTime.Value >= new TimeSpan(hours: hour, minutes: minute, seconds:0))
+                                {
+                                    availableRooms.Add(new AvailableRoomViewModel()
+                                    {
+                                        RoomId = room.Id,
+                                        StartDateTime = shift.EstimatedEndDateTime.Value,
+                                        EndDateTime = shift.EstimatedEndDateTime.Value.AddHours(hour).AddMinutes(minute)
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var newStartDateTime = new DateTime(year: DateTime.Now.Year, month: DateTime.Now.Month, day: DateTime.Now.Day, hour: 7, minute: 0, second: 0);
+                    availableRooms.Add(new AvailableRoomViewModel()
+                    {
+                        RoomId = room.Id,
+                        StartDateTime = newStartDateTime,
+                        EndDateTime = newStartDateTime.AddHours(hour).AddMinutes(minute)
+                    });
+                }
+
+            }
+            return availableRooms;
+        }
+        #endregion 
+
     }
 }
