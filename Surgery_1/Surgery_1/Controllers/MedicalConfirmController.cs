@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Surgery_1.Controllers
 {
+
     [Route("api/MedicalConfirm/[action]")]
     [ApiController]
     public class MedicalConfirmController: ControllerBase

@@ -27,7 +27,7 @@ namespace Surgery_1.Services.Implementations
                 shift.IsDeleted = false;
                 shift.DateCreated = DateTime.Today;
                 shift.IsAvailableMedicalSupplies = false;
-                shift.StatusId = 1;
+                //shift.StatusId = 1;
 
                 shift.ExpectedSurgeryDuration = s.ExpectedSurgeryDuration;
                 shift.PriorityNumber = s.PriorityNumber;
