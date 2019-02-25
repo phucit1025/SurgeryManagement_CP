@@ -16,15 +16,13 @@ namespace Surgery_1.Services.Implementations
             this._context = _context;
         }
 
-        public void InsertSupplyRequest(ICollection<MedicalSupplyDetailImportViewModel> list)
+        public void ConfirmedAllSupplyRequest()
         {
-            Data.Entities.SurgeryShiftMedicalSupply data = new Data.Entities.SurgeryShiftMedicalSupply();
-            foreach (var r in list)
+            var request = _context.SurgeryShifts.Where(a => a.IsAvailableMedicalSupplies == false).ToList();
+            foreach (var r in request)
             {
-                data.MedicalSupplyId = r.supplyId;
-                data.SurgeryShiftId = r.surgeryShiftId;
-                //data.Quantity = r.quantity;
-                _context.SurgeryShiftMedicalSupplies.Add(data);
+                r.IsAvailableMedicalSupplies = true;
+                r.ConfirmDate = new DateTime();
             }
             _context.SaveChanges();
         }
@@ -53,6 +51,7 @@ namespace Surgery_1.Services.Implementations
             if (shift == null)
                 return false;
             shift.IsAvailableMedicalSupplies = true;
+            shift.ConfirmDate = new DateTime();
             _context.SaveChanges();
             return true;
         }
