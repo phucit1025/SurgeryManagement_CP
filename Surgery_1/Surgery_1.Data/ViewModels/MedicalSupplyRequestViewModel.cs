@@ -26,4 +26,8 @@ namespace Surgery_1.Data.ViewModels
         public string name { get; set; }
         public int quantity { get; set; }
     }
+    public class MedicalSupplyIdConfirmViewModel
+    {
+        public int id { get; set; }
+    }
 }
