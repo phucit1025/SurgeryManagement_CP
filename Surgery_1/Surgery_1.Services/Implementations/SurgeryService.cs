@@ -58,12 +58,6 @@ namespace Surgery_1.Services.Implementations
                 }
                 
             }
-
-            //var result = GetSurgeryShiftsNoSchedule().FirstOrDefault();
-            ////foreach (var index in result)
-            ////{
-            //MakeSchedule(result);
-            ////}
         }
 
         public int GetAvailableRoomForProposedTime(DateTime startTime, DateTime endTime)
@@ -75,7 +69,7 @@ namespace Surgery_1.Services.Implementations
                 .Where(s => (s.EstimatedStartDateTime >= startTime && s.EstimatedStartDateTime < endTime)
                 || (s.EstimatedEndDateTime > startTime && s.EstimatedEndDateTime <= endTime))
                 .Select(s => s.SurgeryRoomId).ToList();
-
+            // Loại những phòng không hợp lệ
             ICollection<int> roomIds = parentRoomIds.Where(p => !childRoomIds.Contains(p)).ToList();
             if (roomIds == null || roomIds.Count == 0)
             {
@@ -100,7 +94,7 @@ namespace Surgery_1.Services.Implementations
             // Parse số thành giờ: 1.5 => 1h30
             TimeSpan hour = TimeSpan.FromHours(scheduleViewModel.ExpectedSurgeryDuration);
             int roomEmptyId = GetEmptyRoomForDate(selectedDay);
-            if (roomEmptyId == null || roomEmptyId == 0)
+            if (roomEmptyId == 0)
             {
                 // Lấy ra cái phòng hợp lý nhất, có ca sớm nhất
                 var availableRoom = GetRoomByMaxSurgeryTime(scheduleViewModel);

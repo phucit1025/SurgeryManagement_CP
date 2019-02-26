@@ -22,7 +22,8 @@ namespace Surgery_1.Services.Implementations
             foreach (var r in request)
             {
                 r.IsAvailableMedicalSupplies = true;
-                r.ConfirmDate = new DateTime();
+                r.ConfirmDate = DateTime.Now;
+                r.ScheduleDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
             }
             _context.SaveChanges();
         }
