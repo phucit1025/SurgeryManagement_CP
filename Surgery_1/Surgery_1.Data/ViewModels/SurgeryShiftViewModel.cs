@@ -30,7 +30,7 @@ namespace Surgery_1.Data.ViewModels
         public string EndTime { get; set; }
 
         //Surgery Info
-        public List<EkipMemberViewModel> EkipMembers { get; set; }
+        //public List<EkipMemberViewModel> EkipMembers { get; set; }
         public string Procedure { get; set; }
     }
 

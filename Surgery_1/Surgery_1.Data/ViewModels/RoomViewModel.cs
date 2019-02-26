@@ -13,6 +13,7 @@ namespace Surgery_1.Data.ViewModels
         public int RoomId { get; set; }
         public DateTime StartDateTime { get; set; }
         public DateTime EndDateTime { get; set; }
+        public double ExpectedSurgeryDuration { get; set; }
     }
 
     public class AvailableRoomParamViewModel

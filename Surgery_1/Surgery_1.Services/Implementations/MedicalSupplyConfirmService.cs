@@ -20,10 +20,17 @@ namespace Surgery_1.Services.Implementations
         {
             var request = _context.SurgeryShifts.Where(a => a.IsAvailableMedicalSupplies == false).ToList();
             foreach (var r in request)
-            {
+            {                
                 r.IsAvailableMedicalSupplies = true;
                 r.ConfirmDate = DateTime.Now;
-                r.ScheduleDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                if (r.ProposedStartDateTime != null && r.ProposedEndDateTime != null)
+                {
+                    r.ScheduleDate = new DateTime(r.ProposedStartDateTime.Value.Year, r.ProposedStartDateTime.Value.Month, r.ProposedStartDateTime.Value.Day);
+                } else
+                {
+                    r.ScheduleDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                }
+                
             }
             _context.SaveChanges();
         }

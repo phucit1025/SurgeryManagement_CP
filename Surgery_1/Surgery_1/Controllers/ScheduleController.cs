@@ -26,6 +26,14 @@ namespace Surgery_1.Controllers
             var result = _surgeryService.GetSurgeryShiftNoScheduleByProposedTime();
             return StatusCode(200, result);
         }
+        [HttpGet]
+        public IActionResult MakeScheduleByProposedTime()
+        {
+            _surgeryService.MakeScheduleByProposedTime();
+            return StatusCode(200);
+        }
+        
+            
 
         [HttpGet]
         public IActionResult MakeScheduleList()
@@ -34,12 +42,19 @@ namespace Surgery_1.Controllers
             return StatusCode(200);
         }
 
+        //[HttpPost]
+        //public IActionResult MakeSchedule([FromBody] ScheduleViewModel scheduleViewModel)
+        //{
+        //    _surgeryService.MakeSchedule(scheduleViewModel);
+        //    return StatusCode(200);
+        //}
         [HttpPost]
-        public IActionResult MakeSchedule([FromBody] ScheduleViewModel scheduleViewModel)
+        public IActionResult MakeScheduleV2(int dateNumber)
         {
-            _surgeryService.MakeSchedule(scheduleViewModel);
-            return StatusCode(200);
+            var result = _surgeryService.GetAvailableSlotRoom(dateNumber);
+            return StatusCode(200, result);
         }
+        
         [HttpGet]
         public IActionResult GetSurgeryShiftsNoSchedule()
         {
@@ -47,12 +62,7 @@ namespace Surgery_1.Controllers
             return StatusCode(200, result);
         }
 
-        [HttpPost]
-        public IActionResult GetSurgeryMaxTime([FromBody] ScheduleViewModel scheduleViewModel)
-        {
-            var result = _surgeryService.GetRoomByMaxSurgeryTime(scheduleViewModel);
-            return StatusCode(200, result);
-        }
+
 
 
         [HttpGet]
@@ -73,8 +83,7 @@ namespace Surgery_1.Controllers
         {
             var result = _surgeryService.GetShiftDetail(shiftId);
 
-            if (result != null) return StatusCode(200, result);
-            return StatusCode(400);
+            return StatusCode(200, result);
         }
 
         #region Change Schedules

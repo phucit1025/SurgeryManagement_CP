@@ -25,7 +25,7 @@ namespace Surgery_1.Services.Implementations
             {
                 var shift = new SurgeryShift();
                 shift.IsDeleted = false;
-                shift.DateCreated = DateTime.Today;
+                shift.DateCreated = DateTime.Now;
                 shift.IsAvailableMedicalSupplies = false;
                 //shift.StatusId = 1;
 
