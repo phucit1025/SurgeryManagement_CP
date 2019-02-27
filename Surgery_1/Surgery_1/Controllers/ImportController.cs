@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Surgery_1.Data.ViewModels.PostOpSurgeryShiftViewModel;
 
 namespace Surgery_1.Controllers
 {
@@ -21,7 +22,7 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public bool ImportSurgeryShift([FromBody]ICollection<ImportSurgeryShirftViewModel> surgeryShift)
+        public bool ImportSurgeryShift([FromBody]ICollection<ImportSurgeryShiftViewModel> surgeryShift)
         {
             _surgeryShiftService.ImportSurgeryShift(surgeryShift);
             return true;

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Surgery_1.Controllers
 {
+
     [Route("api/MedicalConfirm/[action]")]
     [ApiController]
     public class MedicalConfirmController: ControllerBase
@@ -29,6 +30,12 @@ namespace Surgery_1.Controllers
         public bool ConfirmMedicalRequest([FromBody]ICollection<MedicalSupplyIdConfirmViewModel> surgeryShift)
         {
             return _confirmService.ConfirmedSupply(surgeryShift);
+        }
+        [HttpPost]
+        public IActionResult ConfirmAll()
+        {
+            var result = _confirmService.ConfirmAll();
+            return StatusCode(200, result);
         }
 
         [HttpGet]

@@ -30,7 +30,7 @@ namespace Surgery_1.Data.ViewModels
         public string EndTime { get; set; }
 
         //Surgery Info
-        public List<EkipMemberViewModel> EkipMembers { get; set; }
+        //public List<EkipMemberViewModel> EkipMembers { get; set; }
         public string Procedure { get; set; }
     }
 
@@ -42,9 +42,10 @@ namespace Surgery_1.Data.ViewModels
         public string PostOpBed { get; set; }
         public int PatientGender { get; set; }
         public int PatientAge { get; set; }
-    
+    }
+  
     //Import surgery profile view models
-    public class ImportSurgeryShirftViewModel
+    public class ImportSurgeryShiftViewModel
     {
         public float ExpectedSurgeryDuration { get; set; }
         public int PriorityNumber { get; set; }
@@ -57,7 +58,7 @@ namespace Surgery_1.Data.ViewModels
 
         public int SurgeryCatalogID { get; set; }
         public String SurgeryShiftCode { get; set; }
-        public int SurgoenId { get; set; }
+        public int SurgeonId { get; set; }
         public DateTime? ProposedStartDateTime { get; set; }
         public DateTime? ProposedEndDateTime { get; set; }
 
@@ -67,5 +68,21 @@ namespace Surgery_1.Data.ViewModels
     {
         public int MedicalSupplyId { get; set; }
         public String SurgeryShiftCode { get; set; }
+    }
+
+    public class ShiftScheduleChangeViewModel
+    {
+        public int Id { get; set; }
+        public DateTime EstimatedStartDateTime { get; set; }
+        public DateTime EstimatedEndDateTime { get; set; }
+        public string ChangeLogDescription { get; set; }
+        public int RoomId { get; set; }
+    }
+
+    public class ShiftChangeViewModel
+    {
+        public int Id { get; set; }
+        public string ChangeLogDescription { get; set; }
+        public int NewPriority { get; set; }
     }
 }

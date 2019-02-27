@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static Surgery_1.Data.ViewModels.PostOpSurgeryShiftViewModel;
 
 namespace Surgery_1.Services.Implementations
 {
@@ -17,16 +18,16 @@ namespace Surgery_1.Services.Implementations
             this._context = _context;
         }
 
-        public void ImportSurgeryShift(ICollection<ImportSurgeryShirftViewModel> surgeryShift)
+        public void ImportSurgeryShift(ICollection<ImportSurgeryShiftViewModel> surgeryShift)
         {
             var list = surgeryShift;
             foreach (var s in surgeryShift)
             {
                 var shift = new SurgeryShift();
                 shift.IsDeleted = false;
-                shift.DateCreated = DateTime.Today;
+                shift.DateCreated = DateTime.Now;
                 shift.IsAvailableMedicalSupplies = false;
-                shift.StatusId = 1;
+                //shift.StatusId = 1;
 
                 shift.ExpectedSurgeryDuration = s.ExpectedSurgeryDuration;
                 shift.PriorityNumber = s.PriorityNumber;
@@ -45,7 +46,6 @@ namespace Surgery_1.Services.Implementations
                 shift.PatientId = patient.Id;
                 shift.SurgeryCatalogId = s.SurgeryCatalogID;
                 shift.SurgeryShiftCode = s.SurgeryShiftCode;
-                shift.SurgeryCatalogId = s.SurgeryCatalogID;
                 shift.ProposedStartDateTime = s.ProposedStartDateTime;
                 shift.ProposedEndDateTime = s.ProposedEndDateTime;
                 _context.SurgeryShifts.Add(shift);
