@@ -7,8 +7,7 @@ namespace Surgery_1.Services.Interfaces
 {
     public interface IMedicalSupplyConfirmService
     {
-        void InsertSupplyRequest(ICollection<MedicalSupplyDetailImportViewModel> list);
-        bool ConfirmedSupply(int surgeryShiftId);
+        bool ConfirmedSupply(ICollection<MedicalSupplyIdConfirmViewModel> surgeryShift);
         ICollection<MedicalSupplyRequestViewModel> GetAllMedicalSupplyRequest();
         ICollection<MedicalSupplyRequestDetailViewModel> GetMedicalSupplyRequestDetail(int surgeryShitfId);
     }

@@ -16,19 +16,6 @@ namespace Surgery_1.Services.Implementations
             this._context = _context;
         }
 
-        public void InsertSupplyRequest(ICollection<MedicalSupplyDetailImportViewModel> list)
-        {
-            Data.Entities.SurgeryShiftMedicalSupply data = new Data.Entities.SurgeryShiftMedicalSupply();
-            foreach (var r in list)
-            {
-                data.MedicalSupplyId = r.supplyId;
-                data.SurgeryShiftId = r.surgeryShiftId;
-                //data.Quantity = r.quantity;
-                _context.SurgeryShiftMedicalSupplies.Add(data);
-            }
-            _context.SaveChanges();
-        }
-
         public ICollection<MedicalSupplyRequestViewModel> GetAllMedicalSupplyRequest()
         {
             var result = new List<MedicalSupplyRequestViewModel>();
@@ -40,19 +27,19 @@ namespace Surgery_1.Services.Implementations
                     Id = r.Id,
                     PatientName = r.Patient.FullName,
                     SurgeryName = r.SurgeryCatalog.Name,
-                    SurgeryCatalogId = r.SurgeryCatalogId.ToString(),
+                    SurgeryCatalogId = /*r.SurgeryCatalogId.ToString()*/"",
                     CreatedDate = r.DateCreated.ToString()
                 });
             }
             return result;
         }
 
-        public bool ConfirmedSupply(int surgeryShiftId)
+        public bool ConfirmedSupply(ICollection<MedicalSupplyIdConfirmViewModel> surgeryShift)
         {
-            var shift = _context.SurgeryShifts.Where(a => a.Id == surgeryShiftId).Single();
-            if (shift == null)
-                return false;
-            shift.IsAvailableMedicalSupplies = true;
+            foreach(var s in surgeryShift)
+            {
+                _context.SurgeryShifts.Where(a => a.Id == s.id).FirstOrDefault().IsAvailableMedicalSupplies = true;
+            }
             _context.SaveChanges();
             return true;
         }
