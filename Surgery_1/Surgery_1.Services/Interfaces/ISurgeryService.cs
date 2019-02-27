@@ -9,6 +9,8 @@ namespace Surgery_1.Services.Interfaces
     {
         void MakeScheduleList();
         void MakeScheduleByProposedTime();
+
+        bool SetPostoperativeStatus(int shiftId);
         List<AvailableRoomViewModel> GetAvailableSlotRoom(int dateNumber);
 
         ICollection<SurgeryRoomViewModel> GetSurgeryRooms();

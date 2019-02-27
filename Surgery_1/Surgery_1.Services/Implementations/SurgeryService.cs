@@ -21,7 +21,18 @@ namespace Surgery_1.Services.Implementations
         {
             this._context = _context;
         }
-
+        public bool SetPostoperativeStatus(int shiftId)
+        {
+            var shift = _context.SurgeryShifts.Find(shiftId);
+            if (shift != null)
+            {
+                shift.StatusId = 3;
+                _context.Update(shift);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
         public void MakeScheduleList()
         {
             var shifts = GetSurgeryShiftsNoSchedule();
@@ -77,7 +88,13 @@ namespace Surgery_1.Services.Implementations
                         }
                         else
                         {
+                            int roomProposed = GetAvailableRoomForProposedTime(shift.ProposedStartDateTime.Value, shift.ProposedEndDateTime.Value);
                             // TODO: Thông báo ko tìm ra
+                            if (roomProposed != 0)
+                            {
+                                InsertDateTimeToSurgeryShift
+                                (shift.SurgeryShiftId, shift.ProposedStartDateTime.Value, shift.ProposedEndDateTime.Value, roomProposed);
+                            }
                         }
                     }
                 }
@@ -105,9 +122,21 @@ namespace Surgery_1.Services.Implementations
                     }
                     else
                     {
-
+                        var item = _context.SurgeryShifts.Find(shift.SurgeryShiftId);
+                        item.ProposedStartDateTime = null;
+                        item.ProposedEndDateTime = null;
+                        if (shift.ScheduleDate.AddDays(1).DayOfWeek.Equals(ConstantVariable.DAYOFF))
+                        {
+                            item.ScheduleDate = shift.ScheduleDate.AddDays(2);
+                            _context.SaveChanges();
+                        }
+                        else
+                        {
+                            item.ScheduleDate = shift.ScheduleDate.AddDays(1);
+                            _context.SaveChanges();
+                        }
                     }
-                    
+
                 }
                 MakeScheduleList();
             }
@@ -278,20 +307,22 @@ namespace Surgery_1.Services.Implementations
 
                         for (int i = 0; i < result.Count - 1; i++)
                         {
-
-                            if (result.ElementAt(i).EstimatedEndDateTime != result.ElementAt(i + 1).EstimatedStartDateTime)
+                            if (result.Last().EstimatedEndDateTime.Value.TimeOfDay <= TimeSpan.FromHours(ConstantVariable.EndPMWorkingHour))
                             {
-                                var start = result.ElementAt(i).EstimatedEndDateTime.Value;
-                                var end = result.ElementAt(i + 1).EstimatedStartDateTime.Value;
-
-                                availableRooms.Add(new AvailableRoomViewModel
+                                if (result.ElementAt(i).EstimatedEndDateTime != result.ElementAt(i + 1).EstimatedStartDateTime)
                                 {
-                                    RoomId = room.Id,
-                                    StartDateTime = start,
-                                    EndDateTime = end,
-                                    ExpectedSurgeryDuration = (end - start).TotalHours
-                                });
+                                    var start = result.ElementAt(i).EstimatedEndDateTime.Value;
+                                    var end = result.ElementAt(i + 1).EstimatedStartDateTime.Value;
 
+                                    availableRooms.Add(new AvailableRoomViewModel
+                                    {
+                                        RoomId = room.Id,
+                                        StartDateTime = start,
+                                        EndDateTime = end,
+                                        ExpectedSurgeryDuration = (end - start).TotalHours
+                                    });
+
+                                }
                             }
                         }
                     }

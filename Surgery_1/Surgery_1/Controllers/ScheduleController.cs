@@ -19,6 +19,13 @@ namespace Surgery_1.Controllers
         {
             this._surgeryService = _surgeryService;
         }
+        [HttpPost]
+        public IActionResult SetPostoperativeStatus(int shiftId)
+        {
+            var result = _surgeryService.SetPostoperativeStatus(shiftId);
+
+            return StatusCode(200, result);
+        }
 
         [HttpGet]
         public IActionResult GetSurgeryShiftNoScheduleByProposedTime()
