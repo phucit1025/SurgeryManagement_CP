@@ -43,6 +43,7 @@ namespace Surgery_1.Data.ViewModels
         public int PatientGender { get; set; }
         public int PatientAge { get; set; }
     }
+  
     //Import surgery profile view models
     public class ImportSurgeryShiftViewModel
     {
