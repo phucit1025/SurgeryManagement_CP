@@ -19,6 +19,7 @@ namespace Surgery_1.Controllers
         {
             this._surgeryService = _surgeryService;
         }
+
         [HttpPost]
         public IActionResult SetPostoperativeStatus(int shiftId)
         {

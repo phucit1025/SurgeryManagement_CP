@@ -31,6 +31,12 @@ namespace Surgery_1.Controllers
         {
             return _confirmService.ConfirmedSupply(surgeryShift);
         }
+        [HttpPost]
+        public IActionResult ConfirmAll()
+        {
+            var result = _confirmService.ConfirmAll();
+            return StatusCode(200, result);
+        }
 
         [HttpGet]
         public IActionResult GetMedicalSupplyRequest(int surgeryShiftId)

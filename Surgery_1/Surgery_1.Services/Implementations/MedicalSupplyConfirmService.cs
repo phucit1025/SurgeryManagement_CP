@@ -16,7 +16,7 @@ namespace Surgery_1.Services.Implementations
             this._context = _context;
         }
 
-<<<<<<< HEAD
+
         public void ConfirmedAllSupplyRequest()
         {
             var request = _context.SurgeryShifts.Where(a => a.IsAvailableMedicalSupplies == false).ToList();
@@ -36,8 +36,29 @@ namespace Surgery_1.Services.Implementations
             _context.SaveChanges();
         }
 
-=======
->>>>>>> 054c22e46662b82f35a055d0702043673b53fbf5
+        public bool ConfirmAll()
+        {
+            var request = _context.SurgeryShifts.Where(a => a.IsAvailableMedicalSupplies == false).ToList();
+            foreach (var r in request)
+            {
+                r.IsAvailableMedicalSupplies = true;
+                r.ConfirmDate = DateTime.Now;
+                if (r.ProposedStartDateTime != null && r.ProposedEndDateTime != null)
+                {
+                    r.ScheduleDate = new DateTime(r.ProposedStartDateTime.Value.Year, r.ProposedStartDateTime.Value.Month, r.ProposedStartDateTime.Value.Day);
+                }
+                else
+                {
+                    r.ScheduleDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                }
+
+            }
+            _context.SaveChanges();
+            return true;
+        }
+
+
+
         public ICollection<MedicalSupplyRequestViewModel> GetAllMedicalSupplyRequest()
         {
             var result = new List<MedicalSupplyRequestViewModel>();
@@ -49,7 +70,7 @@ namespace Surgery_1.Services.Implementations
                     Id = r.Id,
                     PatientName = r.Patient.FullName,
                     SurgeryName = r.SurgeryCatalog.Name,
-                    SurgeryCatalogId = /*r.SurgeryCatalogId.ToString()*/"",
+                    SurgeryCatalogId = r.SurgeryCatalogId.ToString(),
                     CreatedDate = r.DateCreated.ToString()
                 });
             }
