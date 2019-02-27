@@ -58,8 +58,10 @@ namespace Surgery_1.Services.Implementations
             foreach (var tmp in medicalSupply)
             {
                 var shiftSupply = new SurgeryShiftMedicalSupply();
-                int surgeryShiftId = _context.SurgeryShifts.Where(a => a.SurgeryShiftCode == tmp.SurgeryShiftCode).Single().Id;
-                shiftSupply.SurgeryShiftId = surgeryShiftId;
+                var surgeryShift = _context.SurgeryShifts.Where(a => a.SurgeryShiftCode == tmp.SurgeryShiftCode).FirstOrDefault();
+                if (surgeryShift == null)
+                    continue;
+                shiftSupply.SurgeryShiftId = surgeryShift.Id;
                 shiftSupply.MedicalSupplyId = tmp.MedicalSupplyId;
                 _context.SurgeryShiftMedicalSupplies.Add(shiftSupply);
             }

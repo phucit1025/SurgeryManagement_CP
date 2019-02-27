@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Surgery_1.Data.ViewModels;
 using Surgery_1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -25,10 +26,10 @@ namespace Surgery_1.Controllers
             return Ok(result);
         }
 
-        [HttpGet]
-        public void ConfirmMedicalRequest(int surgeryShiftId)
+        [HttpPost]
+        public bool ConfirmMedicalRequest([FromBody]ICollection<MedicalSupplyIdConfirmViewModel> surgeryShift)
         {
-            var result = _confirmService.ConfirmedSupply(surgeryShiftId);
+            return _confirmService.ConfirmedSupply(surgeryShift);
         }
 
         [HttpGet]
@@ -38,10 +39,5 @@ namespace Surgery_1.Controllers
             return Ok(result);
         }
 
-        [HttpGet]
-        public void ConfirmedAllSupplyRequest()
-        {
-            _confirmService.ConfirmedAllSupplyRequest();
-        }
     }
 }
