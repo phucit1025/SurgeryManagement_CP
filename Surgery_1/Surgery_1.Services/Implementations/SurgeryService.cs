@@ -23,19 +23,6 @@ namespace Surgery_1.Services.Implementations
         }
         public bool SetPostoperativeStatus(int shiftId)
         {
-<<<<<<< HEAD
-            var result = GetSurgeryShiftsNoSchedule();
-            foreach (var index in result)
-            {
-                MakeSchedule(index);
-            }
-
-            //var result = GetSurgeryShiftsNoSchedule().First();
-            ////foreach (var index in result)
-            ////{
-            //MakeSchedule(result);
-            ////}
-=======
             var shift = _context.SurgeryShifts.Find(shiftId);
             if (shift != null)
             {
@@ -45,7 +32,6 @@ namespace Surgery_1.Services.Implementations
                 return true;
             }
             return false;
->>>>>>> e17416a75e887b15ffd736100cbfec5fdf47286b
         }
         public void MakeScheduleList()
         {
