@@ -40,9 +40,7 @@ namespace Surgery_1.Controllers
             _surgeryService.MakeScheduleByProposedTime();
             return StatusCode(200);
         }
-        
-            
-
+                   
         [HttpGet]
         public IActionResult MakeScheduleList()
         {
