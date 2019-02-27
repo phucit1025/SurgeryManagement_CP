@@ -14,5 +14,6 @@ namespace Surgery_1.Services.Interfaces
         bool CreateHealthCareReport(HealthCareReportViewModel healthCareRerpotViewModel);
         bool UpdateHealthCareReport(HealthCareReportViewModel healthCareRerpotViewModel);
         bool SoftDeleteHealthCareReport(int healthCareReportId);
+        ICollection<PostOpSurgeryShiftViewModel> FindPostOpSurgeryByPatientName(string name);
     }
 }
