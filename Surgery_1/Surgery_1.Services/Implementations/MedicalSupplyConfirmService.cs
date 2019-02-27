@@ -16,18 +16,48 @@ namespace Surgery_1.Services.Implementations
             this._context = _context;
         }
 
-        public void InsertSupplyRequest(ICollection<MedicalSupplyDetailImportViewModel> list)
+
+        public void ConfirmedAllSupplyRequest()
         {
-            Data.Entities.SurgeryShiftMedicalSupply data = new Data.Entities.SurgeryShiftMedicalSupply();
-            foreach (var r in list)
-            {
-                data.MedicalSupplyId = r.supplyId;
-                data.SurgeryShiftId = r.surgeryShiftId;
-                //data.Quantity = r.quantity;
-                _context.SurgeryShiftMedicalSupplies.Add(data);
+            var request = _context.SurgeryShifts.Where(a => a.IsAvailableMedicalSupplies == false).ToList();
+            foreach (var r in request)
+            {                
+                r.IsAvailableMedicalSupplies = true;
+                r.ConfirmDate = DateTime.Now;
+                if (r.ProposedStartDateTime != null && r.ProposedEndDateTime != null)
+                {
+                    r.ScheduleDate = new DateTime(r.ProposedStartDateTime.Value.Year, r.ProposedStartDateTime.Value.Month, r.ProposedStartDateTime.Value.Day);
+                } else
+                {
+                    r.ScheduleDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                }
+                
             }
             _context.SaveChanges();
         }
+
+        public bool ConfirmAll()
+        {
+            var request = _context.SurgeryShifts.Where(a => a.IsAvailableMedicalSupplies == false).ToList();
+            foreach (var r in request)
+            {
+                r.IsAvailableMedicalSupplies = true;
+                r.ConfirmDate = DateTime.Now;
+                if (r.ProposedStartDateTime != null && r.ProposedEndDateTime != null)
+                {
+                    r.ScheduleDate = new DateTime(r.ProposedStartDateTime.Value.Year, r.ProposedStartDateTime.Value.Month, r.ProposedStartDateTime.Value.Day);
+                }
+                else
+                {
+                    r.ScheduleDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                }
+
+            }
+            _context.SaveChanges();
+            return true;
+        }
+
+
 
         public ICollection<MedicalSupplyRequestViewModel> GetAllMedicalSupplyRequest()
         {
@@ -47,12 +77,12 @@ namespace Surgery_1.Services.Implementations
             return result;
         }
 
-        public bool ConfirmedSupply(int surgeryShiftId)
+        public bool ConfirmedSupply(ICollection<MedicalSupplyIdConfirmViewModel> surgeryShift)
         {
-            var shift = _context.SurgeryShifts.Where(a => a.Id == surgeryShiftId).Single();
-            if (shift == null)
-                return false;
-            shift.IsAvailableMedicalSupplies = true;
+            foreach(var s in surgeryShift)
+            {
+                _context.SurgeryShifts.Where(a => a.Id == s.id).FirstOrDefault().IsAvailableMedicalSupplies = true;
+            }
             _context.SaveChanges();
             return true;
         }

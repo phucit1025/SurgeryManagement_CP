@@ -42,6 +42,13 @@ namespace Surgery_1
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                 //.UseUrls(urls: "http://*:5000")
+                 .UseUrls(urls: "http://*:5000")
+                 .ConfigureLogging(logging =>
+                 {
+                     logging.ClearProviders();
+                     logging.AddConsole();
+                 })
                 .UseStartup<Startup>();
     }
 }

@@ -42,9 +42,9 @@ namespace Surgery_1.Controllers
         }
 
         [HttpGet]
-        public IActionResult ChangeSurgeryShiftToRecovery(int surgeryShiftId)
+        public IActionResult ChangeSurgeryShiftToRecovery(int surgeryShiftId, string postOpRoom, string postOpBed)
         {
-            var result = _postOpService.ChangeSurgeryShiftToRecovery(surgeryShiftId);
+            var result = _postOpService.ChangeSurgeryShiftToRecovery(surgeryShiftId, postOpRoom, postOpBed);
             if (result)
             {
                 return Ok(result);
@@ -94,6 +94,17 @@ namespace Surgery_1.Controllers
                 return Ok(result);
             }
             return BadRequest();
+        }
+
+        [HttpGet]
+        public IActionResult FindPostOpSurgeryByPatientName(string name)
+        {
+            var result = _postOpService.FindPostOpSurgeryByPatientName(name);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
     }
 }

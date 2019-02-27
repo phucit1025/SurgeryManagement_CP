@@ -7,12 +7,13 @@ namespace Surgery_1.Services.Interfaces
 {
     public interface IPostOpService
     {
-        ICollection<SurgeryShiftViewModel> GetSurgeryByStatusId(int statusId);
+        ICollection<PostOpSurgeryShiftViewModel> GetSurgeryByStatusId(int statusId);
         RecoverySurgeryShiftViewModel GetRecoverySurgeryShiftById(int id);
         object GetHealthCareRerportBySurgeryShiftId(int surgeryShiftId);
-        bool ChangeSurgeryShiftToRecovery(int surgeryShiftId);
+        bool ChangeSurgeryShiftToRecovery(int surgeryShiftId, string postOpRoom, string postOpBed);
         bool CreateHealthCareReport(HealthCareReportViewModel healthCareRerpotViewModel);
         bool UpdateHealthCareReport(HealthCareReportViewModel healthCareRerpotViewModel);
         bool SoftDeleteHealthCareReport(int healthCareReportId);
+        ICollection<PostOpSurgeryShiftViewModel> FindPostOpSurgeryByPatientName(string name);
     }
 }

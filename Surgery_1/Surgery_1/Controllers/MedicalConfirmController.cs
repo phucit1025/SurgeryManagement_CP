@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Surgery_1.Data.ViewModels;
 using Surgery_1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Surgery_1.Controllers
 {
+
     [Route("api/MedicalConfirm/[action]")]
     [ApiController]
     public class MedicalConfirmController: ControllerBase
@@ -24,10 +26,16 @@ namespace Surgery_1.Controllers
             return Ok(result);
         }
 
-        [HttpGet]
-        public void ConfirmMedicalRequest(int surgeryShiftId)
+        [HttpPost]
+        public bool ConfirmMedicalRequest([FromBody]ICollection<MedicalSupplyIdConfirmViewModel> surgeryShift)
         {
-            var result = _confirmService.ConfirmedSupply(surgeryShiftId);
+            return _confirmService.ConfirmedSupply(surgeryShift);
+        }
+        [HttpPost]
+        public IActionResult ConfirmAll()
+        {
+            var result = _confirmService.ConfirmAll();
+            return StatusCode(200, result);
         }
 
         [HttpGet]

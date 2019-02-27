@@ -8,9 +8,10 @@ namespace Surgery_1.Services.Interfaces
     public interface ISurgeryService
     {
         void MakeScheduleList();
-        void MakeSchedule(ScheduleViewModel scheduleViewModel);
-        //Lấy phòng có thời gian phẫu thuật trễ nhất (EndStart)
-        RoomDateViewModel GetRoomByMaxSurgeryTime(ScheduleViewModel scheduleViewModel);
+        void MakeScheduleByProposedTime();
+
+        bool SetPostoperativeStatus(int shiftId);
+        List<AvailableRoomViewModel> GetAvailableSlotRoom(int dateNumber);
 
         ICollection<SurgeryRoomViewModel> GetSurgeryRooms();
         ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int surgeryRoomId, int dateNumber);
@@ -20,5 +21,12 @@ namespace Surgery_1.Services.Interfaces
         ICollection<ScheduleViewModel> GetSurgeryShiftNoScheduleByProposedTime();
 
         SurgeryShiftDetailViewModel GetShiftDetail(int shiftId);
+
+        #region Change Surgery Business
+        bool ChangeFirstPriority(ShiftChangeViewModel newShift);
+        bool ChangeSchedule(ShiftScheduleChangeViewModel newShift);
+        List<int> GetAvailableRoom(DateTime start, DateTime end);
+        List<AvailableRoomViewModel> GetAvailableRoom(int hour, int minute);
+        #endregion 
     }
 }

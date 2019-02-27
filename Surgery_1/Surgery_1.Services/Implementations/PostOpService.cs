@@ -30,28 +30,34 @@ namespace Surgery_1.Services.Implementations
             return result;
         }
 
-        public ICollection<SurgeryShiftViewModel> GetSurgeryByStatusId(int statusId)
+        public ICollection<PostOpSurgeryShiftViewModel> GetSurgeryByStatusId(int statusId)
         {
             var surgeryShifts = _appDbContext.SurgeryShifts
                 .Where(a => a.StatusId == statusId && a.IsDeleted == false)
                 .ToList();
-            var results = new List<SurgeryShiftViewModel>();
+            var results = new List<PostOpSurgeryShiftViewModel>();
             foreach (var shift in surgeryShifts)
             {
-                results.Add(new SurgeryShiftViewModel()
+                results.Add(new PostOpSurgeryShiftViewModel()
                 {
                     Id = shift.Id,
                     CatalogName = shift.SurgeryCatalog.Name,
-                    PatientName = shift.Patient.FullName
+                    PatientName = shift.Patient.FullName,
+                    PostOpBed = shift.PostBedName,
+                    PatientAge = DateTime.Now.Year - shift.Patient.YearOfBirth,
+                    PatientGender = shift.Patient.Gender
                 });
             }
             return results;
         }
 
-        public bool ChangeSurgeryShiftToRecovery(int surgeryShiftId)
+        public bool ChangeSurgeryShiftToRecovery(int surgeryShiftId, string postOpRoom, string postOpBed)
         {
             var surgeryShift = _appDbContext.SurgeryShifts.Find(surgeryShiftId);
             surgeryShift.StatusId = RECOVERY_STATE;
+            surgeryShift.PostRoomName = postOpRoom;
+            surgeryShift.PostBedName = postOpBed;
+
             try
             {
                 _appDbContext.Update(surgeryShift);
@@ -81,7 +87,7 @@ namespace Surgery_1.Services.Implementations
                 {
                     Id = healthCareRerport.Id,
                     DateCreated = healthCareRerport.DateCreated.Value.ToString("dd/MM/yyyy HH:mm:ss"),
-                    VisitReason = healthCareRerport.EventContent,
+                    VisitReason = healthCareRerport.CareReason,
                     EventContent = healthCareRerport.EventContent,
                     CareContent = healthCareRerport.CareContent,
                     SurgeryShiftId = healthCareRerport.SurgeryShiftId
@@ -94,6 +100,8 @@ namespace Surgery_1.Services.Implementations
                 PatientAge = DateTime.Now.Year - patient.YearOfBirth,
                 PatientGender = patient.Gender,
                 Diagnose = surgeryCatalog.Name,
+                PostOpBed = surgeryShift.PostBedName,
+                PostOpRooom = surgeryShift.PostRoomName,
                 CareReports = healthCareReportsViewModelList
             };
             return recoverySurgeryShiftViewModel;
@@ -103,7 +111,7 @@ namespace Surgery_1.Services.Implementations
         {
             var healthCareReport = new HealthCareReport()
             {
-                //DateCreated = DateTime.ParseExact(healthCareReportViewModel.DateCreated, "ddd, dd-MM-yyyy hh:mm", provider),
+               CareReason = healthCareReportViewModel.VisitReason,
                 EventContent = healthCareReportViewModel.EventContent,
                 CareContent = healthCareReportViewModel.CareContent,
                 IsDeleted = false,
@@ -142,6 +150,7 @@ namespace Surgery_1.Services.Implementations
         public bool UpdateHealthCareReport(HealthCareReportViewModel healthCareReportViewModel)
         {
             var healthCareReport = _appDbContext.HealthCareReports.Find(healthCareReportViewModel.Id);
+            healthCareReport.CareReason = healthCareReportViewModel.VisitReason;
             healthCareReport.EventContent = healthCareReportViewModel.EventContent;
             healthCareReport.CareContent = healthCareReportViewModel.CareContent;
             DateTime date = new DateTime();
@@ -158,6 +167,27 @@ namespace Surgery_1.Services.Implementations
                 return false;
             }
 
+        }
+
+        public ICollection<PostOpSurgeryShiftViewModel> FindPostOpSurgeryByPatientName(string name)
+        {
+            var surgeryShifts = _appDbContext.SurgeryShifts
+                .Where(a => (a.StatusId == 3 || a.StatusId == 4) && a.IsDeleted == false && a.Patient.FullName.Contains(name))
+                .ToList();
+            var results = new List<PostOpSurgeryShiftViewModel>();
+            foreach (var shift in surgeryShifts)
+            {
+                results.Add(new PostOpSurgeryShiftViewModel()
+                {
+                    Id = shift.Id,
+                    CatalogName = shift.SurgeryCatalog.Name,
+                    PatientName = shift.Patient.FullName,
+                    PostOpBed = shift.PostBedName,
+                    PatientAge = DateTime.Now.Year - shift.Patient.YearOfBirth,
+                    PatientGender = shift.Patient.Gender
+                });
+            }
+            return results;
         }
     }
 }
