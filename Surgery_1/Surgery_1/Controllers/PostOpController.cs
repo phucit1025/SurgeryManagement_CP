@@ -95,16 +95,5 @@ namespace Surgery_1.Controllers
             }
             return BadRequest();
         }
-
-        [HttpGet]
-        public IActionResult FindPostOpSurgeryByPatientName(string name)
-        {
-            var result = _postOpService.FindPostOpSurgeryByPatientName(name);
-            if (result == null)
-            {
-                return NotFound();
-            }
-            return Ok(result);
-        }
     }
 }

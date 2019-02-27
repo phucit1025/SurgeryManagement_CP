@@ -168,26 +168,5 @@ namespace Surgery_1.Services.Implementations
             }
 
         }
-
-        public ICollection<PostOpSurgeryShiftViewModel> FindPostOpSurgeryByPatientName(string name)
-        {
-            var surgeryShifts = _appDbContext.SurgeryShifts
-                .Where(a => (a.StatusId == 3 || a.StatusId == 4) && a.IsDeleted == false && a.Patient.FullName.Contains(name))
-                .ToList();
-            var results = new List<PostOpSurgeryShiftViewModel>();
-            foreach (var shift in surgeryShifts)
-            {
-                results.Add(new PostOpSurgeryShiftViewModel()
-                {
-                    Id = shift.Id,
-                    CatalogName = shift.SurgeryCatalog.Name,
-                    PatientName = shift.Patient.FullName,
-                    PostOpBed = shift.PostBedName,
-                    PatientAge = DateTime.Now.Year - shift.Patient.YearOfBirth,
-                    PatientGender = shift.Patient.Gender
-                });
-            }
-            return results;
-        }
     }
 }
