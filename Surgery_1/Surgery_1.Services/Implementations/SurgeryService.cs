@@ -174,62 +174,7 @@ namespace Surgery_1.Services.Implementations
             // Loại những phòng không hợp lệ
             ICollection<int> roomIds = parentRoomIds.Where(p => !childRoomIds.Contains(p)).ToList();
             return roomIds.FirstOrDefault();
-        }
-
-        //public void MakeSchedule(ScheduleViewModel scheduleViewModel)
-        //{
-        //    scheduleViewModel.StartAMWorkingHour 
-        //        = (scheduleViewModel.ScheduleDate + TimeSpan.FromHours(ConstantVariable.StartAMWorkingHour));
-        //    scheduleViewModel.EndAMWorkingHour
-        //        = (scheduleViewModel.ScheduleDate + TimeSpan.FromHours(ConstantVariable.EndAMWorkingHour));
-        //    scheduleViewModel.StartPMWorkingHour
-        //        = (scheduleViewModel.ScheduleDate + TimeSpan.FromHours(ConstantVariable.StartPMWorkingHour));
-        //    scheduleViewModel.EndPMWorkingHour
-        //        = (scheduleViewModel.ScheduleDate + TimeSpan.FromHours(ConstantVariable.EndPMWorkingHour));
-
-        //    string selectedDay = UtilitiesDate.ConvertDateToString(scheduleViewModel.ScheduleDate);
-        //    // Tìm những phòng còn trống theo ngày
-        //    // Parse số thành giờ: 1.5 => 1h30
-        //    TimeSpan hour = TimeSpan.FromHours(scheduleViewModel.ExpectedSurgeryDuration);
-        //    int roomEmptyId = GetEmptyRoomForDate(selectedDay);
-        //    if (roomEmptyId == 0)
-        //    {
-        //        // Lấy ra cái phòng hợp lý nhất, có ca sớm nhất
-        //        var availableRoom = GetRoomByMaxSurgeryTime(scheduleViewModel);
-        //        if (availableRoom == null)
-        //        {
-
-        //        } // End If available room
-        //        else
-        //        {
-        //            DateTime endEstimatedTime = availableRoom.EarlyEndDateTime.Value + hour;
-        //            if (availableRoom.EarlyEndDateTime.Value >= scheduleViewModel.StartAMWorkingHour && endEstimatedTime <= scheduleViewModel.EndAMWorkingHour) //buổi sáng: thời gian phải <= 11:00
-        //            {// Khoảng thời gian hợp lý vào buổi sáng
-        //                InsertDateTimeToSurgeryShift
-        //                    (scheduleViewModel.SurgeryShiftId, availableRoom.EarlyEndDateTime.Value, endEstimatedTime, availableRoom.SurgeryRoomId);
-        //            } 
-        //            else if (availableRoom.EarlyEndDateTime.Value >= scheduleViewModel.StartPMWorkingHour && endEstimatedTime <= scheduleViewModel.EndPMWorkingHour) //buổi chiều:  >= 13h && <= 17h
-        //            {// Khoảng thời gian hợp lý vào buổi chiều
-        //                InsertDateTimeToSurgeryShift
-        //                    (scheduleViewModel.SurgeryShiftId, availableRoom.EarlyEndDateTime.Value, endEstimatedTime, availableRoom.SurgeryRoomId);
-        //            }
-        //            else if (endEstimatedTime >= scheduleViewModel.EndAMWorkingHour)
-        //            {// Nếu thời gian ước tính nằm trong giờ nghỉ trưa thì lấy thời gian đầu của buổi chiều + ExpectedSurgeryDuration
-        //                endEstimatedTime = scheduleViewModel.StartPMWorkingHour + hour;
-        //                InsertDateTimeToSurgeryShift
-        //                    (scheduleViewModel.SurgeryShiftId, scheduleViewModel.StartPMWorkingHour, endEstimatedTime, availableRoom.SurgeryRoomId);
-        //                // Tính sau
-        //            }
-        //        } // End else available room
-        //    } // End room Id
-        //    else // Trường hợp có phòng chưa có ca phẫu thuật nào sẽ add thời gian từ 7:00
-        //    {
-        //        DateTime endEstimatedTime = scheduleViewModel.StartAMWorkingHour + hour;
-        //        InsertDateTimeToSurgeryShift(scheduleViewModel.SurgeryShiftId, scheduleViewModel.StartAMWorkingHour, endEstimatedTime, roomEmptyId);  
-        //    }
-        //        // Lấy thời gian sớm nhất + khoảng giờ phẫu thuật = thời gian bắt đầu của ca phẫu thuật tiếp theo
-
-        //}
+        }     
 
         #region GetAvailableRoom
         public List<AvailableRoomViewModel> GetAvailableSlotRoom(int dateNumber)
