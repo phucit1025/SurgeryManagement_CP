@@ -81,7 +81,17 @@ namespace Surgery_1.Services.Implementations
         {
             foreach(var s in surgeryShift)
             {
-                _context.SurgeryShifts.Where(a => a.Id == s.id).FirstOrDefault().IsAvailableMedicalSupplies = true;
+                var shift = _context.SurgeryShifts.Find(s.id);
+                shift.IsAvailableMedicalSupplies = true;
+                shift.ConfirmDate = DateTime.Now;
+                if (shift.ProposedStartDateTime != null && shift.ProposedEndDateTime != null)
+                {
+                    shift.ScheduleDate = new DateTime(shift.ProposedStartDateTime.Value.Year, shift.ProposedStartDateTime.Value.Month, shift.ProposedStartDateTime.Value.Day);
+                }
+                else
+                {
+                    shift.ScheduleDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                }
             }
             _context.SaveChanges();
             return true;

@@ -14,7 +14,8 @@ namespace Surgery_1.Services.Implementations
 {
     public class SurgeryService : ISurgeryService
     {
-
+        TimeSpan startAMWorkingHour = TimeSpan.FromHours(ConstantVariable.StartAMWorkingHour);
+        TimeSpan endPMWorkingHour = TimeSpan.FromHours(ConstantVariable.EndPMWorkingHour);
         private readonly AppDbContext _context;
 
         public SurgeryService(AppDbContext _context)
@@ -51,14 +52,17 @@ namespace Surgery_1.Services.Implementations
                 {
                     if (roomEmptyId != 0)
                     {
-                        DateTime startEstimatedTime = shift.ScheduleDate + TimeSpan.FromHours(ConstantVariable.StartAMWorkingHour);
+                        DateTime startEstimatedTime = shift.ScheduleDate + startAMWorkingHour;
                         DateTime endEstimatedTime = startEstimatedTime + TimeSpan.FromHours(shift.ExpectedSurgeryDuration);
                         InsertDateTimeToSurgeryShift(shift.SurgeryShiftId, startEstimatedTime, endEstimatedTime, roomEmptyId);
                     }
                     else
                     {
+                        // Sắp xếp theo khoảng t.g phẫu thuật hợp lý và thời gian sớm nhất
                         var room = availableSlotRooms.Where(s => s.ExpectedSurgeryDuration >= shift.ExpectedSurgeryDuration)
-                                    .OrderBy(s => s.StartDateTime).OrderBy(s => s.ExpectedSurgeryDuration).FirstOrDefault();
+                            .OrderBy(s => s.ExpectedSurgeryDuration)
+                            .OrderBy(s => s.StartDateTime)
+                            .FirstOrDefault();
                         if (room != null)
                         {
                             var endTime = room.StartDateTime + TimeSpan.FromHours(shift.ExpectedSurgeryDuration);
@@ -75,18 +79,19 @@ namespace Surgery_1.Services.Implementations
                     }
                     else
                     {
+                        // Sắp xếp theo thời gian tiệm cận với khoảng chỉ định nhất, 
                         var room = availableSlotRooms.Where(s => s.StartDateTime <= shift.ProposedStartDateTime
                                 && s.EndDateTime >= shift.ProposedEndDateTime)
-                               .OrderByDescending(s => s.StartDateTime)
-                               .OrderBy(s => s.EndDateTime)
                                .OrderBy(s => s.ExpectedSurgeryDuration)
+                               .OrderBy(s => s.EndDateTime)
+                               .OrderByDescending(s => s.StartDateTime)
                                .FirstOrDefault();
                         if (room != null)
                         {
                             InsertDateTimeToSurgeryShift
                                 (shift.SurgeryShiftId, shift.ProposedStartDateTime.Value, shift.ProposedEndDateTime.Value, room.RoomId);
                         }
-                        else
+                        else //Khoảng thời gian chỉ định ko hợp lý thì vào trong này
                         {
                             int roomProposed = GetAvailableRoomForProposedTime(shift.ProposedStartDateTime.Value, shift.ProposedEndDateTime.Value);
                             // TODO: Thông báo ko tìm ra
@@ -166,9 +171,9 @@ namespace Surgery_1.Services.Implementations
         {
 
             var parentRoomIds = _context.SurgeryRooms.Select(s => s.Id).ToList();
-            // TODO: Lấy những phòng không hợp lệ (điều có khoảng thời gian trùng với startTime và endTime)
+            // TODO: Lấy những phòng không hợp lệ (có khoảng thời gian trùng với startTime và endTime)
             var childRoomIds = _context.SurgeryShifts
-                .Where(s => (s.EstimatedStartDateTime >= startTime && s.EstimatedStartDateTime < endTime)
+                .Where(s => (startTime <= s.EstimatedStartDateTime && endTime > s.EstimatedStartDateTime)
                 || (s.EstimatedEndDateTime > startTime && s.EstimatedEndDateTime <= endTime))
                 .Select(s => s.SurgeryRoomId).ToList();
             // Loại những phòng không hợp lệ
@@ -185,16 +190,18 @@ namespace Surgery_1.Services.Implementations
             var availableRooms = new List<AvailableRoomViewModel>();
             foreach (var room in rooms)
             {
-                // TODO: Lấy các ca phẫu thuật theo phòng, sắp xếp giảm dần theo thời gian kết thúc
+                // TODO: Lấy các ca phẫu thuật theo từng phòng, sắp xếp giảm dần theo thời gian kết thúc
                 var result = room.SurgeryShifts
                     .Where(s => UtilitiesDate.ConvertDateToNumber(s.ScheduleDate.Value) == dateNumber
-                    && s.IsAvailableMedicalSupplies == true)
+                    && s.IsAvailableMedicalSupplies == true
+                    && s.EstimatedStartDateTime.Value.TimeOfDay >= startAMWorkingHour
+                    && s.EstimatedEndDateTime.Value.TimeOfDay <= endPMWorkingHour)
                     .OrderBy(s => s.EstimatedStartDateTime).ToList();
                 if (result.Count > 0)
                 {
-                    if (result.Count == 1) // TODO: Lấy thời gian End + Duration
+                    if (result.Count == 1) // TODO: Lấy khoảng thời gian: có thể 3 khoảng
                     {
-                        var start = result.First().ScheduleDate.Value + TimeSpan.FromHours(ConstantVariable.StartAMWorkingHour);
+                        var start = result.First().ScheduleDate.Value + startAMWorkingHour;
                         var end = result.First().EstimatedStartDateTime.Value;
                         if (start != end) // Bỏ trường hợp ca mổ start lúc 7:00
                         {
@@ -206,10 +213,8 @@ namespace Surgery_1.Services.Implementations
                                 ExpectedSurgeryDuration = (end - start).TotalHours
                             });
                         }
-
-
-                        start = result.ElementAt(0).EstimatedEndDateTime.Value;
-                        end = result.ElementAt(0).ScheduleDate.Value + TimeSpan.FromHours(ConstantVariable.EndPMWorkingHour);
+                        start = result.First().EstimatedEndDateTime.Value;
+                        end = result.First().ScheduleDate.Value + endPMWorkingHour;
                         if (start != end) //Bỏ trường hợp ca mổ end lúc 17:00
                         {
                             availableRooms.Add(new AvailableRoomViewModel
@@ -224,9 +229,10 @@ namespace Surgery_1.Services.Implementations
                     }
                     else // TODO: Số ca trong 1 phòng lớn >= 2                
                     {
-                        if (result.ElementAt(0).EstimatedStartDateTime.Value.TimeOfDay != TimeSpan.FromHours(ConstantVariable.StartAMWorkingHour))
+                        // Lấy khoảng ở ngoài các ca mổ [7h - 17h]
+                        if (result.ElementAt(0).EstimatedStartDateTime.Value.TimeOfDay != startAMWorkingHour)
                         { // Lấy khoảng từ 7h ->
-                            var start = result.First().ScheduleDate.Value + TimeSpan.FromHours(ConstantVariable.StartAMWorkingHour);
+                            var start = result.First().ScheduleDate.Value + startAMWorkingHour;
                             var end = result.First().EstimatedStartDateTime.Value;
                             availableRooms.Add(new AvailableRoomViewModel
                             {
@@ -237,10 +243,10 @@ namespace Surgery_1.Services.Implementations
                             });
                         }
 
-                        if (result.Last().EstimatedEndDateTime.Value.TimeOfDay != TimeSpan.FromHours(ConstantVariable.EndPMWorkingHour))
+                        if (result.Last().EstimatedEndDateTime.Value.TimeOfDay != endPMWorkingHour)
                         { // Lấy khoảng từ -> 17h
                             var start = result.Last().EstimatedEndDateTime.Value;
-                            var end = result.First().ScheduleDate.Value + TimeSpan.FromHours(ConstantVariable.EndPMWorkingHour);
+                            var end = result.Last().ScheduleDate.Value + endPMWorkingHour;
                             availableRooms.Add(new AvailableRoomViewModel
                             {
                                 RoomId = room.Id,
@@ -250,9 +256,10 @@ namespace Surgery_1.Services.Implementations
                             });
                         }
 
+                        //======= Lấy khoảng ở giữa các ca mổ==========
                         for (int i = 0; i < result.Count - 1; i++)
                         {
-                            if (result.Last().EstimatedEndDateTime.Value.TimeOfDay <= TimeSpan.FromHours(ConstantVariable.EndPMWorkingHour))
+                            if (result.Last().EstimatedEndDateTime.Value.TimeOfDay <= endPMWorkingHour)
                             {
                                 if (result.ElementAt(i).EstimatedEndDateTime != result.ElementAt(i + 1).EstimatedStartDateTime)
                                 {
@@ -350,7 +357,8 @@ namespace Surgery_1.Services.Implementations
                 .Where(s => (s.EstimatedStartDateTime == null) && s.EstimatedEndDateTime == null
                 && s.IsAvailableMedicalSupplies == true
                 && s.ProposedStartDateTime == null && s.ProposedEndDateTime == null
-                && s.SurgeryRoomId == null)
+                && s.SurgeryRoomId == null && s.ConfirmDate != null
+                && s.ScheduleDate != null)
                 .OrderBy(s => s.ConfirmDate)
                 .OrderBy(s => s.ExpectedSurgeryDuration)
                 .OrderBy(s => s.PriorityNumber).ToList();
@@ -370,7 +378,9 @@ namespace Surgery_1.Services.Implementations
             }
             var proposedTimeSurgeryShiftList = GetSurgeryShiftNoScheduleByProposedTime();
 
-            return proposedTimeSurgeryShiftList.Union(surgeryShiftList).ToList();
+            return proposedTimeSurgeryShiftList.Union(surgeryShiftList)
+                .OrderBy(s => s.PriorityNumber)
+                .OrderBy(s => s.ScheduleDate).ToList();
         }
 
         // TODO: Lấy những ca mổ chưa lên lịch theo thời gian chỉ định
@@ -507,9 +517,7 @@ namespace Surgery_1.Services.Implementations
             var roomId = new List<int>();
             foreach (var room in rooms)
             {
-                var shifts = room.SurgeryShifts.Where(s =>
-                !s.IsDeleted
-                );
+                var shifts = room.SurgeryShifts.Where(s => !s.IsDeleted);
                 if (shifts.ToList().Count() != 0)
                 {
                     var onScheduleShifts = shifts.Where(s => start < s.EstimatedEndDateTime);

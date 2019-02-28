@@ -55,7 +55,7 @@ namespace Surgery_1.Controllers
         //    return StatusCode(200);
         //}
         [HttpPost]
-        public IActionResult MakeScheduleV2(int dateNumber)
+        public IActionResult GetAvailableSlotRoom(int dateNumber)
         {
             var result = _surgeryService.GetAvailableSlotRoom(dateNumber);
             return StatusCode(200, result);
