@@ -189,5 +189,28 @@ namespace Surgery_1.Services.Implementations
             }
             return results;
         }
+
+        public bool EditRoomBedSurgeryShift(int surgeryShiftId, string room, string bed)
+        {
+            var surgeryShift = _appDbContext.SurgeryShifts.Find(surgeryShiftId);
+            if (!string.IsNullOrEmpty(room))
+            {
+                surgeryShift.PostRoomName = room;
+            }
+            if (!string.IsNullOrEmpty(bed))
+            {
+                surgeryShift.PostBedName = bed;
+            }
+            try
+            {
+                _appDbContext.Update(surgeryShift);
+                _appDbContext.SaveChanges();
+                return true;
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }
+        }
     }
 }
