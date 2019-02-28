@@ -144,7 +144,6 @@ namespace Surgery_1.Services.Implementations
                             _context.SaveChanges();
                         }
                     }
-
                 }
                 MakeScheduleList();
             }
