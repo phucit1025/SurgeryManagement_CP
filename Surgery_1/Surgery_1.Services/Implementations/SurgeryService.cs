@@ -26,9 +26,10 @@ namespace Surgery_1.Services.Implementations
         public bool SetPostoperativeStatus(int shiftId)
         {
             var shift = _context.SurgeryShifts.Find(shiftId);
+            var status = _context.Statuses.Where(s => s.Name.Equals("Postoperative")).FirstOrDefault();
             if (shift != null)
             {
-                shift.StatusId = 3;
+                shift.StatusId = status.Id;
                 _context.Update(shift);
                 _context.SaveChanges();
                 return true;
@@ -632,7 +633,7 @@ namespace Surgery_1.Services.Implementations
             }
             return availableRooms;
         }
-
+        #region
         public bool ChangeShiftStatus(ShiftStatusChangeViewModel currentShift)
         {
             try

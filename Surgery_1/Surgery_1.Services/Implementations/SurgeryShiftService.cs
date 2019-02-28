@@ -27,8 +27,8 @@ namespace Surgery_1.Services.Implementations
                 shift.IsDeleted = false;
                 shift.DateCreated = DateTime.Now;
                 shift.IsAvailableMedicalSupplies = false;
-                //shift.StatusId = 1;
-
+                var status = _context.Statuses.Where(x => x.Name.Equals("Preoperative")).FirstOrDefault();
+                shift.StatusId = status.Id;
                 shift.ExpectedSurgeryDuration = s.ExpectedSurgeryDuration;
                 shift.PriorityNumber = s.PriorityNumber;
                 var patient = _context.Patients.Where(p => p.IdentityNumber == s.PatientID).FirstOrDefault();
