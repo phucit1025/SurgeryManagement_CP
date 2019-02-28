@@ -3,6 +3,7 @@ using Surgery_1.Data.Context;
 using Surgery_1.Data.Entities;
 using Surgery_1.Data.ViewModels;
 using Surgery_1.Repositories.Interfaces;
+using Surgery_1.Services.Enums;
 using Surgery_1.Services.Interfaces;
 using Surgery_1.Services.Utilities;
 using System;
@@ -522,7 +523,10 @@ namespace Surgery_1.Services.Implementations
             var roomId = new List<int>();
             foreach (var room in rooms)
             {
-                var shifts = room.SurgeryShifts.Where(s => !s.IsDeleted);
+                var shifts = room.SurgeryShifts.Where(s =>
+                !s.IsDeleted &&
+                s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase)
+                );
                 if (shifts.ToList().Count() != 0)
                 {
                     var onScheduleShifts = shifts.Where(s => start < s.EstimatedEndDateTime);
@@ -551,7 +555,8 @@ namespace Surgery_1.Services.Implementations
             foreach (var room in rooms)
             {
                 var shifts = room.SurgeryShifts.Where(s =>
-                !s.IsDeleted);
+                !s.IsDeleted &&
+                s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase));
                 if (shifts.ToList().Count != 0)
                 {
                     shifts = shifts.OrderByDescending(s => s.EstimatedStartDateTime);
@@ -627,5 +632,37 @@ namespace Surgery_1.Services.Implementations
             }
             return availableRooms;
         }
+
+        public bool ChangeShiftStatus(ShiftStatusChangeViewModel currentShift)
+        {
+            try
+            {
+                var shift = _context.SurgeryShifts.Find(currentShift.ShiftId);
+                if (shift != null)
+                {
+                    var enumStatus = new ShiftStatus();
+                    if (Enum.TryParse<ShiftStatus>(currentShift.CurrentStatus.Trim().ToUpper(), out enumStatus))
+                    {
+                        var nextStatus = (ShiftStatus)Enum.ToObject(typeof(ShiftStatus), (int)enumStatus + 1);
+                        var status = _context.Statuses.FirstOrDefault(s => s.Name.Equals(nextStatus.ToString(), StringComparison.CurrentCultureIgnoreCase));
+
+                        shift.StatusId = status.Id;
+                        shift.DateUpdated = DateTime.Now;
+                        _context.Update(shift);
+                        _context.SaveChanges();
+                    }
+
+                    return true;
+                }
+                return false;
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }
+
+        }
+        #endregion 
+
     }
 }
