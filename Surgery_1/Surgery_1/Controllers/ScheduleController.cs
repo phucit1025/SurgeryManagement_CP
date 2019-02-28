@@ -107,6 +107,24 @@ namespace Surgery_1.Controllers
             if (result) return StatusCode(200);
             return StatusCode(400);
         }
+
+        [HttpPost]
+        public IActionResult ChangeShiftPriority([FromBody] ShiftChangeViewModel newPriority)
+        {
+            if (_surgeryService.ChangeFirstPriority(newPriority)) return StatusCode(200);
+            return StatusCode(400);
+
+        }
+
+        [HttpPost]
+        public IActionResult ChangeShiftStatus([FromBody] ShiftStatusChangeViewModel newStatus)
+        {
+            if (_surgeryService.ChangeShiftStatus(newStatus))
+            {
+                return StatusCode(200);
+            }
+            return StatusCode(400);
+        }
         #endregion
     }
 }

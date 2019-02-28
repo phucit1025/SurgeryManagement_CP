@@ -84,4 +84,10 @@ namespace Surgery_1.Data.ViewModels
         public string ChangeLogDescription { get; set; }
         public int NewPriority { get; set; }
     }
+
+    public class ShiftStatusChangeViewModel
+    {
+        public int ShiftId { get; set; }
+        public string CurrentStatus { get; set; }
+    }
 }

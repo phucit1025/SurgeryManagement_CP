@@ -3,6 +3,7 @@ using Surgery_1.Data.Context;
 using Surgery_1.Data.Entities;
 using Surgery_1.Data.ViewModels;
 using Surgery_1.Repositories.Interfaces;
+using Surgery_1.Services.Enums;
 using Surgery_1.Services.Interfaces;
 using Surgery_1.Services.Utilities;
 using System;
@@ -46,24 +47,25 @@ namespace Surgery_1.Services.Implementations
                     {
                         InsertDateTimeToSurgeryShift(index.SurgeryShiftId, index.ProposedStartDateTime.Value, index.ProposedEndDateTime.Value, roomId);
                     }
-                    
+
                     //foreach (var room in roomIds)
                     //{
                     //    var shift = _context.SurgeryShifts
                     //        .Max(s => s.EstimatedEndDateTime <= index.ProposedStartDateTime);
                     //}
-                } else
+                }
+                else
                 {
                     MakeSchedule(index);
                 }
-                
+
             }
         }
 
         public int GetAvailableRoomForProposedTime(DateTime startTime, DateTime endTime)
         {
-            
-            var parentRoomIds = _context.SurgeryRooms.Select(s => s.Id).ToList();           
+
+            var parentRoomIds = _context.SurgeryRooms.Select(s => s.Id).ToList();
             // TODO: Lây những phòng không hợp lệ (điều có khoảng thời gian trung với startTime và endTime)
             var childRoomIds = _context.SurgeryShifts
                 .Where(s => (s.EstimatedStartDateTime >= startTime && s.EstimatedStartDateTime < endTime)
@@ -74,13 +76,13 @@ namespace Surgery_1.Services.Implementations
             if (roomIds == null || roomIds.Count == 0)
             {
                 return 0;
-            } 
+            }
             return roomIds.First();
         }
 
         public void MakeSchedule(ScheduleViewModel scheduleViewModel)
         {
-            scheduleViewModel.StartAMWorkingHour 
+            scheduleViewModel.StartAMWorkingHour
                 = (scheduleViewModel.ScheduleDate + TimeSpan.FromHours(ConstantVariable.StartAMWorkingHour));
             scheduleViewModel.EndAMWorkingHour
                 = (scheduleViewModel.ScheduleDate + TimeSpan.FromHours(ConstantVariable.EndAMWorkingHour));
@@ -109,7 +111,7 @@ namespace Surgery_1.Services.Implementations
                     {// Khoảng thời gian hợp lý vào buổi sáng
                         InsertDateTimeToSurgeryShift
                             (scheduleViewModel.SurgeryShiftId, availableRoom.EarlyEndDateTime.Value, endEstimatedTime, availableRoom.SurgeryRoomId);
-                    } 
+                    }
                     else if (availableRoom.EarlyEndDateTime.Value >= scheduleViewModel.StartPMWorkingHour && endEstimatedTime <= scheduleViewModel.EndPMWorkingHour) //buổi chiều:  >= 13h && <= 17h
                     {// Khoảng thời gian hợp lý vào buổi chiều
                         InsertDateTimeToSurgeryShift
@@ -127,10 +129,10 @@ namespace Surgery_1.Services.Implementations
             else // Trường hợp có phòng chưa có ca phẫu thuật nào sẽ add thời gian từ 7:00
             {
                 DateTime endEstimatedTime = scheduleViewModel.StartAMWorkingHour + hour;
-                InsertDateTimeToSurgeryShift(scheduleViewModel.SurgeryShiftId, scheduleViewModel.StartAMWorkingHour, endEstimatedTime, roomEmptyId);  
+                InsertDateTimeToSurgeryShift(scheduleViewModel.SurgeryShiftId, scheduleViewModel.StartAMWorkingHour, endEstimatedTime, roomEmptyId);
             }
-                // Lấy thời gian sớm nhất + khoảng giờ phẫu thuật = thời gian bắt đầu của ca phẫu thuật tiếp theo
-                
+            // Lấy thời gian sớm nhất + khoảng giờ phẫu thuật = thời gian bắt đầu của ca phẫu thuật tiếp theo
+
         }
 
         public RoomDateViewModel GetRoomByMaxSurgeryTime(ScheduleViewModel scheduleViewModel)
@@ -242,7 +244,7 @@ namespace Surgery_1.Services.Implementations
         {
             var results = new List<SurgeryShiftViewModel>();
             foreach (var shift in _context.SurgeryShifts
-                .Where(s => (s.EstimatedStartDateTime != null) 
+                .Where(s => (s.EstimatedStartDateTime != null)
                 && (UtilitiesDate.ConvertDateToNumber(s.EstimatedStartDateTime.Value) == dateNumber) //mm/dd/YYYY
                 && (s.SurgeryRoomId == surgeryRoomId))
                 .OrderBy(s => s.EstimatedStartDateTime))
@@ -297,7 +299,7 @@ namespace Surgery_1.Services.Implementations
                 .OrderBy(s => s.ProposedStartDateTime)
                 .OrderBy(s => s.PriorityNumber)
                 .OrderBy(s => s.ExpectedSurgeryDuration).ToList();
-            foreach(var index in surgeryShifts)
+            foreach (var index in surgeryShifts)
             {
                 result.Add(new ScheduleViewModel()
                 {
@@ -431,7 +433,8 @@ namespace Surgery_1.Services.Implementations
             foreach (var room in rooms)
             {
                 var shifts = room.SurgeryShifts.Where(s =>
-                !s.IsDeleted
+                !s.IsDeleted &&
+                s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase)
                 );
                 if (shifts.ToList().Count() != 0)
                 {
@@ -461,8 +464,9 @@ namespace Surgery_1.Services.Implementations
             foreach (var room in rooms)
             {
                 var shifts = room.SurgeryShifts.Where(s =>
-                !s.IsDeleted);
-                if (shifts.ToList().Count !=0)
+                !s.IsDeleted &&
+                s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase));
+                if (shifts.ToList().Count != 0)
                 {
                     shifts = shifts.OrderByDescending(s => s.EstimatedStartDateTime);
                     if (shifts.Count() == 1)
@@ -510,7 +514,7 @@ namespace Surgery_1.Services.Implementations
                             else
                             {
                                 var shiftAfter = shifts.ElementAt(i + 1);
-                                if (shiftAfter.EstimatedStartDateTime.Value - shift.EstimatedEndDateTime.Value >= new TimeSpan(hours: hour, minutes: minute, seconds:0))
+                                if (shiftAfter.EstimatedStartDateTime.Value - shift.EstimatedEndDateTime.Value >= new TimeSpan(hours: hour, minutes: minute, seconds: 0))
                                 {
                                     availableRooms.Add(new AvailableRoomViewModel()
                                     {
@@ -536,6 +540,36 @@ namespace Surgery_1.Services.Implementations
 
             }
             return availableRooms;
+        }
+
+        public bool ChangeShiftStatus(ShiftStatusChangeViewModel currentShift)
+        {
+            try
+            {
+                var shift = _context.SurgeryShifts.Find(currentShift.ShiftId);
+                if (shift != null)
+                {
+                    var enumStatus = new ShiftStatus();
+                    if (Enum.TryParse<ShiftStatus>(currentShift.CurrentStatus.Trim().ToUpper(), out enumStatus))
+                    {
+                        var nextStatus = (ShiftStatus)Enum.ToObject(typeof(ShiftStatus), (int)enumStatus + 1);
+                        var status = _context.Statuses.FirstOrDefault(s => s.Name.Equals(nextStatus.ToString(), StringComparison.CurrentCultureIgnoreCase));
+
+                        shift.StatusId = status.Id;
+                        shift.DateUpdated = DateTime.Now;
+                        _context.Update(shift);
+                        _context.SaveChanges();
+                    }
+
+                    return true;
+                }
+                return false;
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }
+
         }
         #endregion 
 
