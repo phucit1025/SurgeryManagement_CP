@@ -106,5 +106,16 @@ namespace Surgery_1.Controllers
             }
             return Ok(result);
         }
+
+        [HttpGet]
+        public IActionResult EditRoomBedSurgeryShift(int surgeryShiftId, string room, string bed)
+        {
+            var result = _postOpService.EditRoomBedSurgeryShift(surgeryShiftId, room, bed);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
+        }
     }
 }
