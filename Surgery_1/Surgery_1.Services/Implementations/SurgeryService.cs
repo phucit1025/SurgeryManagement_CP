@@ -41,41 +41,40 @@ namespace Surgery_1.Services.Implementations
                 int dayNumber = UtilitiesDate.ConvertDateToNumber(shift.ScheduleDate);
                 string dayString = UtilitiesDate.ConvertDateToString(shift.ScheduleDate);
                 var availableSlotRooms = GetAvailableSlotRoom(dayNumber);
+
+                // TODO: Lấy list phòng trống (chưa có ca phẫu thuật nào trong ngày)
                 int roomEmptyId = GetEmptyRoomForDate(dayString);
 
-                // TODO: Xử lý phòng trống
+                //// Lấy khoảng thời gian sau thời gian confirm
+                //var roomList = availableSlotRooms.Where(s => s.StartDateTime > shift.ConfirmDate).ToList();
 
-                //// TODO: Lấy khoảng thời gian sau thời gian confirm
-                //var roomList = availableSlotRooms.Where(s => s.StartDateTime > shift.ConfirmDate).ToList();se
+                //TODO: Trường hợp mổ theo chương trình
                 if (shift.ProposedStartDateTime == null && shift.ProposedEndDateTime == null)
                 {
+                    // TODO: 1.1. Nếu có thì thẳng tay add vào
                     if (roomEmptyId != 0)
                     {
                         DateTime startEstimatedTime = shift.ScheduleDate + TimeSpan.FromHours(ConstantVariable.StartAMWorkingHour);
                         DateTime endEstimatedTime = startEstimatedTime + TimeSpan.FromHours(shift.ExpectedSurgeryDuration);
                         InsertDateTimeToSurgeryShift(shift.SurgeryShiftId, startEstimatedTime, endEstimatedTime, roomEmptyId);
                     }
-                    else
+                    else  // TODO: 1.2. Nếu ko thì tìm các khoảng trống hợp lệ của từng phòng
                     {
-                        var room = availableSlotRooms.Where(s => s.ExpectedSurgeryDuration >= shift.ExpectedSurgeryDuration)
-                                    .OrderBy(s => s.StartDateTime).OrderBy(s => s.ExpectedSurgeryDuration).FirstOrDefault();
+                        var room = availableSlotRooms
+                                    .Where(s => s.ExpectedSurgeryDuration >= shift.ExpectedSurgeryDuration)
+                                    .OrderBy(s => s.StartDateTime)
+                                    .OrderBy(s => s.ExpectedSurgeryDuration).FirstOrDefault();
                         if (room != null)
                         {
                             var endTime = room.StartDateTime + TimeSpan.FromHours(shift.ExpectedSurgeryDuration);
                             InsertDateTimeToSurgeryShift(shift.SurgeryShiftId, room.StartDateTime, endTime, room.RoomId);
                         }
                     }
-<<<<<<< HEAD
-                    else if (endEstimatedTime >= scheduleViewModel.EndAMWorkingHour)
-                    {// Nếu thời gian ước tính nằm trong giờ nghỉ trưa thì lấy thời gian đầu của buổi chiều + ExpectedSurgeryDuration
-                        endEstimatedTime = scheduleViewModel.StartPMWorkingHour + hour;
-=======
                 }
-                else // Có thời gian chỉ định
+                else //TODO: Trường hợp mổ theo thời gian chỉ định
                 {
                     if (roomEmptyId != 0)
                     {
->>>>>>> e17416a75e887b15ffd736100cbfec5fdf47286b
                         InsertDateTimeToSurgeryShift
                                 (shift.SurgeryShiftId, shift.ProposedStartDateTime.Value, shift.ProposedEndDateTime.Value, roomEmptyId);
                     }
@@ -95,7 +94,6 @@ namespace Surgery_1.Services.Implementations
                         else
                         {
                             int roomProposed = GetAvailableRoomForProposedTime(shift.ProposedStartDateTime.Value, shift.ProposedEndDateTime.Value);
-                            // TODO: Thông báo ko tìm ra
                             if (roomProposed != 0)
                             {
                                 InsertDateTimeToSurgeryShift
@@ -106,12 +104,16 @@ namespace Surgery_1.Services.Implementations
                 }
             }
 
-            // TODO: Xử lý qua ngày
+            // TODO: =======================Xử lý qua ngày========================
             shifts = GetSurgeryShiftsNoSchedule();
             if (shifts.Count != 0)
             {
                 foreach (var shift in shifts)
                 {
+                    if (shift.PriorityNumber == 1)
+                    {
+
+                    }
                     if (shift.ProposedStartDateTime == null && shift.ProposedEndDateTime == null)
                     {
                         var item = _context.SurgeryShifts.Find(shift.SurgeryShiftId);
@@ -180,7 +182,7 @@ namespace Surgery_1.Services.Implementations
             // Loại những phòng không hợp lệ
             ICollection<int> roomIds = parentRoomIds.Where(p => !childRoomIds.Contains(p)).ToList();
             return roomIds.FirstOrDefault();
-        }     
+        }
 
         #region GetAvailableRoom
         public List<AvailableRoomViewModel> GetAvailableSlotRoom(int dateNumber)
@@ -349,18 +351,6 @@ namespace Surgery_1.Services.Implementations
             return results;
         }
 
-<<<<<<< HEAD
-        //TODO: Lấy danh sách ca mổ chưa lên lịch theo độ ưu tiên và ngày
-        public ICollection<ScheduleViewModel> GetSurgeryShiftsNoSchedule()
-        {
-            var result = _context.SurgeryShifts
-                .Where(s => (s.EstimatedStartDateTime == null) && (s.EstimatedEndDateTime == null)
-                && (s.IsAvailableMedicalSupplies == true) && (s.SurgeryRoomId == null))              
-                .OrderBy(s => s.ExpectedSurgeryDuration)
-                .OrderBy(s => s.PriorityNumber)
-                .OrderBy(s => s.ScheduleDate)
-                .ToList();
-=======
         //TODO: Lấy danh sách ca mổ chưa lên lịch theo độ ưu tiên và ngày (bao gồm chỉ định và ko chỉ định)
         public ICollection<ScheduleViewModel> GetSurgeryShiftsNoSchedule()
         {
@@ -372,7 +362,6 @@ namespace Surgery_1.Services.Implementations
                 .OrderBy(s => s.ConfirmDate)
                 .OrderBy(s => s.ExpectedSurgeryDuration)
                 .OrderBy(s => s.PriorityNumber).ToList();
->>>>>>> e17416a75e887b15ffd736100cbfec5fdf47286b
             var surgeryShiftList = new List<ScheduleViewModel>();
             foreach (var shift in result)
             {
@@ -633,9 +622,5 @@ namespace Surgery_1.Services.Implementations
             }
             return availableRooms;
         }
-
-
-
-
     }
 }

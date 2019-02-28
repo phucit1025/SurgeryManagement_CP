@@ -11,11 +11,6 @@ namespace Surgery_1.Data.ViewModels
         public DateTime? ProposedEndDateTime { get; set; }
         public DateTime ConfirmDate { get; set; }
         public DateTime ScheduleDate { get; set; }
-        //Working hour of hospital: 7 - 11h; 13 - 17h
-        public DateTime StartAMWorkingHour { get; set; }
-        public DateTime EndAMWorkingHour { get; set; }
-        public DateTime StartPMWorkingHour { get; set; }
-        public DateTime EndPMWorkingHour { get; set; }
 
         //Thời gian hoàn thành ca mổ dự kiến
         public float ExpectedSurgeryDuration { get; set; }
