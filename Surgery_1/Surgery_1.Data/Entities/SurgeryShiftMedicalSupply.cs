@@ -9,6 +9,7 @@ namespace Surgery_1.Data.Entities
     {
         public int MedicalSupplyId { get; set; }
         public int SurgeryShiftId { get; set; }
+        public int Quantity { get; set; }
 
         [ForeignKey("MedicalSupplyId")]
         public virtual MedicalSupply MedicalSupply { get; set; }

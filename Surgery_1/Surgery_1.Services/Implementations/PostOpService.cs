@@ -15,7 +15,7 @@ namespace Surgery_1.Services.Implementations
 {
     public class PostOpService : IPostOpService
     {
-        private readonly int RECOVERY_STATE = 4;
+        private readonly int RECOVERY_STATE = 6;
         private CultureInfo provider = CultureInfo.InvariantCulture;
         private readonly AppDbContext _appDbContext;
         private readonly ILogger _logger;

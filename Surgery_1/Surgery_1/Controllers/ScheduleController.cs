@@ -21,10 +21,16 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public IActionResult SetPostoperativeStatus(int shiftId)
+        public IActionResult SetPostoperativeStatus(int shiftId, string roomPost, string bedPost)
         {
-            var result = _surgeryService.SetPostoperativeStatus(shiftId);
+            var result = _surgeryService.SetPostoperativeStatus(shiftId, roomPost, bedPost);
 
+            return StatusCode(200, result);
+        }
+        [HttpGet]
+        public IActionResult CheckPostStatus(int shiftId)
+        {
+            var result = _surgeryService.CheckPostStatus(shiftId);
             return StatusCode(200, result);
         }
 
@@ -34,13 +40,7 @@ namespace Surgery_1.Controllers
             var result = _surgeryService.GetSurgeryShiftNoScheduleByProposedTime();
             return StatusCode(200, result);
         }
-        [HttpGet]
-        public IActionResult MakeScheduleByProposedTime()
-        {
-            _surgeryService.MakeScheduleByProposedTime();
-            return StatusCode(200);
-        }
-                   
+
         [HttpGet]
         public IActionResult MakeScheduleList()
         {
@@ -48,28 +48,19 @@ namespace Surgery_1.Controllers
             return StatusCode(200);
         }
 
-        //[HttpPost]
-        //public IActionResult MakeSchedule([FromBody] ScheduleViewModel scheduleViewModel)
-        //{
-        //    _surgeryService.MakeSchedule(scheduleViewModel);
-        //    return StatusCode(200);
-        //}
         [HttpPost]
         public IActionResult GetAvailableSlotRoom(int dateNumber)
         {
             var result = _surgeryService.GetAvailableSlotRoom(dateNumber);
             return StatusCode(200, result);
         }
-        
+
         [HttpGet]
         public IActionResult GetSurgeryShiftsNoSchedule()
         {
             var result = _surgeryService.GetSurgeryShiftsNoSchedule();
             return StatusCode(200, result);
         }
-
-
-
 
         [HttpGet]
         public IActionResult GetSurgeryShiftsByRoomAndDate(int roomId, int dayNumber)
@@ -121,6 +112,45 @@ namespace Surgery_1.Controllers
             var result = _surgeryService.ChangeSchedule(newShift);
             if (result) return StatusCode(200);
             return StatusCode(400);
+        }
+
+        [HttpPost]
+        public IActionResult ChangeShiftPriority([FromBody] ShiftChangeViewModel newPriority)
+        {
+            if (_surgeryService.ChangeFirstPriority(newPriority)) return StatusCode(200);
+            return StatusCode(400);
+
+        }
+
+        [HttpPost]
+        public IActionResult ChangeShiftStatus([FromBody] ShiftStatusChangeViewModel newStatus)
+        {
+            if (_surgeryService.ChangeShiftStatus(newStatus))
+            {
+                return StatusCode(200);
+            }
+            return StatusCode(400);
+        }
+
+        [HttpPost]
+        public IActionResult SwapShifts([FromBody] SwapShiftViewModel shifts)
+        {
+            var result = _surgeryService.SwapShift(shifts.FirstShiftId, shifts.SecondShiftId);
+            if (result.Succeed)
+            {
+                return StatusCode(200, result.AffectedShifts);
+            }
+            else
+            {
+                return StatusCode(400);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetSwapableShifts()
+        {
+            var results = _surgeryService.GetSwapableShiftIds();
+            return StatusCode(200, results);
         }
         #endregion
     }

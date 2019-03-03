@@ -12,8 +12,8 @@ namespace Surgery_1.Data.ViewModels
         public int PriorityNumber { get; set; }
         public List<string> SurgeonNames { get; set; }
         public string PatientName { get; set; }
-        public string EstimatedStartDateTime { get; set; }
-        public string EstimatedEndDateTime { get; set; }
+        public DateTime EstimatedStartDateTime { get; set; }
+        public DateTime EstimatedEndDateTime { get; set; }
     }
 
 
@@ -43,7 +43,7 @@ namespace Surgery_1.Data.ViewModels
         public int PatientGender { get; set; }
         public int PatientAge { get; set; }
     }
-  
+
     //Import surgery profile view models
     public class ImportSurgeryShiftViewModel
     {
@@ -84,5 +84,43 @@ namespace Surgery_1.Data.ViewModels
         public int Id { get; set; }
         public string ChangeLogDescription { get; set; }
         public int NewPriority { get; set; }
+    }
+
+    public class SurgeryCatalogNamesViewModel
+    {
+        public string name { get; set; }
+    }
+
+    public class SurgeryCatalogIDsViewModel
+    {
+        public int id { get; set; }
+    }
+    public class ShiftStatusChangeViewModel
+    {
+        public int ShiftId { get; set; }
+        public string CurrentStatus { get; set; }
+    }
+
+    public class SwapShiftResultViewModel
+    {
+        public bool Succeed { get; set; } = false;
+        public List<AffectedShiftResultViewModel> AffectedShifts { get; set; } = new List<AffectedShiftResultViewModel>();
+    }
+
+    public class AffectedShiftResultViewModel
+    {
+        public int ShiftId { get; set; }
+        public DateTime OldStart { get; set; }
+        public DateTime OldEnd { get; set; }
+        public DateTime NewStart { get; set; }
+        public DateTime NewEnd { get; set; }
+        public string OldRoomName { get; set; }
+        public string NewRoomName { get; set; }
+    }
+
+    public class SwapShiftViewModel
+    {
+        public int FirstShiftId { get; set; }
+        public int SecondShiftId { get; set; }
     }
 }
