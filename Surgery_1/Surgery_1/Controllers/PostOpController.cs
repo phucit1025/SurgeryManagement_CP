@@ -117,5 +117,38 @@ namespace Surgery_1.Controllers
             }
             return BadRequest();
         }
+       
+        [HttpPost]
+        public IActionResult CreateTreatmenReport(TreatmentReportViewModel treatmentReportViewModel)
+        {
+            var result = _postOpService.CreateTreatmenReport(treatmentReportViewModel);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
+        }
+
+        [HttpGet]
+        public IActionResult GetTreatmentReportByShiftId(int surgeryShiftId)
+        {
+            var result = _postOpService.GetTreatmentReportByShiftId(surgeryShiftId);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+        
+        [HttpGet]
+        public IActionResult GetTodayTreatmentReportByShiftId(int surgeryShiftId)
+        {
+            var result = _postOpService.GetTodayTreatmentReportByShiftId(surgeryShiftId);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
     }
 }
