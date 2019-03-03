@@ -25,10 +25,26 @@ namespace Surgery_1.Services.Implementations
             this._logger = _logger;
         }
 
-        public object GetHealthCareRerportBySurgeryShiftId(int surgeryShiftId)
+        public ICollection<HealthCareReportViewModel> GetHealthCareRerportBySurgeryShiftId(int surgeryShiftId)
         {
-            var result = _appDbContext.HealthCareReports.Where(a => a.SurgeryShiftId == surgeryShiftId).ToList();
-            return result;
+            var healthCareReports = _appDbContext.HealthCareReports
+                .Where(a => a.SurgeryShiftId == surgeryShiftId && a.IsDeleted == false)
+                .OrderByDescending(a => a.DateCreated)
+                .ToList();
+            var results = new List<HealthCareReportViewModel>();
+            foreach (var healthCareRerport in healthCareReports)
+            {
+                results.Add(new HealthCareReportViewModel()
+                {
+                    Id = healthCareRerport.Id,
+                    DateCreated = healthCareRerport.DateCreated.Value.ToString("dd-MM-yyyy HH:mm:ss"),
+                    VisitReason = healthCareRerport.CareReason,
+                    EventContent = healthCareRerport.EventContent,
+                    CareContent = healthCareRerport.CareContent,
+                    SurgeryShiftId = healthCareRerport.SurgeryShiftId
+                });
+            }
+            return results;
         }
 
         public ICollection<PostOpSurgeryShiftViewModel> GetSurgeryByStatusId(int statusId)
