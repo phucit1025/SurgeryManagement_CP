@@ -41,6 +41,8 @@ namespace Surgery_1.Services.Implementations
                     VisitReason = healthCareRerport.CareReason,
                     EventContent = healthCareRerport.EventContent,
                     CareContent = healthCareRerport.CareContent,
+                    WoundConditionDescription = healthCareRerport.WoundConditionDescription,
+                    WoundCondition = healthCareRerport.WoundCondition,
                     SurgeryShiftId = healthCareRerport.SurgeryShiftId
                 });
             }
@@ -107,6 +109,8 @@ namespace Surgery_1.Services.Implementations
                     VisitReason = healthCareRerport.CareReason,
                     EventContent = healthCareRerport.EventContent,
                     CareContent = healthCareRerport.CareContent,
+                    WoundConditionDescription = healthCareRerport.WoundConditionDescription,
+                    WoundCondition = healthCareRerport.WoundCondition,
                     SurgeryShiftId = healthCareRerport.SurgeryShiftId
                 });
             }
@@ -131,6 +135,8 @@ namespace Surgery_1.Services.Implementations
                CareReason = healthCareReportViewModel.VisitReason,
                 EventContent = healthCareReportViewModel.EventContent,
                 CareContent = healthCareReportViewModel.CareContent,
+                WoundCondition = healthCareReportViewModel.WoundCondition,
+                WoundConditionDescription = healthCareReportViewModel.WoundConditionDescription,
                 IsDeleted = false,
                 SurgeryShiftId = healthCareReportViewModel.SurgeryShiftId
             };
@@ -170,6 +176,8 @@ namespace Surgery_1.Services.Implementations
             healthCareReport.CareReason = healthCareReportViewModel.VisitReason;
             healthCareReport.EventContent = healthCareReportViewModel.EventContent;
             healthCareReport.CareContent = healthCareReportViewModel.CareContent;
+            healthCareReport.WoundCondition = healthCareReportViewModel.WoundCondition;
+            healthCareReport.WoundConditionDescription = healthCareReportViewModel.WoundConditionDescription;
             DateTime date = new DateTime();
             healthCareReport.DateUpdated = date;
             try
