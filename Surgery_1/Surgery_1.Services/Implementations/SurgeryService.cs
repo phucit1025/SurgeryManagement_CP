@@ -17,25 +17,47 @@ namespace Surgery_1.Services.Implementations
     {
         TimeSpan startAMWorkingHour = TimeSpan.FromHours(ConstantVariable.StartAMWorkingHour);
         TimeSpan endPMWorkingHour = TimeSpan.FromHours(ConstantVariable.EndPMWorkingHour);
+        private readonly string POST_STATUS = "Postoperative";
         private readonly AppDbContext _context;
 
         public SurgeryService(AppDbContext _context)
         {
             this._context = _context;
         }
-        public bool SetPostoperativeStatus(int shiftId)
+        public bool SetPostoperativeStatus(int shiftId, string roomPost, string bedPost)
         {
             var shift = _context.SurgeryShifts.Find(shiftId);
             var status = _context.Statuses.Where(s => s.Name.Equals("Postoperative")).FirstOrDefault();
             if (shift != null)
             {
                 shift.StatusId = status.Id;
+                shift.PostRoomName = roomPost;
+                shift.PostBedName = bedPost;
+                shift.ActualEndDateTime = DateTime.Now;
                 _context.Update(shift);
                 _context.SaveChanges();
                 return true;
             }
             return false;
         }
+        public int CheckPostStatus(int shiftId)
+        {
+            var shift = _context.SurgeryShifts.Find(shiftId);
+            int result = 0;
+            if (shift != null)
+            {
+                if (DateTime.Now > shift.EstimatedStartDateTime)
+                {
+                    result = 1; //Hiện nút khi ca mổ sau thời gian phẫu thuật
+                    if (shift.Status.Name.Equals(POST_STATUS, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        result = 2; //Disable nút khi đã set status
+                    }
+                }
+            }
+            return result;
+        }
+
         public void MakeScheduleList()
         {
             var shifts = GetSurgeryShiftsNoSchedule();
@@ -154,25 +176,6 @@ namespace Surgery_1.Services.Implementations
             }
         }
 
-        public void MakeScheduleByProposedTime()
-        {
-            var surgeryShifts = GetSurgeryShiftNoScheduleByProposedTime();
-            foreach (var shift in surgeryShifts)
-            {
-                if (shift.ProposedStartDateTime != null && shift.ProposedEndDateTime != null)
-                {
-                    int roomId = GetAvailableRoomForProposedTime(shift.ProposedStartDateTime.Value, shift.ProposedEndDateTime.Value);
-                    if (roomId == 0) // Thông báo ko lên lịch đc
-                    {
-
-                    }
-                    else
-                    {
-                        InsertDateTimeToSurgeryShift(shift.SurgeryShiftId, shift.ProposedStartDateTime.Value, shift.ProposedEndDateTime.Value, roomId);
-                    }
-                }
-            }
-        }
 
         public int GetAvailableRoomForProposedTime(DateTime startTime, DateTime endTime)
         {
@@ -440,7 +443,6 @@ namespace Surgery_1.Services.Implementations
             }
             return null;
         }
-
         #region Change Shift
         public bool ChangeFirstPriority(ShiftChangeViewModel newShift)
         {
@@ -478,7 +480,7 @@ namespace Surgery_1.Services.Implementations
             }
             return false;
         }
-        #endregion
+
         public bool ChangeSchedule(ShiftScheduleChangeViewModel newShift)
         {
             var shift = _context.SurgeryShifts.Find(newShift.Id);
@@ -633,7 +635,7 @@ namespace Surgery_1.Services.Implementations
             }
             return availableRooms;
         }
-        #region
+
         public bool ChangeShiftStatus(ShiftStatusChangeViewModel currentShift)
         {
             try
@@ -663,7 +665,7 @@ namespace Surgery_1.Services.Implementations
             }
 
         }
-        #endregion 
+        #endregion
 
     }
 }
