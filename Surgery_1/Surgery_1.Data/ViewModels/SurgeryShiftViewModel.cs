@@ -94,6 +94,7 @@ namespace Surgery_1.Data.ViewModels
     public class SurgeryCatalogIDsViewModel
     {
         public int id { get; set; }
+    }
     public class ShiftStatusChangeViewModel
     {
         public int ShiftId { get; set; }
