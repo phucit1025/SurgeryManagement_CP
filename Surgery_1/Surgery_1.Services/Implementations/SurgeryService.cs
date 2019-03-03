@@ -19,6 +19,8 @@ namespace Surgery_1.Services.Implementations
         TimeSpan endPMWorkingHour = TimeSpan.FromHours(ConstantVariable.EndPMWorkingHour);
         private readonly string POST_STATUS = "Postoperative";
         private readonly AppDbContext _context;
+        StringBuilder notificationMakeSchedule = new StringBuilder();
+
 
         public SurgeryService(AppDbContext _context)
         {
@@ -58,7 +60,7 @@ namespace Surgery_1.Services.Implementations
             return result;
         }
 
-        public void MakeScheduleList()
+        public StringBuilder MakeScheduleList()
         {
             var shifts = GetSurgeryShiftsNoSchedule();
             foreach (var shift in shifts)
@@ -73,8 +75,8 @@ namespace Surgery_1.Services.Implementations
                 //// Lấy khoảng thời gian sau thời gian confirm
                 //var roomList = availableSlotRooms.Where(s => s.StartDateTime > shift.ConfirmDate).ToList();
 
-                //TODO: Trường hợp mổ theo chương trình
-                if (shift.ProposedStartDateTime == null && shift.ProposedEndDateTime == null)
+                //TODO: Trường hợp mổ theo chương trình, biến = true
+                if (shift.IsNormalSurgeryTime)
                 {
                     // TODO: 1.1. Nếu có thì thẳng tay add vào
                     if (roomEmptyId != 0)
@@ -82,6 +84,27 @@ namespace Surgery_1.Services.Implementations
                         DateTime startEstimatedTime = shift.ScheduleDate + startAMWorkingHour;
                         DateTime endEstimatedTime = startEstimatedTime + TimeSpan.FromHours(shift.ExpectedSurgeryDuration);
                         InsertDateTimeToSurgeryShift(shift.SurgeryShiftId, startEstimatedTime, endEstimatedTime, roomEmptyId);
+
+                        if (shift.ScheduleDate > shift.ConfirmDate.Date)
+                        {
+                            notificationMakeSchedule.Append("Surgery Shift (ID:  "
+                            + shift.SurgeryShiftId + ") is created successfully at Room "
+                            + roomEmptyId + " on " + shift.ScheduleDate.ToShortDateString() + " after Expected Time: " 
+                            + shift.ConfirmDate.Date + "<br/>");
+
+                        } 
+                        else if (shift.ScheduleDate == shift.ConfirmDate.Date)
+                        {
+                            notificationMakeSchedule.Append("Surgery Shift (ID: "
+                            + shift.SurgeryShiftId + ") is created successfully at Room "
+                            + roomEmptyId + " on " + shift.ScheduleDate.ToShortDateString() + "<br/>");
+                        }
+                        else if (shift.IsNormalSurgeryTime && shift.ProposedStartDateTime != null & shift.ProposedEndDateTime != null)
+                        {
+                            notificationMakeSchedule.Append("Surgery Shift (ID: "
+                            + shift.SurgeryShiftId + ") (Proposed Time) is created normally schedule at Room "
+                            + roomEmptyId + " on " + startEstimatedTime.Date.ToShortDateString() + "<br/>");
+                        }
                     }
                     else  // TODO: 1.2. Nếu ko thì tìm các khoảng trống hợp lệ của từng phòng
                     {
@@ -94,6 +117,27 @@ namespace Surgery_1.Services.Implementations
                         {
                             var endTime = room.StartDateTime + TimeSpan.FromHours(shift.ExpectedSurgeryDuration);
                             InsertDateTimeToSurgeryShift(shift.SurgeryShiftId, room.StartDateTime, endTime, room.RoomId);
+
+                            if (shift.ScheduleDate > shift.ConfirmDate.Date)
+                            {
+                                notificationMakeSchedule.Append("Surgery Shift (ID: "
+                                + shift.SurgeryShiftId + ") is created successfully at Room "
+                                + room.RoomId + " on " + shift.ScheduleDate.ToShortDateString() + " after Expected Time: "
+                                + shift.ConfirmDate.Date + "<br/>");
+
+                            }
+                            else if (shift.ScheduleDate == shift.ConfirmDate.Date)
+                            {
+                                notificationMakeSchedule.Append("Surgery Shift (ID: "
+                                + shift.SurgeryShiftId + ") is created successfully at Room "
+                                + room.RoomId + " on " + shift.ScheduleDate.ToShortDateString() + "<br/>");
+                            }
+                            else if (shift.IsNormalSurgeryTime && shift.ProposedStartDateTime != null & shift.ProposedEndDateTime != null)
+                            {
+                                notificationMakeSchedule.Append("Surgery Shift (ID: "
+                                + shift.SurgeryShiftId + " (Proposed Time) is created normally schedule at Room "
+                                + room.RoomId + " on " + room.StartDateTime.Date.ToShortDateString() + "<br/>");
+                            }
                         }
                     }
                 }
@@ -103,6 +147,12 @@ namespace Surgery_1.Services.Implementations
                     {
                         InsertDateTimeToSurgeryShift
                                 (shift.SurgeryShiftId, shift.ProposedStartDateTime.Value, shift.ProposedEndDateTime.Value, roomEmptyId);
+
+                            notificationMakeSchedule.Append("Surgery Shift (ID: "
+                               + shift.SurgeryShiftId + ") is created successfully at Room "
+                               + roomEmptyId + " from " + shift.ProposedStartDateTime.Value
+                               + " to " + shift.ProposedEndDateTime.Value
+                               + " (Proposed Time)<br/>");
                     }
                     else
                     {
@@ -117,6 +167,12 @@ namespace Surgery_1.Services.Implementations
                         {
                             InsertDateTimeToSurgeryShift
                                 (shift.SurgeryShiftId, shift.ProposedStartDateTime.Value, shift.ProposedEndDateTime.Value, room.RoomId);
+
+                            notificationMakeSchedule.Append("Surgery Shift (ID: "
+                           + shift.SurgeryShiftId + ") is created successfully at Room "
+                           + room.RoomId + " from " + shift.ProposedStartDateTime.Value
+                           + " to " + shift.ProposedEndDateTime.Value
+                           + " (Proposed Time)<br/>");
                         }
                         else //Khoảng thời gian chỉ định ko hợp lý thì vào trong này
                         {
@@ -125,6 +181,12 @@ namespace Surgery_1.Services.Implementations
                             {
                                 InsertDateTimeToSurgeryShift
                                 (shift.SurgeryShiftId, shift.ProposedStartDateTime.Value, shift.ProposedEndDateTime.Value, roomProposed);
+
+                                notificationMakeSchedule.Append("Surgery Shift (ID: "
+                               + shift.SurgeryShiftId + ") is created successfully at Room "
+                               + roomProposed + " from " + shift.ProposedStartDateTime.Value
+                               + " to " + shift.ProposedEndDateTime.Value
+                               + " (Proposed Time)<br/>");
                             }
                         }
                     }
@@ -137,43 +199,24 @@ namespace Surgery_1.Services.Implementations
             {
                 foreach (var shift in shifts)
                 {
-                    if (shift.PriorityNumber == 1)
+                    var item = _context.SurgeryShifts.Find(shift.SurgeryShiftId);
+                    if (shift.ScheduleDate.AddDays(1).DayOfWeek.Equals(ConstantVariable.DAYOFF))
                     {
-
-                    }
-                    if (shift.ProposedStartDateTime == null && shift.ProposedEndDateTime == null)
-                    {
-                        var item = _context.SurgeryShifts.Find(shift.SurgeryShiftId);
-                        if (shift.ScheduleDate.AddDays(1).DayOfWeek.Equals(ConstantVariable.DAYOFF))
-                        {
-                            item.ScheduleDate = shift.ScheduleDate.AddDays(2);
-                            _context.SaveChanges();
-                        }
-                        else
-                        {
-                            item.ScheduleDate = shift.ScheduleDate.AddDays(1);
-                            _context.SaveChanges();
-                        }
+                        item.ScheduleDate = shift.ScheduleDate.AddDays(2);
                     }
                     else
                     {
-                        var item = _context.SurgeryShifts.Find(shift.SurgeryShiftId);
-                        item.ProposedStartDateTime = null;
-                        item.ProposedEndDateTime = null;
-                        if (shift.ScheduleDate.AddDays(1).DayOfWeek.Equals(ConstantVariable.DAYOFF))
-                        {
-                            item.ScheduleDate = shift.ScheduleDate.AddDays(2);
-                            _context.SaveChanges();
-                        }
-                        else
-                        {
-                            item.ScheduleDate = shift.ScheduleDate.AddDays(1);
-                            _context.SaveChanges();
-                        }
+                        item.ScheduleDate = shift.ScheduleDate.AddDays(1);
                     }
+                    if (!shift.IsNormalSurgeryTime)
+                    {
+                        item.IsNormalSurgeryTime = true;
+                    }
+                        _context.SaveChanges();
                 }
                 MakeScheduleList();
             }
+            return notificationMakeSchedule;
         }
 
 
@@ -380,6 +423,7 @@ namespace Surgery_1.Services.Implementations
                     SurgeryShiftId = shift.Id,
                     ProposedStartDateTime = shift.ProposedStartDateTime,
                     ProposedEndDateTime = shift.ProposedEndDateTime,
+                    IsNormalSurgeryTime = shift.IsNormalSurgeryTime,
                     ConfirmDate = shift.ConfirmDate.Value,
                     ScheduleDate = shift.ScheduleDate.Value,
                     ExpectedSurgeryDuration = shift.ExpectedSurgeryDuration,

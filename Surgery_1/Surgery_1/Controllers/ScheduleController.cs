@@ -44,8 +44,8 @@ namespace Surgery_1.Controllers
         [HttpGet]
         public IActionResult MakeScheduleList()
         {
-            _surgeryService.MakeScheduleList();
-            return StatusCode(200);
+            var result = _surgeryService.MakeScheduleList();
+            return StatusCode(200, result);
         }
 
         [HttpPost]

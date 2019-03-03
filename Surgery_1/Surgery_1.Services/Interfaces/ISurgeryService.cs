@@ -11,7 +11,7 @@ namespace Surgery_1.Services.Interfaces
         List<AvailableRoomViewModel> GetAvailableSlotRoom(int dateNumber);
         ICollection<SurgeryRoomViewModel> GetSurgeryRooms();
         ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int surgeryRoomId, int dateNumber);
-        void MakeScheduleList();
+        StringBuilder MakeScheduleList();
         
         //After make schedule
         bool SetPostoperativeStatus(int shiftId, string roomPost, string postBed);
