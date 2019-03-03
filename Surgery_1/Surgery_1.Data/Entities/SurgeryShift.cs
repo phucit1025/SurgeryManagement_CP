@@ -22,12 +22,9 @@ namespace Surgery_1.Data.Entities
         //Thời gian kiến nghị của bác sĩ
         public DateTime? ProposedStartDateTime { get; set; }
         public DateTime? ProposedEndDateTime { get; set; }
-        //Working hour of hospital: 7 - 11h; 13 - 17
 
-        //public DateTime StartAMWorkingHour { get; set; }
-        //public DateTime EndAMWorkingHour { get; set; }
-        //public DateTime StartPMWorkingHour { get; set; }
-        //public DateTime EndPMWorkingHour { get; set; }
+        public bool IsNormalSurgeryTime { get; set; } = true;
+        //Working hour of hospital: 7 - 11h; 13 - 17
 
         public string SurgeryShiftCode { get; set; }
         public DateTime? ConfirmDate { get; set; }
