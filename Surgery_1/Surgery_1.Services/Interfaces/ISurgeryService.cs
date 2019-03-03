@@ -16,7 +16,7 @@ namespace Surgery_1.Services.Interfaces
         //After make schedule
         bool SetPostoperativeStatus(int shiftId, string roomPost, string postBed);
         int CheckPostStatus(int shiftId);
-        
+
 
         // Lấy những ca mổ cần lên lịch theo ngày
         ICollection<ScheduleViewModel> GetSurgeryShiftsNoSchedule();
@@ -31,6 +31,8 @@ namespace Surgery_1.Services.Interfaces
         List<int> GetAvailableRoom(DateTime start, DateTime end);
         List<AvailableRoomViewModel> GetAvailableRoom(int hour, int minute);
         bool ChangeShiftStatus(ShiftStatusChangeViewModel currentShift);
+        SwapShiftResultViewModel SwapShift(int shift1Id, int shift2Id);
+        List<int> GetSwapableShiftIds();
         #endregion
     }
 }

@@ -100,4 +100,27 @@ namespace Surgery_1.Data.ViewModels
         public int ShiftId { get; set; }
         public string CurrentStatus { get; set; }
     }
+
+    public class SwapShiftResultViewModel
+    {
+        public bool Succeed { get; set; } = false;
+        public List<AffectedShiftResultViewModel> AffectedShifts { get; set; } = new List<AffectedShiftResultViewModel>();
+    }
+
+    public class AffectedShiftResultViewModel
+    {
+        public int ShiftId { get; set; }
+        public DateTime OldStart { get; set; }
+        public DateTime OldEnd { get; set; }
+        public DateTime NewStart { get; set; }
+        public DateTime NewEnd { get; set; }
+        public string OldRoomName { get; set; }
+        public string NewRoomName { get; set; }
+    }
+
+    public class SwapShiftViewModel
+    {
+        public int FirstShiftId { get; set; }
+        public int SecondShiftId { get; set; }
+    }
 }

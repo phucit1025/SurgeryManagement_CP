@@ -40,7 +40,7 @@ namespace Surgery_1.Controllers
             var result = _surgeryService.GetSurgeryShiftNoScheduleByProposedTime();
             return StatusCode(200, result);
         }
-                   
+
         [HttpGet]
         public IActionResult MakeScheduleList()
         {
@@ -54,7 +54,7 @@ namespace Surgery_1.Controllers
             var result = _surgeryService.GetAvailableSlotRoom(dateNumber);
             return StatusCode(200, result);
         }
-        
+
         [HttpGet]
         public IActionResult GetSurgeryShiftsNoSchedule()
         {
@@ -130,6 +130,27 @@ namespace Surgery_1.Controllers
                 return StatusCode(200);
             }
             return StatusCode(400);
+        }
+
+        [HttpPost]
+        public IActionResult SwapShifts([FromBody] SwapShiftViewModel shifts)
+        {
+            var result = _surgeryService.SwapShift(shifts.FirstShiftId, shifts.SecondShiftId);
+            if (result.Succeed)
+            {
+                return StatusCode(200, result.AffectedShifts);
+            }
+            else
+            {
+                return StatusCode(400);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetSwapableShifts()
+        {
+            var results = _surgeryService.GetSwapableShiftIds();
+            return StatusCode(200, results);
         }
         #endregion
     }
