@@ -9,7 +9,7 @@ namespace Surgery_1.Services.Interfaces
     {
         ICollection<PostOpSurgeryShiftViewModel> GetSurgeryByStatusId(int statusId);
         RecoverySurgeryShiftViewModel GetRecoverySurgeryShiftById(int id);
-        object GetHealthCareRerportBySurgeryShiftId(int surgeryShiftId);
+        ICollection<HealthCareReportViewModel> GetHealthCareRerportBySurgeryShiftId(int surgeryShiftId);
         bool ChangeSurgeryShiftToRecovery(int surgeryShiftId, string postOpRoom, string postOpBed);
         bool CreateHealthCareReport(HealthCareReportViewModel healthCareRerpotViewModel);
         bool UpdateHealthCareReport(HealthCareReportViewModel healthCareRerpotViewModel);
