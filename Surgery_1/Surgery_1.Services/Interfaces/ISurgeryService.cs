@@ -32,6 +32,7 @@ namespace Surgery_1.Services.Interfaces
         List<AvailableRoomViewModel> GetAvailableRoom(int hour, int minute);
         bool ChangeShiftStatus(ShiftStatusChangeViewModel currentShift);
         SwapShiftResultViewModel SwapShift(int shift1Id, int shift2Id);
+        List<int> GetSwapableShiftIds();
         #endregion
     }
 }

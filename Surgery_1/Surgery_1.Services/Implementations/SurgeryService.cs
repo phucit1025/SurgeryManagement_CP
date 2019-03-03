@@ -814,6 +814,22 @@ namespace Surgery_1.Services.Implementations
                 return result;
             }
         }
+
+        public List<int> GetSwapableShiftIds()
+        {
+            var results = new List<int>();
+            var rooms = _context.SurgeryRooms.Where(r => !r.IsDeleted);
+            foreach (var room in rooms)
+            {
+                var shifts = room.SurgeryShifts.Where(s =>
+                                                        !s.IsDeleted &&
+                                                        s.EstimatedStartDateTime.Value > DateTime.Now &&
+                                                        s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase))
+                                                        .Select(s => s.Id).ToList();
+                results.AddRange(shifts);
+            }
+            return results.OrderBy(r => r).ToList();
+        }
         #endregion
 
         #region Processing

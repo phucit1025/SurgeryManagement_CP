@@ -145,6 +145,13 @@ namespace Surgery_1.Controllers
                 return StatusCode(400);
             }
         }
+
+        [HttpGet]
+        public IActionResult GetSwapableShifts()
+        {
+            var results = _surgeryService.GetSwapableShiftIds();
+            return StatusCode(200, results);
+        }
         #endregion
     }
 }
