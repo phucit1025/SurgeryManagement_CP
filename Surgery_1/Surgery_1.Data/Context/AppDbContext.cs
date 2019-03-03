@@ -20,6 +20,7 @@ namespace Surgery_1.Data.Context
 
         #region Database Tables
         public DbSet<HealthCareReport> HealthCareReports { get; set; }
+        public DbSet<TreatmentReport> TreatmentReports { get; set; }
         public DbSet<MedicalSupply> MedicalSupplies { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Speciality> Specialities { get; set; }

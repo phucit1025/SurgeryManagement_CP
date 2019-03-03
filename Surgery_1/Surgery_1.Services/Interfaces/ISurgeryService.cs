@@ -7,18 +7,21 @@ namespace Surgery_1.Services.Interfaces
 {
     public interface ISurgeryService
     {
-        void MakeScheduleList();
-        void MakeScheduleByProposedTime();
-
-        bool SetPostoperativeStatus(int shiftId);
+        #region Tung
         List<AvailableRoomViewModel> GetAvailableSlotRoom(int dateNumber);
-
         ICollection<SurgeryRoomViewModel> GetSurgeryRooms();
         ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int surgeryRoomId, int dateNumber);
+        void MakeScheduleList();
+        
+        //After make schedule
+        bool SetPostoperativeStatus(int shiftId, string roomPost, string postBed);
+        int CheckPostStatus(int shiftId);
+        
 
         // Lấy những ca mổ cần lên lịch theo ngày
         ICollection<ScheduleViewModel> GetSurgeryShiftsNoSchedule();
         ICollection<ScheduleViewModel> GetSurgeryShiftNoScheduleByProposedTime();
+        #endregion
 
         SurgeryShiftDetailViewModel GetShiftDetail(int shiftId);
 
@@ -27,6 +30,7 @@ namespace Surgery_1.Services.Interfaces
         bool ChangeSchedule(ShiftScheduleChangeViewModel newShift);
         List<int> GetAvailableRoom(DateTime start, DateTime end);
         List<AvailableRoomViewModel> GetAvailableRoom(int hour, int minute);
-        #endregion 
+        bool ChangeShiftStatus(ShiftStatusChangeViewModel currentShift);
+        #endregion
     }
 }

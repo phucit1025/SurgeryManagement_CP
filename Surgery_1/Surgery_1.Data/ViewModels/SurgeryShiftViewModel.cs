@@ -12,8 +12,8 @@ namespace Surgery_1.Data.ViewModels
         public int PriorityNumber { get; set; }
         public List<string> SurgeonNames { get; set; }
         public string PatientName { get; set; }
-        public string EstimatedStartDateTime { get; set; }
-        public string EstimatedEndDateTime { get; set; }
+        public DateTime EstimatedStartDateTime { get; set; }
+        public DateTime EstimatedEndDateTime { get; set; }
     }
 
 
@@ -94,5 +94,9 @@ namespace Surgery_1.Data.ViewModels
     public class SurgeryCatalogIDsViewModel
     {
         public int id { get; set; }
+    public class ShiftStatusChangeViewModel
+    {
+        public int ShiftId { get; set; }
+        public string CurrentStatus { get; set; }
     }
 }
