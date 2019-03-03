@@ -10,5 +10,6 @@ namespace Surgery_1.Services.Interfaces
     {
         void ImportSurgeryShift(ICollection<ImportSurgeryShiftViewModel> surgeryShift);
         void ImportSurgeryShiftMedicalSupply(ICollection<ImportMedicalSupplyViewModel> medicalSupply);
+        ICollection<SurgeryCatalogNamesViewModel> GetSurgeryName(ICollection<SurgeryCatalogIDsViewModel> id);
     }
 }

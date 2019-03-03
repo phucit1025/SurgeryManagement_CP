@@ -18,6 +18,18 @@ namespace Surgery_1.Services.Implementations
             this._context = _context;
         }
 
+        public ICollection<SurgeryCatalogNamesViewModel> GetSurgeryName(ICollection<SurgeryCatalogIDsViewModel> ids)
+        {
+            var result = new List<SurgeryCatalogNamesViewModel>();
+            foreach(var id in ids)
+            {
+                SurgeryCatalogNamesViewModel sname = new SurgeryCatalogNamesViewModel();
+                sname.name = _context.SurgeryCatalogs.Where(a => a.Id == id.id).FirstOrDefault().Name;
+                result.Add(sname);
+            }
+            return result;
+        }
+
         public void ImportSurgeryShift(ICollection<ImportSurgeryShiftViewModel> surgeryShift)
         {
             var list = surgeryShift;

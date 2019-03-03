@@ -34,5 +34,12 @@ namespace Surgery_1.Controllers
             _surgeryShiftService.ImportSurgeryShiftMedicalSupply(surgeryShiftSupply);
             return true;
         }
+
+        [HttpPost]
+        public IActionResult getSurgeryNameById([FromBody]ICollection<SurgeryCatalogIDsViewModel> SurgeryId)
+        {
+            var result = _surgeryShiftService.GetSurgeryName(SurgeryId);
+            return Ok(result);
+        }
     }
 }
