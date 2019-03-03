@@ -83,8 +83,8 @@ namespace Surgery_1.Services.Implementations
                 detail.Add(new MedicalSupplyRequestDetailViewModel()
                 {
                     code = d.Id,
-                    name = d.MedicalSupply.Name
-                    //,quantity = d.quantity
+                    name = d.MedicalSupply.Name,
+                    quantity = d.Quantity
                 }
                 );
             }
