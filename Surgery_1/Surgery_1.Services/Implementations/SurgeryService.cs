@@ -533,14 +533,13 @@ namespace Surgery_1.Services.Implementations
                 .ToList();
                 if (shifts.Any())
                 {
-                    var onScheduleShifts = shifts.Where(s => start < s.EstimatedEndDateTime);
-                    if (onScheduleShifts.ToList().Any())
+                    var affectedShifts = shifts.Where(s =>
+                                                    (start >= s.EstimatedStartDateTime.Value && start < s.EstimatedEndDateTime.Value)
+                                                    || (end > s.EstimatedStartDateTime.Value && end <= s.EstimatedEndDateTime.Value))
+                                                    .ToList();
+                    if (!affectedShifts.Any())
                     {
-                        onScheduleShifts = onScheduleShifts.OrderByDescending(s => s.EstimatedStartDateTime);
-                        if (end < onScheduleShifts.FirstOrDefault().EstimatedStartDateTime)
-                        {
-                            roomId.Add(room.Id);
-                        }
+                        roomId.Add(room.Id);
                     }
                 }
                 else
