@@ -12,8 +12,8 @@ namespace Surgery_1.Data.ViewModels
         public int PriorityNumber { get; set; }
         public List<string> SurgeonNames { get; set; }
         public string PatientName { get; set; }
-        public string EstimatedStartDateTime { get; set; }
-        public string EstimatedEndDateTime { get; set; }
+        public DateTime EstimatedStartDateTime { get; set; }
+        public DateTime EstimatedEndDateTime { get; set; }
     }
 
 

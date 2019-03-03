@@ -351,8 +351,8 @@ namespace Surgery_1.Services.Implementations
                     Id = shift.Id,
                     CatalogName = shift.SurgeryCatalog.Name,
                     PriorityNumber = shift.PriorityNumber,
-                    EstimatedStartDateTime = UtilitiesDate.GetTimeFromDate(shift.EstimatedStartDateTime.Value),
-                    EstimatedEndDateTime = UtilitiesDate.GetTimeFromDate(shift.EstimatedEndDateTime.Value),
+                    EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
+                    EstimatedEndDateTime = shift.EstimatedEndDateTime.Value,
                     PatientName = shift.Patient.FullName,
                     SurgeonNames = shift.SurgeryShiftSurgeons.Select(s => s.Surgeon.FullName).ToList()
                 });
