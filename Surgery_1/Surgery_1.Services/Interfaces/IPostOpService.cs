@@ -16,5 +16,8 @@ namespace Surgery_1.Services.Interfaces
         bool SoftDeleteHealthCareReport(int healthCareReportId);
         ICollection<PostOpSurgeryShiftViewModel> FindPostOpSurgeryByPatientName(string name);
         bool EditRoomBedSurgeryShift(int surgeryShiftId, string room, string bed);
+        bool CreateTreatmenReport(TreatmentReportViewModel treatmentReportViewModel);
+        ICollection<TreatmentReportViewModel> GetTreatmentReportByShiftId(int shiftId);
+        ICollection<TreatmentReportViewModel> GetTodayTreatmentReportByShiftId(int shiftId);
     }
 }
