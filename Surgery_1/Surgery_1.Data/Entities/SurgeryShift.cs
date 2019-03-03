@@ -68,6 +68,7 @@ namespace Surgery_1.Data.Entities
 
         public virtual ICollection<SurgeryShiftMedicalSupply> SurgeryShiftMedicalSupplies { get; set; }
         public virtual ICollection<HealthCareReport> HealthCareReports { get; set; }
+        public virtual ICollection<TreatmentReport> TreatmentReports { get; set; }
         public virtual ICollection<SurgeryShiftSurgeon> SurgeryShiftSurgeons { get; set; }
     }
 }

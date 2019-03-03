@@ -4,6 +4,7 @@ using Surgery_1.Data.Context;
 using Surgery_1.Data.Entities;
 using Surgery_1.Data.ViewModels;
 using Surgery_1.Services.Interfaces;
+using Surgery_1.Services.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -86,7 +87,7 @@ namespace Surgery_1.Services.Implementations
                 healthCareReportsViewModelList.Add(new HealthCareReportViewModel()
                 {
                     Id = healthCareRerport.Id,
-                    DateCreated = healthCareRerport.DateCreated.Value.ToString("dd/MM/yyyy HH:mm:ss"),
+                    DateCreated = healthCareRerport.DateCreated.Value.ToString("dd-MM-yyyy HH:mm:ss"),
                     VisitReason = healthCareRerport.CareReason,
                     EventContent = healthCareRerport.EventContent,
                     CareContent = healthCareRerport.CareContent,
@@ -211,6 +212,75 @@ namespace Surgery_1.Services.Implementations
             {
                 return false;
             }
+        }
+
+        public bool CreateTreatmenReport(TreatmentReportViewModel treatmentReportViewModel)
+        {
+            var transaction = _appDbContext.Database.BeginTransaction();
+            try
+            {
+                var treatmentReport = new TreatmentReport()
+                {
+                    IsDeleted = false,
+                    SurgeryShiftId = treatmentReportViewModel.ShiftId,
+                    ProgressiveDisease = treatmentReportViewModel.ProgressiveDisease,
+                    MedicalRequirement = treatmentReportViewModel.MedicalRequirement
+                };
+                _appDbContext.Add(treatmentReport);
+                _appDbContext.SaveChanges();
+                transaction.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                return false;
+            }
+        }
+
+        public ICollection<TreatmentReportViewModel> GetTreatmentReportByShiftId(int shiftId)
+        {
+            var treatmentReports = _appDbContext.TreatmentReports
+                .Where(a => a.SurgeryShiftId == shiftId && a.IsDeleted == false)
+                .OrderByDescending(a => a.DateCreated)
+                .ToList();
+            var result = new List<TreatmentReportViewModel>();
+            foreach (var treatmentReport in treatmentReports)
+            {
+                result.Add(new TreatmentReportViewModel()
+                {
+                    Id = treatmentReport.Id,
+                    DateCreated = treatmentReport.DateCreated.Value.ToString("dd-MM-yyyy HH:mm:ss"),
+                    ProgressiveDisease = treatmentReport.ProgressiveDisease,
+                    MedicalRequirement = treatmentReport.MedicalRequirement,
+                    ShiftId = treatmentReport.SurgeryShiftId
+                });
+            }
+            return result;
+        }
+        
+        public ICollection<TreatmentReportViewModel> GetTodayTreatmentReportByShiftId(int shiftId)
+        {
+            int today = UtilitiesDate.ConvertDateToNumber(DateTime.Now);
+            var treatmentReports = _appDbContext.TreatmentReports
+                .Where(a => a.SurgeryShiftId == shiftId 
+                        && a.IsDeleted == false
+                        && UtilitiesDate.ConvertDateToNumber(a.DateCreated.Value) == today)
+                .OrderByDescending(a => a.DateCreated)
+                .ToList();
+            var result = new List<TreatmentReportViewModel>();
+            foreach (var treatmentReport in treatmentReports)
+            {
+                result.Add(new TreatmentReportViewModel()
+                {
+                    Id = treatmentReport.Id,
+                    DateCreated = treatmentReport.DateCreated.Value.ToString("dd-MM-yyyy HH:mm:ss"),
+                    ProgressiveDisease = treatmentReport.ProgressiveDisease,
+                    MedicalRequirement = treatmentReport.MedicalRequirement,
+                    ShiftId = treatmentReport.SurgeryShiftId
+                });
+            }
+            return result;
         }
     }
 }
