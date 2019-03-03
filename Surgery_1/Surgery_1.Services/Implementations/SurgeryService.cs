@@ -621,7 +621,7 @@ namespace Surgery_1.Services.Implementations
                         else
                         {
                             var shiftAfter = shifts.ElementAt(i + 1);
-                            var gap = shift.EstimatedEndDateTime.Value - shiftAfter.EstimatedStartDateTime.Value;
+                            var gap = shiftAfter.EstimatedStartDateTime.Value - shift.EstimatedEndDateTime.Value;
                             if (expectedTimeSpan <= gap && !IsInBreakTime(shift.EstimatedEndDateTime.Value))
                             {
                                 results.Add(new AvailableRoomViewModel()
@@ -687,7 +687,7 @@ namespace Surgery_1.Services.Implementations
                 var shift = _context.SurgeryShifts.Find(shift2Id);
                 var longerDuration = longerShift.EstimatedEndDateTime.Value - longerShift.EstimatedStartDateTime.Value;
                 var duration = shift.EstimatedEndDateTime.Value - shift.EstimatedStartDateTime.Value;
-                if (SwapParamName(ref longerShift, ref shift, longerDuration, duration))
+                if (SwapParamName(ref longerShift, ref shift, ref longerDuration, ref duration))
                 {
                     var longerShiftRoomId = longerShift.SurgeryRoomId.Value;
                     var shiftRoomId = shift.SurgeryRoomId.Value;
@@ -767,7 +767,7 @@ namespace Surgery_1.Services.Implementations
 
                                     if (result.Succeed)
                                     {
-                                        resolvedShift.NewRoomName = _context.SurgeryRooms.Find(roomIds.FirstOrDefault()).Name;
+                                        resolvedShift.NewRoomName = _context.SurgeryRooms.Find(rooms.FirstOrDefault().RoomId).Name;
                                         resolvedShift.NewStart = rooms.FirstOrDefault().StartDateTime;
                                         resolvedShift.NewEnd = rooms.FirstOrDefault().EndDateTime;
                                         result.AffectedShifts.Add(resolvedShift);
@@ -845,7 +845,7 @@ namespace Surgery_1.Services.Implementations
         }
         private bool IsInBreakTime(DateTime startTime)
         {
-            if (startTime >= GetCurrentDayBreakTime(true, startTime) && startTime >= GetCurrentDayBreakTime(false, startTime))
+            if (startTime > GetCurrentDayBreakTime(true, startTime) && startTime < GetCurrentDayBreakTime(false, startTime))
             {
                 return true;
             }
@@ -892,14 +892,19 @@ namespace Surgery_1.Services.Implementations
             var gap = GetCurrentDayBreakTime(false, currentTime) - currentTime;
             return currentTime + gap;
         }
-        private bool SwapParamName(ref SurgeryShift longerShift, ref SurgeryShift shift, TimeSpan longerDuration, TimeSpan duration)
+        private bool SwapParamName(ref SurgeryShift longerShift, ref SurgeryShift shift, ref TimeSpan longerDuration, ref TimeSpan duration)
         {
-            var temp = new SurgeryShift();
+            var tempShift = new SurgeryShift();
+            var tempDuration = new TimeSpan();
             if (longerDuration < duration)
             {
-                temp = shift;
+                tempShift = shift;
                 shift = longerShift;
-                longerShift = temp;
+                longerShift = tempShift;
+
+                tempDuration = duration;
+                duration = longerDuration;
+                longerDuration = tempDuration;
                 return true;
             }
             else if (longerDuration > duration)
