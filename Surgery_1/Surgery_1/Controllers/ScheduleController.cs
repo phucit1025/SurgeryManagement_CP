@@ -88,7 +88,14 @@ namespace Surgery_1.Controllers
         public IActionResult GetAvailableRoom([FromBody]AvailableRoomParamViewModel param)
         {
             var results = _surgeryService.GetAvailableRoom(param.StartDate, param.EndDate);
-            return StatusCode(200, results);
+            if (results != null)
+            {
+                return StatusCode(200, results);
+            }
+            else
+            {
+                return StatusCode(400, "Time is not valid");
+            }
         }
 
         [HttpGet]

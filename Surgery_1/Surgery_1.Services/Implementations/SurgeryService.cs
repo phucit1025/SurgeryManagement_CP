@@ -492,6 +492,7 @@ namespace Surgery_1.Services.Implementations
             }
             return null;
         }
+
         #region Change Shift
         public bool ChangeFirstPriority(ShiftChangeViewModel newShift)
         {
@@ -571,6 +572,10 @@ namespace Surgery_1.Services.Implementations
 
         public List<int> GetAvailableRoom(DateTime start, DateTime end)
         {
+            if (IsValidTime(start, end))
+            {
+                return null;
+            }
             var rooms = _context.SurgeryRooms.Where(r => !r.IsDeleted);
             var roomId = new List<int>();
             foreach (var room in rooms)
@@ -902,16 +907,7 @@ namespace Surgery_1.Services.Implementations
         }
         private DateTime GetCurrentDayWorkingHour(bool isStartTime, DateTime currentDay)
         {
-            var hr = currentDay.Hour;
-            var min = currentDay.Minute;
-            var sec = currentDay.Second;
-            var milliSec = currentDay.Millisecond;
-
-            var midnight = currentDay
-                .AddHours(-hr)
-                .AddMinutes(-min)
-                .AddSeconds(-sec)
-                .AddMilliseconds(-milliSec);
+            var midnight = GetMidnight(currentDay);
             if (isStartTime)
             {
                 return midnight + new TimeSpan(7, 0, 0);
@@ -920,16 +916,8 @@ namespace Surgery_1.Services.Implementations
         }
         private DateTime GetCurrentDayBreakTime(bool isStartTime, DateTime currentDay)
         {
-            var hr = currentDay.Hour;
-            var min = currentDay.Minute;
-            var sec = currentDay.Second;
-            var milliSec = currentDay.Millisecond;
 
-            var midnight = currentDay
-                .AddHours(-hr)
-                .AddMinutes(-min)
-                .AddSeconds(-sec)
-                .AddMilliseconds(-milliSec);
+            var midnight = GetMidnight(currentDay);
             if (isStartTime)
             {
                 return midnight + new TimeSpan(11, 0, 0);
@@ -974,6 +962,33 @@ namespace Surgery_1.Services.Implementations
                 s.EstimatedStartDateTime.Value >= longerShift.EstimatedStartDateTime.Value)
                 .ToList();
             return shifts;
+        }
+        private DateTime GetMidnight(DateTime date)
+        {
+            var hr = date.Hour;
+            var min = date.Minute;
+            var sec = date.Second;
+            var milliSec = date.Millisecond;
+
+            var midnight = date
+                .AddHours(-hr)
+                .AddMinutes(-min)
+                .AddSeconds(-sec)
+                .AddMilliseconds(-milliSec);
+
+            return midnight;
+        }
+        private bool IsValidTime(DateTime start, DateTime end)
+        {
+            if (start.Day == start.Day)
+            {
+                var maximumStart = GetMidnight(start) + new TimeSpan(19, 0, 0);
+                if (start <= maximumStart)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         #endregion
     }
