@@ -79,6 +79,7 @@ namespace Surgery_1.Services.Implementations
                     continue;
                 shiftSupply.SurgeryShiftId = surgeryShift.Id;
                 shiftSupply.MedicalSupplyId = tmp.MedicalSupplyId;
+                shiftSupply.Quantity = tmp.Quantity;
                 _context.SurgeryShiftMedicalSupplies.Add(shiftSupply);
             }
             _context.SaveChanges();
