@@ -12,6 +12,8 @@ namespace Surgery_1.Data.ViewModels
         public DateTime ConfirmDate { get; set; }
         public DateTime ScheduleDate { get; set; }
 
+        public bool IsNormalSurgeryTime { get; set; }
+
         //Thời gian hoàn thành ca mổ dự kiến
         public float ExpectedSurgeryDuration { get; set; }
 
