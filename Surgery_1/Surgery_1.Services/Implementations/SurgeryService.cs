@@ -399,6 +399,7 @@ namespace Surgery_1.Services.Implementations
                     PriorityNumber = shift.PriorityNumber,
                     EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
                     EstimatedEndDateTime = shift.EstimatedEndDateTime.Value,
+                    StatusName = _context.Statuses.Find(shift.StatusId).Name,
                     PatientName = shift.Patient.FullName,
                     SurgeonNames = shift.SurgeryShiftSurgeons.Select(s => s.Surgeon.FullName).ToList()
                 });
