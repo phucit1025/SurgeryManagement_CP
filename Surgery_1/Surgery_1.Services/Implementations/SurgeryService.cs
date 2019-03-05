@@ -88,22 +88,22 @@ namespace Surgery_1.Services.Implementations
                         if (shift.ScheduleDate > shift.ConfirmDate.Date)
                         {
                             notificationMakeSchedule.Append("Surgery Shift (ID:  "
-                            + shift.SurgeryShiftId + ") is created successfully at Room "
-                            + roomEmptyId + " on " + shift.ScheduleDate.ToShortDateString() + " after Expected Time: " 
+                            + shift.SurgeryShiftId + ") is created successfully at "
+                            + _context.SurgeryRooms.Find(roomEmptyId).Name + " on " + shift.ScheduleDate.ToShortDateString() + " after Expected Time: " 
                             + shift.ConfirmDate.Date + "<br/>");
 
                         } 
                         else if (shift.ScheduleDate == shift.ConfirmDate.Date)
                         {
                             notificationMakeSchedule.Append("Surgery Shift (ID: "
-                            + shift.SurgeryShiftId + ") is created successfully at Room "
-                            + roomEmptyId + " on " + shift.ScheduleDate.ToShortDateString() + "<br/>");
+                            + shift.SurgeryShiftId + ") is created successfully at "
+                            + _context.SurgeryRooms.Find(roomEmptyId).Name + " on " + shift.ScheduleDate.ToShortDateString() + "<br/>");
                         }
                         else if (shift.IsNormalSurgeryTime && shift.ProposedStartDateTime != null & shift.ProposedEndDateTime != null)
                         {
                             notificationMakeSchedule.Append("Surgery Shift (ID: "
-                            + shift.SurgeryShiftId + ") (Proposed Time) is created normally schedule at Room "
-                            + roomEmptyId + " on " + startEstimatedTime.Date.ToShortDateString() + "<br/>");
+                            + shift.SurgeryShiftId + ") (Proposed Time) is created normally schedule at "
+                            + _context.SurgeryRooms.Find(roomEmptyId).Name + " on " + startEstimatedTime.Date.ToShortDateString() + "<br/>");
                         }
                     }
                     else  // TODO: 1.2. Nếu ko thì tìm các khoảng trống hợp lệ của từng phòng
@@ -121,22 +121,22 @@ namespace Surgery_1.Services.Implementations
                             if (shift.ScheduleDate > shift.ConfirmDate.Date)
                             {
                                 notificationMakeSchedule.Append("Surgery Shift (ID: "
-                                + shift.SurgeryShiftId + ") is created successfully at Room "
-                                + room.RoomId + " on " + shift.ScheduleDate.ToShortDateString() + " after Expected Time: "
+                                + shift.SurgeryShiftId + ") is created successfully at "
+                                + _context.SurgeryRooms.Find(room.RoomId).Name + " on " + shift.ScheduleDate.ToShortDateString() + " after Expected Time: "
                                 + shift.ConfirmDate.Date + "<br/>");
 
                             }
                             else if (shift.ScheduleDate == shift.ConfirmDate.Date)
                             {
                                 notificationMakeSchedule.Append("Surgery Shift (ID: "
-                                + shift.SurgeryShiftId + ") is created successfully at Room "
-                                + room.RoomId + " on " + shift.ScheduleDate.ToShortDateString() + "<br/>");
+                                + shift.SurgeryShiftId + ") is created successfully at "
+                                + _context.SurgeryRooms.Find(room.RoomId).Name + " on " + shift.ScheduleDate.ToShortDateString() + "<br/>");
                             }
                             else if (shift.IsNormalSurgeryTime && shift.ProposedStartDateTime != null & shift.ProposedEndDateTime != null)
                             {
                                 notificationMakeSchedule.Append("Surgery Shift (ID: "
-                                + shift.SurgeryShiftId + " (Proposed Time) is created normally schedule at Room "
-                                + room.RoomId + " on " + room.StartDateTime.Date.ToShortDateString() + "<br/>");
+                                + shift.SurgeryShiftId + " (Proposed Time) is created normally schedule at "
+                                + _context.SurgeryRooms.Find(room.RoomId).Name + " on " + room.StartDateTime.Date.ToShortDateString() + "<br/>");
                             }
                         }
                     }
@@ -149,8 +149,8 @@ namespace Surgery_1.Services.Implementations
                                 (shift.SurgeryShiftId, shift.ProposedStartDateTime.Value, shift.ProposedEndDateTime.Value, roomEmptyId);
 
                             notificationMakeSchedule.Append("Surgery Shift (ID: "
-                               + shift.SurgeryShiftId + ") is created successfully at Room "
-                               + roomEmptyId + " from " + shift.ProposedStartDateTime.Value
+                               + shift.SurgeryShiftId + ") is created successfully at "
+                               + _context.SurgeryRooms.Find(roomEmptyId).Name + " from " + shift.ProposedStartDateTime.Value
                                + " to " + shift.ProposedEndDateTime.Value
                                + " (Proposed Time)<br/>");
                     }
@@ -170,7 +170,7 @@ namespace Surgery_1.Services.Implementations
 
                             notificationMakeSchedule.Append("Surgery Shift (ID: "
                            + shift.SurgeryShiftId + ") is created successfully at Room "
-                           + room.RoomId + " from " + shift.ProposedStartDateTime.Value
+                           + _context.SurgeryRooms.Find(room.RoomId).Name + " from " + shift.ProposedStartDateTime.Value
                            + " to " + shift.ProposedEndDateTime.Value
                            + " (Proposed Time)<br/>");
                         }
@@ -184,7 +184,7 @@ namespace Surgery_1.Services.Implementations
 
                                 notificationMakeSchedule.Append("Surgery Shift (ID: "
                                + shift.SurgeryShiftId + ") is created successfully at Room "
-                               + roomProposed + " from " + shift.ProposedStartDateTime.Value
+                               + _context.SurgeryRooms.Find(roomProposed).Name + " from " + shift.ProposedStartDateTime.Value
                                + " to " + shift.ProposedEndDateTime.Value
                                + " (Proposed Time)<br/>");
                             }
