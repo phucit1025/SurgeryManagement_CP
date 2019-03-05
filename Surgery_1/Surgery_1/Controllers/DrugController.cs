@@ -25,5 +25,16 @@ namespace Surgery_1.Controllers
             _drugService.ImportDrug(drugs);
             return true;
         }
+
+        [HttpGet]
+        public IActionResult GetAllDrugs()
+        {
+            var result = _drugService.GetAllDrug();
+            if (!result.Any())
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
     }
 }

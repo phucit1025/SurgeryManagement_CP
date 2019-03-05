@@ -8,5 +8,6 @@ namespace Surgery_1.Services.Interfaces
     public interface IDrugService
     {
         void ImportDrug(ICollection<DrugViewModel> surgeryShift);
+        ICollection<DrugViewModel> GetAllDrug();
     }
 }

@@ -16,6 +16,22 @@ namespace Surgery_1.Services.Implementations
             this._context = _context;
         }
 
+        public ICollection<DrugViewModel> GetAllDrug()
+        {
+            var drugs = _context.Drugs;
+            var resuts = new List<DrugViewModel>();
+            foreach (var drug in drugs)
+            {
+                resuts.Add(new DrugViewModel()
+                {
+                    Id = drug.Id,
+                    Name = drug.DrugName,
+                    Unit = drug.Unit
+                });
+            }
+            return resuts;
+        }
+
         public void ImportDrug(ICollection<DrugViewModel> drugs)
         {
             foreach (var d in drugs)

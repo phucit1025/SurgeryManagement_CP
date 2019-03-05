@@ -9,11 +9,10 @@ namespace Surgery_1.Data.Entities
     {
         public int TreatmentReportId { get; set; }
         public int DrugId { get; set; }
-        public int Quantity { get; set; }
-        public bool IsMorning { get; set; } 
-        public bool IsAfternoon { get; set; } 
-        public bool IsEvening { get; set; } 
-        public bool IsNight { get; set; } 
+        public int MorningQuantity { get; set; } 
+        public int AfternoonQuantity { get; set; } 
+        public int EveningQuantity { get; set; } 
+        public int NightQuantity { get; set; } 
 
         [ForeignKey("TreatmentReportId")]
         public virtual TreatmentReport TreatmentReport { get; set; }

@@ -243,23 +243,41 @@ namespace Surgery_1.Services.Implementations
             var transaction = _appDbContext.Database.BeginTransaction();
             try
             {
-                var treatmentReport = new TreatmentReport()
+                if (treatmentReportViewModel.treatmentReportDrugs.Count > 0)
                 {
-                    IsDeleted = false,
-                    SurgeryShiftId = treatmentReportViewModel.ShiftId,
-                    ProgressiveDisease = treatmentReportViewModel.ProgressiveDisease,
-                    MedicalRequirement = treatmentReportViewModel.MedicalRequirement
-                };
-                _appDbContext.Add(treatmentReport);
-                _appDbContext.SaveChanges();
-                transaction.Commit();
-                return true;
+                    var treatmentReportDrugs = new List<TreatmentReportDrug>();
+                    foreach (var tmp in treatmentReportViewModel.treatmentReportDrugs)
+                    {
+                        var rs = new TreatmentReportDrug()
+                        {
+                            DrugId = tmp.DrugId,
+                            MorningQuantity = tmp.MorningQuantity,
+                            AfternoonQuantity = tmp.AfternoonQuantity,
+                            EveningQuantity = tmp.EveningQuantity,
+                            NightQuantity = tmp.NightQuantity
+                        };
+                        treatmentReportDrugs.Add(rs);
+                    }
+                    //create treatment
+                    var treatmentReport = new TreatmentReport()
+                    {
+                        IsDeleted = false,
+                        SurgeryShiftId = treatmentReportViewModel.ShiftId,
+                        ProgressiveDisease = treatmentReportViewModel.ProgressiveDisease,
+                        TreatmentReportDrugs = treatmentReportDrugs
+                    };
+                    _appDbContext.Add(treatmentReport);
+                    _appDbContext.SaveChanges();
+                    transaction.Commit();
+                    return true;
+                }
             }
             catch (Exception)
             {
                 transaction.Rollback();
                 return false;
             }
+            return false;
         }
 
         public ICollection<TreatmentReportViewModel> GetTreatmentReportByShiftId(int shiftId)
@@ -271,13 +289,25 @@ namespace Surgery_1.Services.Implementations
             var result = new List<TreatmentReportViewModel>();
             foreach (var treatmentReport in treatmentReports)
             {
+                var treatmentReportDrugs = new List<TreatmentReportDrugViewModel>();
+                foreach (var treatmentReportDrug in treatmentReport.TreatmentReportDrugs)
+                {
+                    treatmentReportDrugs.Add(new TreatmentReportDrugViewModel()
+                    {
+                        Name = treatmentReportDrug.Drug.DrugName,
+                        MorningQuantity = treatmentReportDrug.MorningQuantity,
+                        AfternoonQuantity = treatmentReportDrug.AfternoonQuantity,
+                        EveningQuantity = treatmentReportDrug.EveningQuantity,
+                        NightQuantity = treatmentReportDrug.NightQuantity,
+                    });
+                }
                 result.Add(new TreatmentReportViewModel()
                 {
                     Id = treatmentReport.Id,
                     DateCreated = treatmentReport.DateCreated.Value.ToString("dd-MM-yyyy HH:mm:ss"),
                     ProgressiveDisease = treatmentReport.ProgressiveDisease,
-                    MedicalRequirement = treatmentReport.MedicalRequirement,
-                    ShiftId = treatmentReport.SurgeryShiftId
+                    ShiftId = treatmentReport.SurgeryShiftId,
+                    treatmentReportDrugs = treatmentReportDrugs
                 });
             }
             return result;
@@ -300,9 +330,106 @@ namespace Surgery_1.Services.Implementations
                     Id = treatmentReport.Id,
                     DateCreated = treatmentReport.DateCreated.Value.ToString("dd-MM-yyyy HH:mm:ss"),
                     ProgressiveDisease = treatmentReport.ProgressiveDisease,
-                    MedicalRequirement = treatmentReport.MedicalRequirement,
                     ShiftId = treatmentReport.SurgeryShiftId
                 });
+            }
+            return result;
+        }
+
+        public bool CreateTreatmentReportDrugs(ICollection<TreatmentReportDrugViewModel> treatmentReportDrugViewModels)
+        {
+            int id = treatmentReportDrugViewModels.First().TreatmentReportId;
+            try {
+                foreach (var tmp in treatmentReportDrugViewModels)
+                {
+                    var rs = new TreatmentReportDrug()
+                    {
+                        DrugId = tmp.DrugId,
+                        TreatmentReportId = tmp.TreatmentReportId,
+                        MorningQuantity = tmp.MorningQuantity,
+                        AfternoonQuantity = tmp.AfternoonQuantity,
+                        EveningQuantity = tmp.EveningQuantity,
+                        NightQuantity = tmp.NightQuantity
+                    };
+                    _appDbContext.TreatmentReportDrugs.Add(rs);
+                }
+                _appDbContext.SaveChanges();
+                return true;
+            } catch (Exception)
+            {
+                var treatmentReport = _appDbContext.TreatmentReports.Find(id);
+                _appDbContext.TreatmentReports.Remove(treatmentReport);
+                _appDbContext.SaveChanges();
+                return false;
+            }
+        }
+
+        public ICollection<TreatmentReportDrugViewModel> GetDrugRequirementForNurse(int time, int shiftId)
+        {
+            var result = new List<TreatmentReportDrugViewModel>();
+            int today = UtilitiesDate.ConvertDateToNumber(DateTime.Now);
+            switch (time)
+            {   
+                case 1:
+                    var rs1 = _appDbContext.TreatmentReportDrugs.Where(a => !a.IsDeleted
+                            && a.MorningQuantity > 0
+                            && a.TreatmentReport.SurgeryShiftId == shiftId
+                            && UtilitiesDate.ConvertDateToNumber(a.TreatmentReport.DateCreated.Value) == today)
+                            .ToList();
+                    foreach (var item in rs1)
+                    {
+                        result.Add(new TreatmentReportDrugViewModel()
+                        {
+                            Name = item.Drug.DrugName,
+                            MorningQuantity = item.MorningQuantity
+                        });
+                    }
+                    break;
+                case 2:
+                    var rs2 = _appDbContext.TreatmentReportDrugs.Where(a => !a.IsDeleted
+                            && a.AfternoonQuantity > 0
+                            && a.TreatmentReport.SurgeryShiftId == shiftId
+                            && UtilitiesDate.ConvertDateToNumber(a.TreatmentReport.DateCreated.Value) == today)
+                            .ToList();
+                    foreach (var item in rs2)
+                    {
+                        result.Add(new TreatmentReportDrugViewModel()
+                        {
+                            Name = item.Drug.DrugName,
+                            AfternoonQuantity = item.AfternoonQuantity
+                        });
+                    }
+                    break;
+                case 3:
+                    var rs3 = _appDbContext.TreatmentReportDrugs.Where(a => !a.IsDeleted
+                            && a.EveningQuantity > 0
+                            && a.TreatmentReport.SurgeryShiftId == shiftId
+                            && UtilitiesDate.ConvertDateToNumber(a.TreatmentReport.DateCreated.Value) == today)
+                            .ToList();
+                    foreach (var item in rs3)
+                    {
+                        result.Add(new TreatmentReportDrugViewModel()
+                        {
+                            Name = item.Drug.DrugName,
+                            EveningQuantity = item.EveningQuantity
+                        });
+                    }
+                    break;
+                case 4:
+                    var rs4 = _appDbContext.TreatmentReportDrugs.Where(a => !a.IsDeleted
+                            && a.NightQuantity > 0
+                            && a.TreatmentReport.SurgeryShiftId == shiftId
+                            && UtilitiesDate.ConvertDateToNumber(a.TreatmentReport.DateCreated.Value) == today)
+                            .ToList();
+                    foreach (var item in rs4)
+                    {
+                        result.Add(new TreatmentReportDrugViewModel()
+                        {
+                            Name = item.Drug.DrugName,
+                            NightQuantity = item.NightQuantity
+                        });
+                    }
+                    break;
             }
             return result;
         }
