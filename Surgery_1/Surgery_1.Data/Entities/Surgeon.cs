@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Surgery_1.Data.Entities
 {
-    public class Surgeon : BaseEntity
+    public class Doctor : BaseEntity
     {
-        public Surgeon()
+        public Doctor()
         {
             SurgeryShiftSurgeons = new HashSet<SurgeryShiftSurgeon>();
         }
