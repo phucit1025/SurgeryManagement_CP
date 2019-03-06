@@ -19,7 +19,14 @@ namespace Surgery_1.Controllers
         {
             this._surgeryService = _surgeryService;
         }
+        
+        [HttpPost]
+        public IActionResult SetIntraoperativeStatus(int shiftId)
+        {
+            var result = _surgeryService.SetIntraoperativeStatus(shiftId);
 
+            return StatusCode(200, result);
+        }
         [HttpPost]
         public IActionResult SetPostoperativeStatus(int shiftId, string roomPost, string bedPost)
         {

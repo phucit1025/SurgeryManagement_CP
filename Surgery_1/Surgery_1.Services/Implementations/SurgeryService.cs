@@ -42,6 +42,21 @@ namespace Surgery_1.Services.Implementations
             }
             return false;
         }
+        public bool SetIntraoperativeStatus(int shiftId)
+        {
+            var shift = _context.SurgeryShifts.Find(shiftId);
+            var status = _context.Statuses.Where(s => s.Name.Equals("Intraoperative")).FirstOrDefault();
+            if (shift != null)
+            {
+                shift.StatusId = status.Id;
+                shift.ActualStartDateTime = DateTime.Now;
+                _context.Update(shift);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
         public int CheckPostStatus(int shiftId)
         {
             var shift = _context.SurgeryShifts.Find(shiftId);
