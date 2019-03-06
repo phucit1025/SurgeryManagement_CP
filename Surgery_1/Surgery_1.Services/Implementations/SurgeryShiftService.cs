@@ -60,6 +60,10 @@ namespace Surgery_1.Services.Implementations
                 shift.SurgeryShiftCode = s.SurgeryShiftCode;
                 shift.ProposedStartDateTime = s.ProposedStartDateTime;
                 shift.ProposedEndDateTime = s.ProposedEndDateTime;
+                if (s.ProposedStartDateTime != null && s.ProposedEndDateTime != null)
+                {
+                    shift.IsNormalSurgeryTime = false; //Cờ để phân biệt mổ chỉ định vs mổ bình thường, mặc định là true
+                }
                 _context.SurgeryShifts.Add(shift);
             }
             _context.SaveChanges();

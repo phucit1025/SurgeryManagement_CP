@@ -1,4 +1,5 @@
-﻿using Surgery_1.Data.ViewModels;
+﻿using Surgery_1.Data.Entities;
+using Surgery_1.Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,5 +20,7 @@ namespace Surgery_1.Services.Interfaces
         bool CreateTreatmenReport(TreatmentReportViewModel treatmentReportViewModel);
         ICollection<TreatmentReportViewModel> GetTreatmentReportByShiftId(int shiftId);
         ICollection<TreatmentReportViewModel> GetTodayTreatmentReportByShiftId(int shiftId);
+        bool CreateTreatmentReportDrugs(ICollection<TreatmentReportDrugViewModel> treatmentReportDrugViewModels);
+        ICollection<TreatmentReportDrugViewModel> GetDrugRequirementForNurse(int time, int shiftId);
     }
 }

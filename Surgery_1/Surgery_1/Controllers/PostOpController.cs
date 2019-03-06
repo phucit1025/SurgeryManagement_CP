@@ -122,6 +122,17 @@ namespace Surgery_1.Controllers
         public IActionResult CreateTreatmenReport(TreatmentReportViewModel treatmentReportViewModel)
         {
             var result = _postOpService.CreateTreatmenReport(treatmentReportViewModel);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
+        }
+
+        [HttpPost]
+        public IActionResult CreateTreatmentReportDrugs([FromBody]ICollection<TreatmentReportDrugViewModel> treatmentReportDrugs)
+        {
+            var result = _postOpService.CreateTreatmentReportDrugs(treatmentReportDrugs);
             if (result)
             {
                 return Ok(result);
@@ -150,5 +161,17 @@ namespace Surgery_1.Controllers
             }
             return Ok(result);
         }
+
+        [HttpGet]
+        public IActionResult GetDrugRequirementForNurse(int time, int shiftId)
+        {
+            var result = _postOpService.GetDrugRequirementForNurse(time, shiftId);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
     }
 }

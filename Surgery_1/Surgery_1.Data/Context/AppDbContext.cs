@@ -11,8 +11,8 @@ namespace Surgery_1.Data.Context
     {
         public AppDbContext() : base((new DbContextOptionsBuilder())
             .UseLazyLoadingProxies()
-            .UseSqlServer(@"Data Source=45.119.212.145;Initial Catalog=Surgery_CP_App;persist security info=True;Integrated Security=False;TrustServerCertificate=False;uid=sa;password=zaq@123;Trusted_Connection=False;MultipleActiveResultSets=true;")
-            //.UseSqlServer(@"Data Source=HOANH-TUNG\SQLEXPRESS;Initial Catalog=Surgery_CP_App;persist security info=True;Integrated Security=False;TrustServerCertificate=False;uid=sa;password=password;Trusted_Connection=False;MultipleActiveResultSets=true;")
+            //.UseSqlServer(@"Data Source=45.119.212.145;Initial Catalog=Surgery_CP_App;persist security info=True;Integrated Security=False;TrustServerCertificate=False;uid=sa;password=zaq@123;Trusted_Connection=False;MultipleActiveResultSets=true;")
+            .UseSqlServer(@"Data Source=HOANH-TUNG\SQLEXPRESS;Initial Catalog=Surgery_CP_App;persist security info=True;Integrated Security=False;TrustServerCertificate=False;uid=sa;password=password;Trusted_Connection=False;MultipleActiveResultSets=true;")
             .Options)
         {
 
@@ -33,6 +33,8 @@ namespace Surgery_1.Data.Context
         public DbSet<Ekip> Ekips { get; set; }
         public DbSet<EkipMember> EkipMembers { get; set; }
         public DbSet<SurgeryShiftSurgeon> SurgeryShiftSurgeons { get; set; }
+        public DbSet<Drug> Drugs { get; set; }
+        public DbSet<TreatmentReportDrug> TreatmentReportDrugs { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder builder)

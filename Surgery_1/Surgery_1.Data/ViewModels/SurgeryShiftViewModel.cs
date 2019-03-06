@@ -14,6 +14,7 @@ namespace Surgery_1.Data.ViewModels
         public string PatientName { get; set; }
         public DateTime EstimatedStartDateTime { get; set; }
         public DateTime EstimatedEndDateTime { get; set; }
+        public string StatusName { get; set; }
     }
 
 
