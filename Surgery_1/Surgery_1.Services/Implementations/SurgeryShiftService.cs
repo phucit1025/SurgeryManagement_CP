@@ -60,8 +60,7 @@ namespace Surgery_1.Services.Implementations
                 shift.SurgeryShiftCode = s.SurgeryShiftCode;
                 shift.ProposedStartDateTime = s.ProposedStartDateTime;
                 shift.ProposedEndDateTime = s.ProposedEndDateTime;
-                //TODO: add Doctor Id to surgery shift
-                //shift.DoctorId = s.DoctorId;
+                shift.TreatmentDoctorId = s.DoctorId;
                 if (s.ProposedStartDateTime != null && s.ProposedEndDateTime != null)
                 {
                     shift.IsNormalSurgeryTime = false; //Cờ để phân biệt mổ chỉ định vs mổ bình thường, mặc định là true
