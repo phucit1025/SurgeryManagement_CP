@@ -21,6 +21,6 @@ namespace Surgery_1.Services.Interfaces
         ICollection<TreatmentReportViewModel> GetTreatmentReportByShiftId(int shiftId);
         ICollection<TreatmentReportViewModel> GetTodayTreatmentReportByShiftId(int shiftId);
         bool CreateTreatmentReportDrugs(ICollection<TreatmentReportDrugViewModel> treatmentReportDrugViewModels);
-        ICollection<TreatmentReportDrugViewModel> GetDrugRequirementForNurse(int time, int shiftId);
+        TreatmentMedication GetDrugRequirementForNurse(int shiftId);
     }
 }
