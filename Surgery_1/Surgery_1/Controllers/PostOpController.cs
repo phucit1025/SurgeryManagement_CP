@@ -108,6 +108,28 @@ namespace Surgery_1.Controllers
         }
 
         [HttpGet]
+        public IActionResult FindPostOpSurgeryBySurgeryId(string id)
+        {   
+            var result = _postOpService.FindPostOpSurgeryBySurgeryId(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public IActionResult FindPostOpSurgeryByDoctorName(string doctorName)
+        {
+            var result = _postOpService.FindPostOpSurgeryByDoctorName(doctorName);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
+        [HttpGet]
         public IActionResult EditRoomBedSurgeryShift(int surgeryShiftId, string room, string bed)
         {
             var result = _postOpService.EditRoomBedSurgeryShift(surgeryShiftId, room, bed);
@@ -130,6 +152,18 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
+        public IActionResult EditTreatmentReport(TreatmentReportViewModel treatmentReportViewModel)
+        {
+            var result = _postOpService.EditTreatmentReport(treatmentReportViewModel);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
+        }
+        
+
+       [HttpPost]
         public IActionResult CreateTreatmentReportDrugs([FromBody]ICollection<TreatmentReportDrugViewModel> treatmentReportDrugs)
         {
             var result = _postOpService.CreateTreatmentReportDrugs(treatmentReportDrugs);
@@ -173,5 +207,15 @@ namespace Surgery_1.Controllers
             return Ok(result);
         }
 
+        [HttpGet]
+        public IActionResult GetTreatmentReportById(int id)
+        {
+            var result = _postOpService.GetTreatmentReportById(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
     }
 }
