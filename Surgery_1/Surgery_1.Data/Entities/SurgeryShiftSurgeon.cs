@@ -13,6 +13,6 @@ namespace Surgery_1.Data.Entities
         [ForeignKey("SurgeryShiftId")]
         public virtual SurgeryShift SurgeryShift { get; set; }
         [ForeignKey("SurgeonId")]
-        public virtual Surgeon Surgeon { get; set; }
+        public virtual Doctor Surgeon { get; set; }
     }
 }

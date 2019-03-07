@@ -7,6 +7,6 @@ namespace Surgery_1.Repositories.Interfaces
 {
     public interface ISurgeryRepository: IBaseSurgeryRepository
     {
-        Surgeon GetSurgeon();
+        Doctor GetSurgeon();
     }
 }
