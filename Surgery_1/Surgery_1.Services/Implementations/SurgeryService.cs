@@ -18,6 +18,8 @@ namespace Surgery_1.Services.Implementations
         TimeSpan startAMWorkingHour = TimeSpan.FromHours(ConstantVariable.StartAMWorkingHour);
         TimeSpan endPMWorkingHour = TimeSpan.FromHours(ConstantVariable.EndPMWorkingHour);
         private readonly string POST_STATUS = "Postoperative";
+        private readonly string FINISHED_STATUS = "Finished";
+        private readonly string RECOVERY_STATUS = "Recovery";
         private readonly AppDbContext _context;
         StringBuilder notificationMakeSchedule = new StringBuilder();
 
@@ -26,7 +28,7 @@ namespace Surgery_1.Services.Implementations
         {
             this._context = _context;
         }
-        public bool SetPostoperativeStatus(int shiftId, string roomPost, string bedPost)
+        public bool SetPostoperativeStatus(int shiftId, string roomPost, string bedPost, string actualEndDateTime)
         {
             var shift = _context.SurgeryShifts.Find(shiftId);
             var status = _context.Statuses.Where(s => s.Name.Equals("Postoperative")).FirstOrDefault();
@@ -35,21 +37,37 @@ namespace Surgery_1.Services.Implementations
                 shift.StatusId = status.Id;
                 shift.PostRoomName = roomPost;
                 shift.PostBedName = bedPost;
-                shift.ActualEndDateTime = DateTime.Now;
+                shift.ActualEndDateTime = DateTime.ParseExact(actualEndDateTime, "yyyy-MM-dd HH:mm",
+                                       System.Globalization.CultureInfo.InvariantCulture);
                 _context.Update(shift);
                 _context.SaveChanges();
                 return true;
             }
             return false;
         }
-        public bool SetIntraoperativeStatus(int shiftId)
+        public bool SetIntraoperativeStatus(int shiftId, string actualStartDateTime)
         {
             var shift = _context.SurgeryShifts.Find(shiftId);
             var status = _context.Statuses.Where(s => s.Name.Equals("Intraoperative")).FirstOrDefault();
             if (shift != null)
             {
                 shift.StatusId = status.Id;
-                shift.ActualStartDateTime = DateTime.Now;
+                shift.ActualStartDateTime = DateTime.ParseExact(actualStartDateTime, "yyyy-MM-dd HH:mm",
+                                       System.Globalization.CultureInfo.InvariantCulture);
+                _context.Update(shift);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public bool SetFinishedStatus(int shiftId)
+        {
+            var shift = _context.SurgeryShifts.Find(shiftId);
+            var status = _context.Statuses.Where(s => s.Name.Equals("Finished")).FirstOrDefault();
+            if (shift != null)
+            {
+                shift.StatusId = status.Id;
                 _context.Update(shift);
                 _context.SaveChanges();
                 return true;
@@ -74,7 +92,19 @@ namespace Surgery_1.Services.Implementations
             }
             return result;
         }
+        public bool CheckRecoveryStatus(int shiftId)
+        {
+            var shift = _context.SurgeryShifts.Find(shiftId);
+            if (shift != null)
+            {
+                if (shift.Status.Name.Equals(RECOVERY_STATUS, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return true;
+                }
+            }
 
+            return false;
+        }
         public StringBuilder MakeScheduleList()
         {
             var shifts = GetSurgeryShiftsNoSchedule();
@@ -402,7 +432,7 @@ namespace Surgery_1.Services.Implementations
         {
             var results = new List<SurgeryShiftViewModel>();
             foreach (var shift in _context.SurgeryShifts
-                .Where(s => (s.EstimatedStartDateTime != null)
+                .Where(s => (s.EstimatedStartDateTime != null && s.EstimatedEndDateTime != null)
                 && (UtilitiesDate.ConvertDateToNumber(s.EstimatedStartDateTime.Value) == dateNumber) //mm/dd/YYYY
                 && (s.SurgeryRoomId == surgeryRoomId))
                 .OrderBy(s => s.EstimatedStartDateTime))
@@ -414,6 +444,8 @@ namespace Surgery_1.Services.Implementations
                     PriorityNumber = shift.PriorityNumber,
                     EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
                     EstimatedEndDateTime = shift.EstimatedEndDateTime.Value,
+                    ActualStartDateTime = shift.ActualStartDateTime,
+                    ActualEndDateTime = shift.ActualEndDateTime,
                     StatusName = _context.Statuses.Find(shift.StatusId).Name,
                     PatientName = shift.Patient.FullName,
                     SurgeonNames = shift.SurgeryShiftSurgeons.Select(s => s.Surgeon.FullName).ToList()

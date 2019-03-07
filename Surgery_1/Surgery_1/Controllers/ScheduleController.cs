@@ -21,16 +21,24 @@ namespace Surgery_1.Controllers
         }
         
         [HttpPost]
-        public IActionResult SetIntraoperativeStatus(int shiftId)
+        public IActionResult SetIntraoperativeStatus(int shiftId, string actualStartDateTime)
         {
-            var result = _surgeryService.SetIntraoperativeStatus(shiftId);
+            var result = _surgeryService.SetIntraoperativeStatus(shiftId, actualStartDateTime);
 
             return StatusCode(200, result);
         }
         [HttpPost]
-        public IActionResult SetPostoperativeStatus(int shiftId, string roomPost, string bedPost)
+        public IActionResult SetPostoperativeStatus(int shiftId, string roomPost, string bedPost, string actualEndDateTime)
         {
-            var result = _surgeryService.SetPostoperativeStatus(shiftId, roomPost, bedPost);
+            var result = _surgeryService.SetPostoperativeStatus(shiftId, roomPost, bedPost, actualEndDateTime);
+
+            return StatusCode(200, result);
+        }
+
+        [HttpPost]
+        public IActionResult SetFinishedStatus(int shiftId)
+        {
+            var result = _surgeryService.SetFinishedStatus(shiftId);
 
             return StatusCode(200, result);
         }
@@ -38,6 +46,12 @@ namespace Surgery_1.Controllers
         public IActionResult CheckPostStatus(int shiftId)
         {
             var result = _surgeryService.CheckPostStatus(shiftId);
+            return StatusCode(200, result);
+        }
+        [HttpGet]
+        public IActionResult CheckRecoveryStatus(int shiftId)
+        {
+            var result = _surgeryService.CheckRecoveryStatus(shiftId);
             return StatusCode(200, result);
         }
 
