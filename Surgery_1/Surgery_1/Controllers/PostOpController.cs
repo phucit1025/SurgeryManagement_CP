@@ -122,7 +122,7 @@ namespace Surgery_1.Controllers
         public IActionResult CreateTreatmenReport(TreatmentReportViewModel treatmentReportViewModel)
         {
             var result = _postOpService.CreateTreatmenReport(treatmentReportViewModel);
-            if (result != null)
+            if (result)
             {
                 return Ok(result);
             }
@@ -163,9 +163,9 @@ namespace Surgery_1.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetDrugRequirementForNurse(int time, int shiftId)
+        public IActionResult GetDrugRequirementForNurse(int shiftId)
         {
-            var result = _postOpService.GetDrugRequirementForNurse(time, shiftId);
+            var result = _postOpService.GetDrugRequirementForNurse(shiftId);
             if (result == null)
             {
                 return NotFound();

@@ -364,10 +364,28 @@ namespace Surgery_1.Services.Implementations
             }
         }
 
-        public ICollection<TreatmentReportDrugViewModel> GetDrugRequirementForNurse(int time, int shiftId)
+        public TreatmentMedication GetDrugRequirementForNurse(int shiftId)
         {
-            var result = new List<TreatmentReportDrugViewModel>();
+            var drugs = new List<TreatmentReportDrugViewModel>();
             int today = UtilitiesDate.ConvertDateToNumber(DateTime.Now);
+            int now = DateTime.Now.Hour;
+            int time;
+            if (now >= 5 && now < 11)
+            {
+                time = 1;
+            }
+            else if (now >= 11 && now < 15)
+            {
+                time = 2;
+            }
+            else if (now >= 15 && now < 20)
+            {
+                time = 3;
+            }
+            else
+            {
+                time = 4;
+            }
             switch (time)
             {   
                 case 1:
@@ -378,7 +396,7 @@ namespace Surgery_1.Services.Implementations
                             .ToList();
                     foreach (var item in rs1)
                     {
-                        result.Add(new TreatmentReportDrugViewModel()
+                        drugs.Add(new TreatmentReportDrugViewModel()
                         {
                             Name = item.Drug.DrugName,
                             MorningQuantity = item.MorningQuantity
@@ -393,7 +411,7 @@ namespace Surgery_1.Services.Implementations
                             .ToList();
                     foreach (var item in rs2)
                     {
-                        result.Add(new TreatmentReportDrugViewModel()
+                        drugs.Add(new TreatmentReportDrugViewModel()
                         {
                             Name = item.Drug.DrugName,
                             AfternoonQuantity = item.AfternoonQuantity
@@ -408,7 +426,7 @@ namespace Surgery_1.Services.Implementations
                             .ToList();
                     foreach (var item in rs3)
                     {
-                        result.Add(new TreatmentReportDrugViewModel()
+                        drugs.Add(new TreatmentReportDrugViewModel()
                         {
                             Name = item.Drug.DrugName,
                             EveningQuantity = item.EveningQuantity
@@ -423,7 +441,7 @@ namespace Surgery_1.Services.Implementations
                             .ToList();
                     foreach (var item in rs4)
                     {
-                        result.Add(new TreatmentReportDrugViewModel()
+                        drugs.Add(new TreatmentReportDrugViewModel()
                         {
                             Name = item.Drug.DrugName,
                             NightQuantity = item.NightQuantity
@@ -431,6 +449,11 @@ namespace Surgery_1.Services.Implementations
                     }
                     break;
             }
+            var result = new TreatmentMedication()
+            {
+                drugs = drugs,
+                time = time
+            };
             return result;
         }
     }

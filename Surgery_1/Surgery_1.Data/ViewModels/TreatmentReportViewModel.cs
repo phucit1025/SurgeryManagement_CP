@@ -24,4 +24,10 @@ namespace Surgery_1.Data.ViewModels
         public int EveningQuantity { get; set; }
         public int NightQuantity { get; set; }
     }
+
+    public class TreatmentMedication
+    {
+        public int time { get; set; }
+        public ICollection<TreatmentReportDrugViewModel> drugs { get; set; }
+    }
 }

@@ -61,6 +61,8 @@ namespace Surgery_1.Data.Entities
         public virtual Status Status { get; set; }
         [ForeignKey("EkipId")]
         public virtual Ekip Ekip { get; set; }
+        [ForeignKey("TreatmentDoctorId")]
+        public virtual Doctor TreatmentDoctor { get; set; }
 
         public virtual ICollection<SurgeryShiftMedicalSupply> SurgeryShiftMedicalSupplies { get; set; }
         public virtual ICollection<HealthCareReport> HealthCareReports { get; set; }
