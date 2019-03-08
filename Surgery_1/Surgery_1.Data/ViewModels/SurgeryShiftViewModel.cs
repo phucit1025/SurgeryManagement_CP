@@ -61,7 +61,7 @@ namespace Surgery_1.Data.ViewModels
 
         public int SurgeryCatalogID { get; set; }
         public String SurgeryShiftCode { get; set; }
-        public int SurgeonId { get; set; }
+        public int DoctorId { get; set; }
         public DateTime? ProposedStartDateTime { get; set; }
         public DateTime? ProposedEndDateTime { get; set; }
 
