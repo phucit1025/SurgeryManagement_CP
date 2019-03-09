@@ -12,10 +12,13 @@ namespace Surgery_1.Services.Interfaces
         ICollection<SurgeryRoomViewModel> GetSurgeryRooms();
         ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int surgeryRoomId, int dateNumber);
         StringBuilder MakeScheduleList();
-        
+
         //After make schedule
-        bool SetPostoperativeStatus(int shiftId, string roomPost, string postBed);
+        bool SetPostoperativeStatus(int shiftId, string roomPost, string postBed, string actualEndDateTime);
+        bool SetIntraoperativeStatus(int shiftId, string actualStartDateTime);
+        bool SetFinishedStatus(int shiftId);
         int CheckPostStatus(int shiftId);
+        bool CheckRecoveryStatus(int shiftId);
 
 
         // Lấy những ca mổ cần lên lịch theo ngày
@@ -29,7 +32,7 @@ namespace Surgery_1.Services.Interfaces
         bool ChangeFirstPriority(ShiftChangeViewModel newShift);
         bool ChangeSchedule(ShiftScheduleChangeViewModel newShift);
         List<int> GetAvailableRoom(DateTime start, DateTime end);
-        List<AvailableRoomViewModel> GetAvailableRoom(int hour, int minute);
+        List<AvailableRoomViewModel> GetAvailableRoom(int hour, int minute, int? longerShiftId = null, List<int> shiftIds = null);
         bool ChangeShiftStatus(ShiftStatusChangeViewModel currentShift);
         SwapShiftResultViewModel SwapShift(int shift1Id, int shift2Id);
         List<int> GetSwapableShiftIds();

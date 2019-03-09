@@ -48,6 +48,7 @@ namespace Surgery_1.Data.Entities
         public int? SurgeryCatalogId { get; set; }
         public int? StatusId { get; set; }
         public int? EkipId { get; set; }
+        public int? TreatmentDoctorId { get; set; }
 
         public string EkipIndex { get; set; }
 

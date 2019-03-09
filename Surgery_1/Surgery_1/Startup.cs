@@ -47,9 +47,9 @@ namespace Surgery_1
 
             services.Configure<IdentityOptions>(options =>
             {
-                options.Password.RequiredLength = 6;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequiredLength = 4;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequiredUniqueChars = 0;
 
                 options.Lockout.AllowedForNewUsers = false;
@@ -64,6 +64,7 @@ namespace Surgery_1
             services.AddScoped<IMedicalSupplyConfirmService, MedicalSupplyConfirmService>();
             services.AddScoped<ISurgeryShiftService, SurgeryShiftService>();
             services.AddScoped<IDrugService, DrugService>();
+            services.AddScoped<IAccountService, AccountService>();
             #endregion
 
             #region JWT Config
@@ -140,7 +141,9 @@ namespace Surgery_1
             app.UseMvc();
 
             #region Init Users
-            InitIdentities(serviceProvider, "Admin", "admin1@gmail.com", "Zaq@123");
+            InitIdentities(serviceProvider, "MedicalSupplier", "supplier1", "zxc@123456");
+            InitIdentities(serviceProvider, "HospitalStaff", "hospital_staff1", "zxc@123456");
+            InitIdentities(serviceProvider, "ChiefNurse", "cnurse1", "zxc@123456");
             #endregion
 
         }
