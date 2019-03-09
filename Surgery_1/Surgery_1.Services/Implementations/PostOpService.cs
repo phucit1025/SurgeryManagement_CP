@@ -351,6 +351,7 @@ namespace Surgery_1.Services.Implementations
                         AfternoonQuantity = treatmentReportDrug.AfternoonQuantity,
                         EveningQuantity = treatmentReportDrug.EveningQuantity,
                         NightQuantity = treatmentReportDrug.NightQuantity,
+                        Unit = treatmentReportDrug.Drug.Unit,
                     });
                 }
                 result.Add(new TreatmentReportViewModel()
@@ -544,13 +545,29 @@ namespace Surgery_1.Services.Implementations
             {
                 
                 TreatmentReportDrug treatmentReportDrug = _appDbContext.TreatmentReportDrugs.Find(treatmentReportDrugViewModel.Id);
-                treatmentReportDrug.DrugId = treatmentReportDrugViewModel.DrugId;
-                treatmentReportDrug.MorningQuantity = treatmentReportDrugViewModel.MorningQuantity;
-                treatmentReportDrug.AfternoonQuantity = treatmentReportDrugViewModel.AfternoonQuantity;
-                treatmentReportDrug.EveningQuantity = treatmentReportDrugViewModel.EveningQuantity;
-                treatmentReportDrug.NightQuantity = treatmentReportDrugViewModel.NightQuantity;
-                treatmentReportDrugs.Add(treatmentReportDrug);
-                _appDbContext.Update(treatmentReportDrug);
+                if (treatmentReportDrug != null)
+                {
+                    treatmentReportDrug.DrugId = treatmentReportDrugViewModel.DrugId;
+                    treatmentReportDrug.MorningQuantity = treatmentReportDrugViewModel.MorningQuantity;
+                    treatmentReportDrug.AfternoonQuantity = treatmentReportDrugViewModel.AfternoonQuantity;
+                    treatmentReportDrug.EveningQuantity = treatmentReportDrugViewModel.EveningQuantity;
+                    treatmentReportDrug.NightQuantity = treatmentReportDrugViewModel.NightQuantity;
+                    treatmentReportDrugs.Add(treatmentReportDrug);
+                    _appDbContext.TreatmentReportDrugs.Update(treatmentReportDrug);
+                } else
+                {
+                    treatmentReportDrug = new TreatmentReportDrug()
+                    {
+                        DrugId = treatmentReportDrugViewModel.DrugId,
+                        MorningQuantity = treatmentReportDrugViewModel.MorningQuantity,
+                        AfternoonQuantity = treatmentReportDrugViewModel.AfternoonQuantity,
+                        EveningQuantity = treatmentReportDrugViewModel.EveningQuantity,
+                        NightQuantity = treatmentReportDrugViewModel.NightQuantity,
+                        TreatmentReportId = treatmentReportDrugViewModel.TreatmentReportId,
+                    };
+                    treatmentReportDrugs.Add(treatmentReportDrug);
+                }
+                
                 _appDbContext.SaveChanges();
             }
             treatmentReport.TreatmentReportDrugs = treatmentReportDrugs;
