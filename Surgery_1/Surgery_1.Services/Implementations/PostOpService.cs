@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Surgery_1.Data.Context;
 using Surgery_1.Data.Entities;
@@ -9,20 +11,22 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
+using Surgery_1.Services.Extensions;
 
 namespace Surgery_1.Services.Implementations
 {
     public class PostOpService : IPostOpService
     {
         private readonly int RECOVERY_STATE = 6;
-        private CultureInfo provider = CultureInfo.InvariantCulture;
         private readonly AppDbContext _appDbContext;
-        private readonly ILogger _logger;
-        public PostOpService(AppDbContext _appDbContext, ILogger<PostOpService> _logger)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public PostOpService(AppDbContext appDbContext, IHttpContextAccessor httpContextAccessor)
         {
-            this._appDbContext = _appDbContext;
-            this._logger = _logger;
+            _appDbContext = appDbContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public ICollection<HealthCareReportViewModel> GetHealthCareRerportBySurgeryShiftId(int surgeryShiftId)
@@ -51,8 +55,10 @@ namespace Surgery_1.Services.Implementations
 
         public ICollection<PostOpSurgeryShiftViewModel> GetSurgeryByStatusId(int statusId)
         {
+            var guid = _httpContextAccessor.HttpContext.User.GetGuid();
+            var nurse = _appDbContext.UserInfo.Where(a => a.GuId == guid).FirstOrDefault();
             var surgeryShifts = _appDbContext.SurgeryShifts
-                .Where(a => a.StatusId == statusId && a.IsDeleted == false)
+                .Where(a => a.StatusId == statusId && a.IsDeleted == false && a.NurseId == nurse.Id)
                 .ToList();
             var results = new List<PostOpSurgeryShiftViewModel>();
             foreach (var shift in surgeryShifts)
@@ -132,7 +138,7 @@ namespace Surgery_1.Services.Implementations
         {
             var healthCareReport = new HealthCareReport()
             {
-               CareReason = healthCareReportViewModel.VisitReason,
+                CareReason = healthCareReportViewModel.VisitReason,
                 EventContent = healthCareReportViewModel.EventContent,
                 CareContent = healthCareReportViewModel.CareContent,
                 WoundCondition = healthCareReportViewModel.WoundCondition,
@@ -151,7 +157,7 @@ namespace Surgery_1.Services.Implementations
 
                 return false;
             }
-                
+
         }
 
         public bool SoftDeleteHealthCareReport(int healthCareReportId)
@@ -188,31 +194,63 @@ namespace Surgery_1.Services.Implementations
             }
             catch (Exception ex)
             {
-                _logger.LogInformation("Update Health Care Report", ex);
                 return false;
             }
 
         }
 
-        public ICollection<PostOpSurgeryShiftViewModel> FindPostOpSurgeryByPatientName(string name)
+        public ICollection<PostOpSurgeryShiftViewModel> FindPostOpSurgeryByQuery(string query)
         {
-            var surgeryShifts = _appDbContext.SurgeryShifts
-                .Where(a => (a.StatusId == 3 || a.StatusId == 4) && a.IsDeleted == false && a.Patient.FullName.Contains(name))
-                .ToList();
-            var results = new List<PostOpSurgeryShiftViewModel>();
-            foreach (var shift in surgeryShifts)
+            try
             {
-                results.Add(new PostOpSurgeryShiftViewModel()
+                int id;
+                bool success = Int32.TryParse(query, out id);
+                if (success)
                 {
-                    Id = shift.Id,
-                    CatalogName = shift.SurgeryCatalog.Name,
-                    PatientName = shift.Patient.FullName,
-                    PostOpBed = shift.PostBedName,
-                    PatientAge = DateTime.Now.Year - shift.Patient.YearOfBirth,
-                    PatientGender = shift.Patient.Gender
-                });
+                    var surgeryShifts = _appDbContext.SurgeryShifts
+                     .Where(a => (a.StatusId == 5 || a.StatusId == 6) && a.IsDeleted == false
+                     && (a.Patient.FullName.Contains(query) || a.Id == id || a.TreatmentDoctor.FullName.Contains(query)))
+                     .ToList();
+                    var results = new List<PostOpSurgeryShiftViewModel>();
+                    foreach (var shift in surgeryShifts)
+                    {
+                        results.Add(new PostOpSurgeryShiftViewModel()
+                        {
+                            Id = shift.Id,
+                            CatalogName = shift.SurgeryCatalog.Name,
+                            PatientName = shift.Patient.FullName,
+                            PostOpBed = shift.PostBedName,
+                            PatientAge = DateTime.Now.Year - shift.Patient.YearOfBirth,
+                            PatientGender = shift.Patient.Gender
+                        });
+                    }
+                    return results;
+                } else
+                {
+                    var surgeryShifts = _appDbContext.SurgeryShifts
+                     .Where(a => (a.StatusId == 5 || a.StatusId == 6) && a.IsDeleted == false
+                     && (a.Patient.FullName.Contains(query) || a.TreatmentDoctor.FullName.Contains(query)))
+                     .ToList();
+                    var results = new List<PostOpSurgeryShiftViewModel>();
+                    foreach (var shift in surgeryShifts)
+                    {
+                        results.Add(new PostOpSurgeryShiftViewModel()
+                        {
+                            Id = shift.Id,
+                            CatalogName = shift.SurgeryCatalog.Name,
+                            PatientName = shift.Patient.FullName,
+                            PostOpBed = shift.PostBedName,
+                            PatientAge = DateTime.Now.Year - shift.Patient.YearOfBirth,
+                            PatientGender = shift.Patient.Gender
+                        });
+                    }
+                    return results;
+                }
             }
-            return results;
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public bool EditRoomBedSurgeryShift(int surgeryShiftId, string room, string bed)
@@ -243,10 +281,10 @@ namespace Surgery_1.Services.Implementations
             var transaction = _appDbContext.Database.BeginTransaction();
             try
             {
-                if (treatmentReportViewModel.treatmentReportDrugs.Count > 0)
+                if (treatmentReportViewModel.TreatmentReportDrugs.Count > 0)
                 {
                     var treatmentReportDrugs = new List<TreatmentReportDrug>();
-                    foreach (var tmp in treatmentReportViewModel.treatmentReportDrugs)
+                    foreach (var tmp in treatmentReportViewModel.TreatmentReportDrugs)
                     {
                         var rs = new TreatmentReportDrug()
                         {
@@ -293,12 +331,14 @@ namespace Surgery_1.Services.Implementations
                 foreach (var treatmentReportDrug in treatmentReport.TreatmentReportDrugs)
                 {
                     treatmentReportDrugs.Add(new TreatmentReportDrugViewModel()
-                    {
+                    {   
+                        Id = treatmentReportDrug.Id,
                         Name = treatmentReportDrug.Drug.DrugName,
                         MorningQuantity = treatmentReportDrug.MorningQuantity,
                         AfternoonQuantity = treatmentReportDrug.AfternoonQuantity,
                         EveningQuantity = treatmentReportDrug.EveningQuantity,
                         NightQuantity = treatmentReportDrug.NightQuantity,
+                        Unit = treatmentReportDrug.Drug.Unit,
                     });
                 }
                 result.Add(new TreatmentReportViewModel()
@@ -307,7 +347,7 @@ namespace Surgery_1.Services.Implementations
                     DateCreated = treatmentReport.DateCreated.Value.ToString("dd-MM-yyyy HH:mm:ss"),
                     ProgressiveDisease = treatmentReport.ProgressiveDisease,
                     ShiftId = treatmentReport.SurgeryShiftId,
-                    treatmentReportDrugs = treatmentReportDrugs
+                    TreatmentReportDrugs = treatmentReportDrugs
                 });
             }
             return result;
@@ -456,5 +496,80 @@ namespace Surgery_1.Services.Implementations
             };
             return result;
         }
+
+        public TreatmentReportViewModel GetTreatmentReportById(int id)
+        {
+            var treatmentReport = _appDbContext.TreatmentReports.Find(id);
+            var treatmentReportDrugs = new List<TreatmentReportDrugViewModel>();
+            foreach (var treatmentReportDrug in treatmentReport.TreatmentReportDrugs)
+            {
+                treatmentReportDrugs.Add(new TreatmentReportDrugViewModel()
+                {   
+                    Id = treatmentReportDrug.Id,
+                    Name = treatmentReportDrug.Drug.DrugName,
+                    MorningQuantity = treatmentReportDrug.MorningQuantity,
+                    AfternoonQuantity = treatmentReportDrug.AfternoonQuantity,
+                    EveningQuantity = treatmentReportDrug.EveningQuantity,
+                    NightQuantity = treatmentReportDrug.NightQuantity,
+                });
+            }
+            var result = new TreatmentReportViewModel()
+            {
+                Id = treatmentReport.Id,
+                ProgressiveDisease = treatmentReport.ProgressiveDisease,
+                TreatmentReportDrugs = treatmentReportDrugs
+            };
+            return result;
+        }
+
+        public bool EditTreatmentReport(TreatmentReportViewModel treatmentReportViewModel)
+        {
+            var treatmentReport = _appDbContext.TreatmentReports.Find(treatmentReportViewModel.Id);
+            treatmentReport.ProgressiveDisease = treatmentReportViewModel.ProgressiveDisease;
+
+            var treatmentReportDrugs = new List<TreatmentReportDrug>();
+            foreach (var treatmentReportDrugViewModel in treatmentReportViewModel.TreatmentReportDrugs)
+            {
+                
+                TreatmentReportDrug treatmentReportDrug = _appDbContext.TreatmentReportDrugs.Find(treatmentReportDrugViewModel.Id);
+                if (treatmentReportDrug != null)
+                {
+                    treatmentReportDrug.DrugId = treatmentReportDrugViewModel.DrugId;
+                    treatmentReportDrug.MorningQuantity = treatmentReportDrugViewModel.MorningQuantity;
+                    treatmentReportDrug.AfternoonQuantity = treatmentReportDrugViewModel.AfternoonQuantity;
+                    treatmentReportDrug.EveningQuantity = treatmentReportDrugViewModel.EveningQuantity;
+                    treatmentReportDrug.NightQuantity = treatmentReportDrugViewModel.NightQuantity;
+                    treatmentReportDrugs.Add(treatmentReportDrug);
+                    _appDbContext.TreatmentReportDrugs.Update(treatmentReportDrug);
+                } else
+                {
+                    treatmentReportDrug = new TreatmentReportDrug()
+                    {
+                        DrugId = treatmentReportDrugViewModel.DrugId,
+                        MorningQuantity = treatmentReportDrugViewModel.MorningQuantity,
+                        AfternoonQuantity = treatmentReportDrugViewModel.AfternoonQuantity,
+                        EveningQuantity = treatmentReportDrugViewModel.EveningQuantity,
+                        NightQuantity = treatmentReportDrugViewModel.NightQuantity,
+                        TreatmentReportId = treatmentReportDrugViewModel.TreatmentReportId,
+                    };
+                    treatmentReportDrugs.Add(treatmentReportDrug);
+                }
+                
+                _appDbContext.SaveChanges();
+            }
+            treatmentReport.TreatmentReportDrugs = treatmentReportDrugs;
+            try
+            {
+                _appDbContext.Update(treatmentReport);
+                _appDbContext.SaveChanges();
+                return true;
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }
+        }
+
+        
     }
 }

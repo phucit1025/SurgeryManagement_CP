@@ -35,6 +35,7 @@ namespace Surgery_1.Data.Context
         public DbSet<SurgeryShiftSurgeon> SurgeryShiftSurgeons { get; set; }
         public DbSet<Drug> Drugs { get; set; }
         public DbSet<TreatmentReportDrug> TreatmentReportDrugs { get; set; }
+        public DbSet<UserInfo> UserInfo { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder builder)

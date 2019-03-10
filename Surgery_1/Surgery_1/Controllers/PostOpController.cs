@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Surgery_1.Data.ViewModels;
@@ -19,6 +20,7 @@ namespace Surgery_1.Controllers
             this._postOpService = postOpService;
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult GetSurgeryByStatusId(int statusId)
         {
@@ -97,9 +99,9 @@ namespace Surgery_1.Controllers
         }
 
         [HttpGet]
-        public IActionResult FindPostOpSurgeryByPatientName(string name)
+        public IActionResult FindPostOpSurgeryByQuery(string query)
         {
-            var result = _postOpService.FindPostOpSurgeryByPatientName(name);
+            var result = _postOpService.FindPostOpSurgeryByQuery(query);
             if (result == null)
             {
                 return NotFound();
@@ -130,6 +132,18 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
+        public IActionResult EditTreatmentReport(TreatmentReportViewModel treatmentReportViewModel)
+        {
+            var result = _postOpService.EditTreatmentReport(treatmentReportViewModel);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
+        }
+        
+
+       [HttpPost]
         public IActionResult CreateTreatmentReportDrugs([FromBody]ICollection<TreatmentReportDrugViewModel> treatmentReportDrugs)
         {
             var result = _postOpService.CreateTreatmentReportDrugs(treatmentReportDrugs);
@@ -173,5 +187,15 @@ namespace Surgery_1.Controllers
             return Ok(result);
         }
 
+        [HttpGet]
+        public IActionResult GetTreatmentReportById(int id)
+        {
+            var result = _postOpService.GetTreatmentReportById(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
     }
 }

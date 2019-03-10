@@ -14,7 +14,7 @@ namespace Surgery_1.Services.Interfaces
         StringBuilder MakeScheduleList();
 
         //After make schedule
-        bool SetPostoperativeStatus(int shiftId, string roomPost, string postBed, string actualEndDateTime);
+        bool SetPostoperativeStatus(int shiftId, string roomPost, string postBed, string actualEndDateTime, int nurseId);
         bool SetIntraoperativeStatus(int shiftId, string actualStartDateTime);
         bool SetFinishedStatus(int shiftId);
         int CheckPostStatus(int shiftId);
