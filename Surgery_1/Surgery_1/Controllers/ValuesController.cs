@@ -32,5 +32,27 @@ namespace Surgery_1.Controllers
             return StatusCode(400);
         }
 
+        [HttpPost]
+        public IActionResult NurseLogin([FromBody] LoginViewModel loginViewModel)
+        {
+            var result = _accountService.AuthenticateNurse(loginViewModel.Username, loginViewModel.Password).Result;
+            if (!result.IsNullOrEmpty())
+            {
+                var role = _accountService.GetRoleName(loginViewModel.Username).Result;
+                return StatusCode(200, new { username = loginViewModel.Username, token = result });
+            }
+            return StatusCode(400);
+        }
+
+        [HttpGet]
+        public IActionResult GetAllNurse()
+        {
+            var result = _accountService.GetAllNurse().Result;
+            if (!result.IsNullOrEmpty())
+            {
+                return Ok(result);
+            }
+            return NotFound();
+        }
     }
 }

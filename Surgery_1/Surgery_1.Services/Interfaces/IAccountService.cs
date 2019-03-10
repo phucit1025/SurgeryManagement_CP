@@ -11,5 +11,8 @@ namespace Surgery_1.Services.Interfaces
         string Login(LoginViewModel loginViewModel);
         Task<string> Authenticate(string email, string password);
         Task<string> GetRoleName(string email);
+        Task<string> AuthenticateNurse(string email, string password);
+        Task<ICollection<NurseViewModel>> GetAllNurse();
+
     }
 }

@@ -49,6 +49,8 @@ namespace Surgery_1.Data.Entities
         public int? StatusId { get; set; }
         public int? EkipId { get; set; }
         public int? TreatmentDoctorId { get; set; }
+        public int? NurseId { get; set; }
+
 
         public string EkipIndex { get; set; }
 
@@ -64,6 +66,8 @@ namespace Surgery_1.Data.Entities
         public virtual Ekip Ekip { get; set; }
         [ForeignKey("TreatmentDoctorId")]
         public virtual Doctor TreatmentDoctor { get; set; }
+        [ForeignKey("NurseId")]
+        public virtual UserInfo Nurse { get; set; }
 
         public virtual ICollection<SurgeryShiftMedicalSupply> SurgeryShiftMedicalSupplies { get; set; }
         public virtual ICollection<HealthCareReport> HealthCareReports { get; set; }

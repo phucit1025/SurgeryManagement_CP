@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Surgery_1.Data.ViewModels;
@@ -19,6 +20,7 @@ namespace Surgery_1.Controllers
             this._postOpService = postOpService;
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult GetSurgeryByStatusId(int statusId)
         {
@@ -97,31 +99,9 @@ namespace Surgery_1.Controllers
         }
 
         [HttpGet]
-        public IActionResult FindPostOpSurgeryByPatientName(string name)
+        public IActionResult FindPostOpSurgeryByQuery(string query)
         {
-            var result = _postOpService.FindPostOpSurgeryByPatientName(name);
-            if (result == null)
-            {
-                return NotFound();
-            }
-            return Ok(result);
-        }
-
-        [HttpGet]
-        public IActionResult FindPostOpSurgeryBySurgeryId(string id)
-        {   
-            var result = _postOpService.FindPostOpSurgeryBySurgeryId(id);
-            if (result == null)
-            {
-                return NotFound();
-            }
-            return Ok(result);
-        }
-
-        [HttpGet]
-        public IActionResult FindPostOpSurgeryByDoctorName(string doctorName)
-        {
-            var result = _postOpService.FindPostOpSurgeryByDoctorName(doctorName);
+            var result = _postOpService.FindPostOpSurgeryByQuery(query);
             if (result == null)
             {
                 return NotFound();

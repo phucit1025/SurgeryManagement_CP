@@ -33,6 +33,38 @@ namespace Surgery_1.Services.Implementations
             return loginViewModel.Username;
         }
 
+        public async Task<string> AuthenticateNurse(string email, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                var hasRightPassword = await _userManager.CheckPasswordAsync(user, password);
+
+                if (hasRightPassword)
+                {
+                    var roleList = await _userManager.GetRolesAsync(user);
+                    var userRole = roleList.FirstOrDefault();
+
+                    if (userRole.Equals("Nurse"))
+                    {
+                        #region Set Claims
+                        var claims = new List<Claim>() {
+                        new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                        new Claim(new ClaimsIdentityOptions().UserIdClaimType, user.Id),
+                        };
+                        claims.Add(new Claim(ClaimTypes.Role, userRole));
+                        claims.Add(new Claim(new ClaimsIdentityOptions().SecurityStampClaimType, await _userManager.GetSecurityStampAsync(user)));
+                        claims.Add(new Claim("IsEmailConfirmed", user.EmailConfirmed.ToString()));
+                        #endregion
+
+                        return BuildJwtToken(claims);
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public async Task<string> Authenticate(string email, string password)
         {
             var user = await _userManager.FindByEmailAsync(email);
@@ -82,5 +114,26 @@ namespace Surgery_1.Services.Implementations
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        public async Task<ICollection<NurseViewModel>> GetAllNurse()
+        {
+            var nurses = _context.UserInfo.Where(a => a.IsDeleted == false).ToList();
+            var result = new List<NurseViewModel>();
+            foreach (var item in nurses)
+            {
+                var user = _context.Users.Find(item.GuId);
+                var roleList = await _userManager.GetRolesAsync(user);
+                var userRole = roleList.FirstOrDefault();
+                if (userRole.Equals("Nurse"))
+                {
+                    var nurse = new NurseViewModel()
+                    {
+                        FullName = item.FullName,
+                        Id = item.Id
+                    };
+                    result.Add(nurse);
+                }
+            }
+            return result;
+        }
     }
 }
