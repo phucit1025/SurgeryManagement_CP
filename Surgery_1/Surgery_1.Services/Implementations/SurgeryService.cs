@@ -638,7 +638,7 @@ namespace Surgery_1.Services.Implementations
                 {
                     var affectedShifts = shifts.Where(s =>
                                                     (s.EstimatedStartDateTime.Value >= start && s.EstimatedStartDateTime.Value < end)
-                                                    || (s.EstimatedEndDateTime.Value > start && s.EstimatedEndDateTime.Value<=end))
+                                                    || (s.EstimatedEndDateTime.Value > start && s.EstimatedEndDateTime.Value <= end))
                                                     .ToList();
                     if (!affectedShifts.Any())
                     {
@@ -1066,20 +1066,24 @@ namespace Surgery_1.Services.Implementations
                 }
                 else
                 {
-                    result.Succeed = ChangeSchedule(new ShiftScheduleChangeViewModel()
+                    var shiftChangeVM = new ShiftScheduleChangeViewModel()
                     {
                         Id = shift.Id,
                         RoomId = longerShift.SurgeryRoomId.Value,
                         EstimatedStartDateTime = longerShift.EstimatedStartDateTime.Value,
                         EstimatedEndDateTime = longerShift.EstimatedEndDateTime.Value
-                    });//Shift
-                    result.Succeed = ChangeSchedule(new ShiftScheduleChangeViewModel()
+                    };
+
+                    var longerShiftChangeVM = new ShiftScheduleChangeViewModel()
                     {
                         Id = longerShift.Id,
                         RoomId = shift.SurgeryRoomId.Value,
                         EstimatedEndDateTime = shift.EstimatedStartDateTime.Value,
                         EstimatedStartDateTime = shift.EstimatedEndDateTime.Value
-                    });//Longer Shift
+                    };
+
+                    result.Succeed = ChangeSchedule(shiftChangeVM);//Shift
+                    result.Succeed = ChangeSchedule(longerShiftChangeVM);//Longer Shift
 
                     return result;
                 }
@@ -1229,12 +1233,12 @@ namespace Surgery_1.Services.Implementations
 
         private bool IsNextTo(SurgeryShift shift, SurgeryShift longerShift)
         {
-            if(shift.SurgeryRoomId == longerShift.SurgeryRoomId)
+            if (shift.SurgeryRoomId == longerShift.SurgeryRoomId)
             {
-                var shifts = shift.SurgeryRoom.SurgeryShifts.Where(s => !s.IsDeleted).OrderBy(s=>s.EstimatedStartDateTime).ToList();
+                var shifts = shift.SurgeryRoom.SurgeryShifts.Where(s => !s.IsDeleted).OrderBy(s => s.EstimatedStartDateTime).ToList();
                 var shiftIndex = shifts.IndexOf(shift);
                 var longerShiftIndex = shifts.IndexOf(longerShift);
-                if(Math.Abs(shiftIndex-longerShiftIndex) == 1)
+                if (Math.Abs(shiftIndex - longerShiftIndex) == 1)
                 {
                     return true;
                 }
