@@ -29,8 +29,8 @@ namespace Surgery_1.Data.ViewModels
         public string Speciality { get; set; }
         public string SurgeryName { get; set; }
         public string SurgeryType { get; set; }
-        public string StartTime { get; set; }
-        public string EndTime { get; set; }
+        public DateTime? StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
 
         //Surgery Info
         //public List<EkipMemberViewModel> EkipMembers { get; set; }
@@ -61,7 +61,7 @@ namespace Surgery_1.Data.ViewModels
 
         public int SurgeryCatalogID { get; set; }
         public String SurgeryShiftCode { get; set; }
-        public int SurgeonId { get; set; }
+        public int DoctorId { get; set; }
         public DateTime? ProposedStartDateTime { get; set; }
         public DateTime? ProposedEndDateTime { get; set; }
 
