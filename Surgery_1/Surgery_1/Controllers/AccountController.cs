@@ -11,11 +11,11 @@ namespace Surgery_1.Controllers
 {
     [Route("api/Account/[action]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
 
-        public ValuesController(IAccountService _accountService)
+        public AccountController(IAccountService _accountService)
         {
             this._accountService = _accountService;
         }

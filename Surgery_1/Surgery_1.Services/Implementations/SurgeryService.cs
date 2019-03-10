@@ -18,7 +18,7 @@ namespace Surgery_1.Services.Implementations
         TimeSpan startAMWorkingHour = TimeSpan.FromHours(ConstantVariable.StartAMWorkingHour);
         TimeSpan endPMWorkingHour = TimeSpan.FromHours(ConstantVariable.EndPMWorkingHour);
         private readonly string POST_STATUS = "Postoperative";
-        private readonly string FINISHED_STATUS = "Finished";
+        private readonly string INTRA_STATUS = "Intraoperative";
         private readonly string RECOVERY_STATUS = "Recovery";
         private readonly AppDbContext _context;
         StringBuilder notificationMakeSchedule = new StringBuilder();
@@ -81,13 +81,13 @@ namespace Surgery_1.Services.Implementations
             int result = 0;
             if (shift != null)
             {
-                if (DateTime.Now > shift.EstimatedStartDateTime)
+                if (shift.Status.Name.Equals(INTRA_STATUS, StringComparison.CurrentCultureIgnoreCase))
                 {
                     result = 1; //Hiện nút khi ca mổ sau thời gian phẫu thuật
-                    if (shift.Status.Name.Equals(POST_STATUS, StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        result = 2; //Disable nút khi đã set status
-                    }
+                }
+                else if (shift.Status.Name.Equals(POST_STATUS, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    result = 2; //Disable nút khi đã set status
                 }
             }
             return result;
@@ -530,8 +530,8 @@ namespace Surgery_1.Services.Implementations
                     Speciality = shift.SurgeryCatalog.Speciality.Name,
                     SurgeryName = shift.SurgeryCatalog.Name,
                     SurgeryType = shift.SurgeryCatalog.Type,
-                    StartTime = $"{shift.EstimatedStartDateTime.Value.ToShortTimeString()} {shift.EstimatedStartDateTime.Value.ToShortDateString()}",
-                    EndTime = $"{shift.EstimatedEndDateTime.Value.ToShortTimeString()} {shift.EstimatedEndDateTime.Value.ToShortDateString()}",
+                    StartTime = shift.EstimatedStartDateTime,
+                    EndTime = shift.EstimatedEndDateTime,
                     //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
                     Procedure = shift.SurgeryCatalog.Procedure
                 };
