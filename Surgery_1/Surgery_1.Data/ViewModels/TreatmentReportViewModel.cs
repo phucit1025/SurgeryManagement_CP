@@ -23,6 +23,7 @@ namespace Surgery_1.Data.ViewModels
         public int AfternoonQuantity { get; set; }
         public int EveningQuantity { get; set; }
         public int NightQuantity { get; set; }
+        public string Unit { get; set; }
     }
 
     public class TreatmentMedication

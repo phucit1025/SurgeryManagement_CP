@@ -144,6 +144,8 @@ namespace Surgery_1
             InitIdentities(serviceProvider, "MedicalSupplier", "supplier1", "zxc@123456");
             InitIdentities(serviceProvider, "HospitalStaff", "hospital_staff1", "zxc@123456");
             InitIdentities(serviceProvider, "ChiefNurse", "cnurse1", "zxc@123456");
+            InitIdentities(serviceProvider, "Nurse", "nurse1", "zxc@123456");
+            InitIdentities(serviceProvider, "Nurse", "nurse2", "zxc@123456");
             #endregion
 
         }

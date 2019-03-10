@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Surgery_1.Data.Context;
 using Surgery_1.Data.Entities;
@@ -9,20 +11,22 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
+using Surgery_1.Services.Extensions;
 
 namespace Surgery_1.Services.Implementations
 {
     public class PostOpService : IPostOpService
     {
         private readonly int RECOVERY_STATE = 6;
-        private CultureInfo provider = CultureInfo.InvariantCulture;
         private readonly AppDbContext _appDbContext;
-        private readonly ILogger _logger;
-        public PostOpService(AppDbContext _appDbContext, ILogger<PostOpService> _logger)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public PostOpService(AppDbContext appDbContext, IHttpContextAccessor httpContextAccessor)
         {
-            this._appDbContext = _appDbContext;
-            this._logger = _logger;
+            _appDbContext = appDbContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public ICollection<HealthCareReportViewModel> GetHealthCareRerportBySurgeryShiftId(int surgeryShiftId)
@@ -51,8 +55,10 @@ namespace Surgery_1.Services.Implementations
 
         public ICollection<PostOpSurgeryShiftViewModel> GetSurgeryByStatusId(int statusId)
         {
+            var guid = _httpContextAccessor.HttpContext.User.GetGuid();
+            var nurse = _appDbContext.UserInfo.Where(a => a.GuId == guid).FirstOrDefault();
             var surgeryShifts = _appDbContext.SurgeryShifts
-                .Where(a => a.StatusId == statusId && a.IsDeleted == false)
+                .Where(a => a.StatusId == statusId && a.IsDeleted == false && a.NurseId == nurse.Id)
                 .ToList();
             var results = new List<PostOpSurgeryShiftViewModel>();
             foreach (var shift in surgeryShifts)
@@ -132,7 +138,7 @@ namespace Surgery_1.Services.Implementations
         {
             var healthCareReport = new HealthCareReport()
             {
-               CareReason = healthCareReportViewModel.VisitReason,
+                CareReason = healthCareReportViewModel.VisitReason,
                 EventContent = healthCareReportViewModel.EventContent,
                 CareContent = healthCareReportViewModel.CareContent,
                 WoundCondition = healthCareReportViewModel.WoundCondition,
@@ -151,7 +157,7 @@ namespace Surgery_1.Services.Implementations
 
                 return false;
             }
-                
+
         }
 
         public bool SoftDeleteHealthCareReport(int healthCareReportId)
@@ -188,82 +194,63 @@ namespace Surgery_1.Services.Implementations
             }
             catch (Exception ex)
             {
-                _logger.LogInformation("Update Health Care Report", ex);
                 return false;
             }
 
         }
 
-        public ICollection<PostOpSurgeryShiftViewModel> FindPostOpSurgeryByPatientName(string name)
-        {
-            var surgeryShifts = _appDbContext.SurgeryShifts
-                .Where(a => (a.StatusId == 5 || a.StatusId == 6) && a.IsDeleted == false && a.Patient.FullName.Contains(name))
-                .ToList();
-            var results = new List<PostOpSurgeryShiftViewModel>();
-            foreach (var shift in surgeryShifts)
-            {
-                results.Add(new PostOpSurgeryShiftViewModel()
-                {
-                    Id = shift.Id,
-                    CatalogName = shift.SurgeryCatalog.Name,
-                    PatientName = shift.Patient.FullName,
-                    PostOpBed = shift.PostBedName,
-                    PatientAge = DateTime.Now.Year - shift.Patient.YearOfBirth,
-                    PatientGender = shift.Patient.Gender
-                });
-            }
-            return results;
-        }
-
-        public ICollection<PostOpSurgeryShiftViewModel> FindPostOpSurgeryBySurgeryId(string idString)
+        public ICollection<PostOpSurgeryShiftViewModel> FindPostOpSurgeryByQuery(string query)
         {
             try
             {
-                int id = Convert.ToInt32(idString);
-                var surgeryShifts = _appDbContext.SurgeryShifts
-               .Where(a => (a.StatusId == 5 || a.StatusId == 6) && a.IsDeleted == false && a.Id == id)
-               .ToList();
-                var results = new List<PostOpSurgeryShiftViewModel>();
-                foreach (var shift in surgeryShifts)
+                int id;
+                bool success = Int32.TryParse(query, out id);
+                if (success)
                 {
-                    results.Add(new PostOpSurgeryShiftViewModel()
+                    var surgeryShifts = _appDbContext.SurgeryShifts
+                     .Where(a => (a.StatusId == 5 || a.StatusId == 6) && a.IsDeleted == false
+                     && (a.Patient.FullName.Contains(query) || a.Id == id || a.TreatmentDoctor.FullName.Contains(query)))
+                     .ToList();
+                    var results = new List<PostOpSurgeryShiftViewModel>();
+                    foreach (var shift in surgeryShifts)
                     {
-                        Id = shift.Id,
-                        CatalogName = shift.SurgeryCatalog.Name,
-                        PatientName = shift.Patient.FullName,
-                        PostOpBed = shift.PostBedName,
-                        PatientAge = DateTime.Now.Year - shift.Patient.YearOfBirth,
-                        PatientGender = shift.Patient.Gender
-                    });
+                        results.Add(new PostOpSurgeryShiftViewModel()
+                        {
+                            Id = shift.Id,
+                            CatalogName = shift.SurgeryCatalog.Name,
+                            PatientName = shift.Patient.FullName,
+                            PostOpBed = shift.PostBedName,
+                            PatientAge = DateTime.Now.Year - shift.Patient.YearOfBirth,
+                            PatientGender = shift.Patient.Gender
+                        });
+                    }
+                    return results;
+                } else
+                {
+                    var surgeryShifts = _appDbContext.SurgeryShifts
+                     .Where(a => (a.StatusId == 5 || a.StatusId == 6) && a.IsDeleted == false
+                     && (a.Patient.FullName.Contains(query) || a.TreatmentDoctor.FullName.Contains(query)))
+                     .ToList();
+                    var results = new List<PostOpSurgeryShiftViewModel>();
+                    foreach (var shift in surgeryShifts)
+                    {
+                        results.Add(new PostOpSurgeryShiftViewModel()
+                        {
+                            Id = shift.Id,
+                            CatalogName = shift.SurgeryCatalog.Name,
+                            PatientName = shift.Patient.FullName,
+                            PostOpBed = shift.PostBedName,
+                            PatientAge = DateTime.Now.Year - shift.Patient.YearOfBirth,
+                            PatientGender = shift.Patient.Gender
+                        });
+                    }
+                    return results;
                 }
-                return results;
             }
             catch (Exception)
             {
                 return null;
             }
-           
-        }
-
-        public ICollection<PostOpSurgeryShiftViewModel> FindPostOpSurgeryByDoctorName(string doctorName)
-        {
-            var surgeryShifts = _appDbContext.SurgeryShifts
-                .Where(a => (a.StatusId == 5 || a.StatusId == 6) && a.IsDeleted == false && a.TreatmentDoctor.FullName.Contains(doctorName))
-                .ToList();
-            var results = new List<PostOpSurgeryShiftViewModel>();
-            foreach (var shift in surgeryShifts)
-            {
-                results.Add(new PostOpSurgeryShiftViewModel()
-                {
-                    Id = shift.Id,
-                    CatalogName = shift.SurgeryCatalog.Name,
-                    PatientName = shift.Patient.FullName,
-                    PostOpBed = shift.PostBedName,
-                    PatientAge = DateTime.Now.Year - shift.Patient.YearOfBirth,
-                    PatientGender = shift.Patient.Gender
-                });
-            }
-            return results;
         }
 
         public bool EditRoomBedSurgeryShift(int surgeryShiftId, string room, string bed)
@@ -351,6 +338,7 @@ namespace Surgery_1.Services.Implementations
                         AfternoonQuantity = treatmentReportDrug.AfternoonQuantity,
                         EveningQuantity = treatmentReportDrug.EveningQuantity,
                         NightQuantity = treatmentReportDrug.NightQuantity,
+                        Unit = treatmentReportDrug.Drug.Unit,
                     });
                 }
                 result.Add(new TreatmentReportViewModel()
@@ -544,13 +532,29 @@ namespace Surgery_1.Services.Implementations
             {
                 
                 TreatmentReportDrug treatmentReportDrug = _appDbContext.TreatmentReportDrugs.Find(treatmentReportDrugViewModel.Id);
-                treatmentReportDrug.DrugId = treatmentReportDrugViewModel.DrugId;
-                treatmentReportDrug.MorningQuantity = treatmentReportDrugViewModel.MorningQuantity;
-                treatmentReportDrug.AfternoonQuantity = treatmentReportDrugViewModel.AfternoonQuantity;
-                treatmentReportDrug.EveningQuantity = treatmentReportDrugViewModel.EveningQuantity;
-                treatmentReportDrug.NightQuantity = treatmentReportDrugViewModel.NightQuantity;
-                treatmentReportDrugs.Add(treatmentReportDrug);
-                _appDbContext.Update(treatmentReportDrug);
+                if (treatmentReportDrug != null)
+                {
+                    treatmentReportDrug.DrugId = treatmentReportDrugViewModel.DrugId;
+                    treatmentReportDrug.MorningQuantity = treatmentReportDrugViewModel.MorningQuantity;
+                    treatmentReportDrug.AfternoonQuantity = treatmentReportDrugViewModel.AfternoonQuantity;
+                    treatmentReportDrug.EveningQuantity = treatmentReportDrugViewModel.EveningQuantity;
+                    treatmentReportDrug.NightQuantity = treatmentReportDrugViewModel.NightQuantity;
+                    treatmentReportDrugs.Add(treatmentReportDrug);
+                    _appDbContext.TreatmentReportDrugs.Update(treatmentReportDrug);
+                } else
+                {
+                    treatmentReportDrug = new TreatmentReportDrug()
+                    {
+                        DrugId = treatmentReportDrugViewModel.DrugId,
+                        MorningQuantity = treatmentReportDrugViewModel.MorningQuantity,
+                        AfternoonQuantity = treatmentReportDrugViewModel.AfternoonQuantity,
+                        EveningQuantity = treatmentReportDrugViewModel.EveningQuantity,
+                        NightQuantity = treatmentReportDrugViewModel.NightQuantity,
+                        TreatmentReportId = treatmentReportDrugViewModel.TreatmentReportId,
+                    };
+                    treatmentReportDrugs.Add(treatmentReportDrug);
+                }
+                
                 _appDbContext.SaveChanges();
             }
             treatmentReport.TreatmentReportDrugs = treatmentReportDrugs;
@@ -565,5 +569,7 @@ namespace Surgery_1.Services.Implementations
                 return false;
             }
         }
+
+        
     }
 }
