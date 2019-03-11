@@ -6,5 +6,6 @@ namespace Surgery_1.Services.Interfaces
     public interface IRoomService
     {
         ICollection<RoomViewModel> GetRooms();
+        RoomViewModel GetRoom(int id);
     }
 }
