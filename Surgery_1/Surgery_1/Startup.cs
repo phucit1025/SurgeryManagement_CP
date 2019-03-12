@@ -65,6 +65,7 @@ namespace Surgery_1
             services.AddScoped<ISurgeryShiftService, SurgeryShiftService>();
             services.AddScoped<IDrugService, DrugService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IRoomService, RoomService>();
             #endregion
 
             #region JWT Config

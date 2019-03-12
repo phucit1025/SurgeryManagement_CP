@@ -14,10 +14,12 @@ namespace Surgery_1.Controllers
     public class ScheduleController : ControllerBase
     {
         private readonly ISurgeryService _surgeryService;
+        private readonly IRoomService _roomService;
 
-        public ScheduleController(ISurgeryService _surgeryService)
+        public ScheduleController(ISurgeryService _surgeryService, IRoomService _roomService)
         {
             this._surgeryService = _surgeryService;
+            this._roomService = _roomService;
         }
 
         [HttpPost]
@@ -105,6 +107,12 @@ namespace Surgery_1.Controllers
         }
 
         #region Change Schedules
+        [HttpGet]
+        public IActionResult GetRoomInfo(int id)
+        {
+            return StatusCode(200, _roomService.GetRoom(id));
+        }
+
         [HttpPost]
         public IActionResult GetAvailableRoom([FromBody]AvailableRoomParamViewModel param)
         {
@@ -115,7 +123,14 @@ namespace Surgery_1.Controllers
             }
             else
             {
-                return StatusCode(400, "Time is not valid");
+                if (param.ForcedChange)
+                {
+                    return StatusCode(400, "There was an error during getting room.");
+                }
+                else
+                {
+                    return StatusCode(400, "Start Time cannot beyond 17:00.");
+                }
             }
         }
 

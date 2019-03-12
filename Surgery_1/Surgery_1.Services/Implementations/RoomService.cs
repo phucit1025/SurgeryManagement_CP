@@ -15,6 +15,16 @@ namespace Surgery_1.Services.Implementations
             _context = context;
         }
 
+        public RoomViewModel GetRoom(int id)
+        {
+            var room = _context.SurgeryRooms.Find(id);
+            return new RoomViewModel()
+            {
+                Id = id,
+                RoomName = room.Name
+            };
+        }
+
         public ICollection<RoomViewModel> GetRooms()
         {
             var rooms = _context.SurgeryRooms.Where(r => !r.IsDeleted);

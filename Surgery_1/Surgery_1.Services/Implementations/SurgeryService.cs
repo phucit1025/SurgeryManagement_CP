@@ -1090,7 +1090,6 @@ namespace Surgery_1.Services.Implementations
             }
             catch (DbUpdateException)
             {
-                //transaction.Rollback();
                 ChangeSchedule(new ShiftScheduleChangeViewModel()
                 {
                     Id = shift.Id,
