@@ -19,7 +19,7 @@ namespace Surgery_1.Services.Implementations
 {
     public class PostOpService : IPostOpService
     {
-        private readonly int RECOVERY_STATE = 6;
+        private readonly int RECOVERY_STATE = 4;
         private readonly AppDbContext _appDbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -208,7 +208,7 @@ namespace Surgery_1.Services.Implementations
                 if (success)
                 {
                     var surgeryShifts = _appDbContext.SurgeryShifts
-                     .Where(a => (a.StatusId == 5 || a.StatusId == 6) && a.IsDeleted == false
+                     .Where(a => (a.StatusId == 3 || a.StatusId == 4) && a.IsDeleted == false
                      && (a.Patient.FullName.Contains(query) || a.Id == id || a.TreatmentDoctor.FullName.Contains(query)))
                      .ToList();
                     var results = new List<PostOpSurgeryShiftViewModel>();
@@ -228,7 +228,7 @@ namespace Surgery_1.Services.Implementations
                 } else
                 {
                     var surgeryShifts = _appDbContext.SurgeryShifts
-                     .Where(a => (a.StatusId == 5 || a.StatusId == 6) && a.IsDeleted == false
+                     .Where(a => (a.StatusId == 3 || a.StatusId == 4) && a.IsDeleted == false
                      && (a.Patient.FullName.Contains(query) || a.TreatmentDoctor.FullName.Contains(query)))
                      .ToList();
                     var results = new List<PostOpSurgeryShiftViewModel>();

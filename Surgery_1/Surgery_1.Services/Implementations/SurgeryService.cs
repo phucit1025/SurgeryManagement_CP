@@ -1078,8 +1078,8 @@ namespace Surgery_1.Services.Implementations
                     {
                         Id = longerShift.Id,
                         RoomId = shift.SurgeryRoomId.Value,
-                        EstimatedEndDateTime = shift.EstimatedStartDateTime.Value,
-                        EstimatedStartDateTime = shift.EstimatedEndDateTime.Value
+                        EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
+                        EstimatedEndDateTime = shift.EstimatedEndDateTime.Value
                     };
 
                     result.Succeed = ChangeSchedule(shiftChangeVM);//Shift
