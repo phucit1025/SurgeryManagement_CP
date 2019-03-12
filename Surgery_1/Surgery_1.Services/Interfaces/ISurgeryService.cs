@@ -8,6 +8,7 @@ namespace Surgery_1.Services.Interfaces
     public interface ISurgeryService
     {
         #region Tung
+        //Making schedule
         List<AvailableRoomViewModel> GetAvailableSlotRoom(int dateNumber);
         ICollection<SurgeryRoomViewModel> GetSurgeryRooms();
         ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int surgeryRoomId, int dateNumber);

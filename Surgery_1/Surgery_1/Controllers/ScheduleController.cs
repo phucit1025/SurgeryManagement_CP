@@ -64,6 +64,13 @@ namespace Surgery_1.Controllers
             return StatusCode(200, result);
         }
 
+        [HttpPost]
+        public IActionResult GetEmptyRoomForDate(int scheduleDateNumber)
+        {
+            var result = _surgeryService.GetEmptyRoomForDate(scheduleDateNumber);
+            return StatusCode(200, result);
+        }
+
         [HttpGet]
         public IActionResult MakeScheduleList()
         {
@@ -75,6 +82,12 @@ namespace Surgery_1.Controllers
         public IActionResult GetAvailableSlotRoom(int dateNumber)
         {
             var result = _surgeryService.GetAvailableSlotRoom(dateNumber);
+            return StatusCode(200, result);
+        }
+        [HttpPost]
+        public IActionResult GetAvailableSlotRoomV2(int dateNumber)
+        {
+            var result = _surgeryService.GetAvailableSlotRoomV2(dateNumber);
             return StatusCode(200, result);
         }
 
