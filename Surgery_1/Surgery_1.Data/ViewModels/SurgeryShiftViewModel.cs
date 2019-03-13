@@ -9,7 +9,7 @@ namespace Surgery_1.Data.ViewModels
     {
         public int Id { get; set; }
         public string CatalogName { get; set; }
-        public int PriorityNumber { get; set; }
+        public int? PriorityNumber { get; set; }
         public List<string> SurgeonNames { get; set; }
         public string PatientName { get; set; }
         public DateTime EstimatedStartDateTime { get; set; }
@@ -126,5 +126,11 @@ namespace Surgery_1.Data.ViewModels
     {
         public int FirstShiftId { get; set; }
         public int SecondShiftId { get; set; }
+    }
+
+    public class EmerSurgeryShift
+    {
+        public DateTime startTime { get; set; }
+        public DateTime endTime { get; set; }
     }
 }

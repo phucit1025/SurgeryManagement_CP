@@ -14,6 +14,10 @@ namespace Surgery_1.Services.Interfaces
         ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int surgeryRoomId, int dateNumber);
         StringBuilder MakeScheduleList();
 
+        bool AddEmergencyShift(EmerSurgeryShift emerShift);
+        int GetAvailableRoomForProposedTime(DateTime startTime, DateTime endTime);
+        int GetAvailableRoomForProposedTimeV2(EmerSurgeryShift emerShift);
+
         //After make schedule
         bool SetPostoperativeStatus(int shiftId, string roomPost, string postBed, string actualEndDateTime, int nurseId);
         bool SetIntraoperativeStatus(int shiftId, string actualStartDateTime);
