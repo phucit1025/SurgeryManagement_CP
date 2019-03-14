@@ -221,14 +221,9 @@ namespace Surgery_1.Services.Implementations
                 if (success)
                 {
                     var surgeryShifts = _appDbContext.SurgeryShifts
-<<<<<<< HEAD
-                     .Where(a => (a.StatusId == 3 || a.StatusId == 4) && a.IsDeleted == false
-                     && (a.Patient.FullName.Contains(query) || a.Id == id || a.TreatmentDoctor.FullName.Contains(query)))
-=======
                      .Where(a => (a.StatusId == 5 || a.StatusId == 6) && a.IsDeleted == false
                      && (a.Patient.FullName.Contains(query) || a.Id == id || a.TreatmentDoctor.FullName.Contains(query))
                      && a.NurseId == nurse.Id)
->>>>>>> 808e5abc7f668c7e060239f4b69323a1d9b8d7d1
                      .ToList();
                     var results = new List<PostOpSurgeryShiftViewModel>();
                     foreach (var shift in surgeryShifts)

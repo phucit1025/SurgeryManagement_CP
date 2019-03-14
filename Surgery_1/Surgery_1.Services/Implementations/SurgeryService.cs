@@ -30,12 +30,9 @@ namespace Surgery_1.Services.Implementations
         {
             this._context = _context;
         }
-<<<<<<< HEAD
         #region Status
-        public bool SetPostoperativeStatus(int shiftId, string roomPost, string bedPost, string actualEndDateTime, int nurseId)
-=======
+
         public bool SetPostoperativeStatus(int shiftId, string roomPost, string bedPost, string actualEndDateTime)
->>>>>>> 808e5abc7f668c7e060239f4b69323a1d9b8d7d1
         {
             var shift = _context.SurgeryShifts.Find(shiftId);
             var status = _context.Statuses.Where(s => s.Name.Equals("Postoperative")).FirstOrDefault();
@@ -286,13 +283,13 @@ namespace Surgery_1.Services.Implementations
                     if (result.First().ActualStartDateTime != null)
                     {
                         end = result.First().ActualStartDateTime.Value;
-                    }          
+                    }
                     // Lấy khoảng ở ngoài các ca mổ [7h - 17h]
                     if (start != end)
                     { // Lấy khoảng từ 7h ->
                         AddAvailableSlotExceptBreakTime(availableRooms, start, end, room.Id);
                     }
-                    
+
                     start = result.Last().EstimatedEndDateTime.Value;
                     end = result.Last().ScheduleDate.Value + endPMWorkingHour;
                     //nếu có actual
@@ -323,11 +320,11 @@ namespace Surgery_1.Services.Implementations
                                 tmpStart = result.ElementAt(i + 1).ActualStartDateTime;
                             }
                             if (tmpEnd != tmpStart)
-                                {
-                                    start = tmpEnd.Value;
-                                    end = tmpStart.Value;
-                                    AddAvailableSlotExceptBreakTime(availableRooms, start, end, room.Id);
-                                }
+                            {
+                                start = tmpEnd.Value;
+                                end = tmpStart.Value;
+                                AddAvailableSlotExceptBreakTime(availableRooms, start, end, room.Id);
+                            }
                             //}
                         }
                     }
@@ -1284,7 +1281,7 @@ namespace Surgery_1.Services.Implementations
             else
             {
                 var roomIds = GetAvailableRoom(shift.EstimatedStartDateTime.Value, shift.EstimatedEndDateTime.Value, false);
-                if(roomIds.Any(r=>r == roomId))
+                if (roomIds.Any(r => r == roomId))
                 {
                     var changeRoomVM = new ShiftScheduleChangeViewModel()
                     {
@@ -1300,7 +1297,7 @@ namespace Surgery_1.Services.Implementations
                     var affectedShiftDuration = shift.EstimatedEndDateTime.Value - shift.EstimatedStartDateTime.Value;
                     var rooms = GetAvailableRoom(affectedShiftDuration.Hours, affectedShiftDuration.Minutes, shift.Id);
 
-                    if (rooms.Any(r=>r.RoomId == roomId))
+                    if (rooms.Any(r => r.RoomId == roomId))
                     {
                         var newSchedule = rooms.Where(r => r.RoomId == roomId).OrderBy(r => r.StartDateTime).FirstOrDefault();
                         var changeRoomVM = new ShiftScheduleChangeViewModel()
@@ -1463,8 +1460,8 @@ namespace Surgery_1.Services.Implementations
                 s.EstimatedStartDateTime.Value > DateTime.Now &&
                 s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase) &&
                 (s.EstimatedStartDateTime.Value < end && s.EstimatedStartDateTime.Value >= start) ||
-                (s.EstimatedEndDateTime.Value > start && s.EstimatedEndDateTime.Value <= end ))
-                .OrderBy(s=>s.EstimatedStartDateTime)
+                (s.EstimatedEndDateTime.Value > start && s.EstimatedEndDateTime.Value <= end))
+                .OrderBy(s => s.EstimatedStartDateTime)
                 .ToList();
             return shifts;
         }

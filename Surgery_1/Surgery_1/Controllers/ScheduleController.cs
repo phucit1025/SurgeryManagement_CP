@@ -22,9 +22,7 @@ namespace Surgery_1.Controllers
             this._roomService = _roomService;
         }
 
-<<<<<<< HEAD
         #region Set Status
-=======
         [HttpGet]
         public IActionResult GetServerTime()
         {
@@ -32,7 +30,6 @@ namespace Surgery_1.Controllers
             return StatusCode(200, dateTime);
         }
 
->>>>>>> 808e5abc7f668c7e060239f4b69323a1d9b8d7d1
         [HttpPost]
         public IActionResult SetIntraoperativeStatus(int shiftId, string actualStartDateTime)
         {
