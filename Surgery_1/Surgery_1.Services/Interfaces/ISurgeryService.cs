@@ -36,6 +36,7 @@ namespace Surgery_1.Services.Interfaces
         bool ChangeShiftStatus(ShiftStatusChangeViewModel currentShift);
         SwapShiftResultViewModel SwapShift(int shift1Id, int shift2Id);
         List<int> GetSwapableShiftIds();
+        SwapShiftResultViewModel SwapShiftToRoom(int shiftId, int roomId, bool forcedSwap);
         #endregion
     }
 }

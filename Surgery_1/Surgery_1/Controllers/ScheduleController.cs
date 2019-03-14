@@ -189,6 +189,20 @@ namespace Surgery_1.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult SwapShiftToRoom([FromBody] SwapShiftToRoomViewModel shift)
+        {
+            var result = _surgeryService.SwapShiftToRoom(shift.ShiftId, shift.RoomId, shift.ForcedSwap);
+            if (result.Succeed)
+            {
+                return StatusCode(200, result.AffectedShifts);
+            }
+            else
+            {
+                return StatusCode(400);
+            }
+        }
+
         [HttpGet]
         public IActionResult GetSwapableShifts()
         {
