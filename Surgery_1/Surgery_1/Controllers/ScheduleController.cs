@@ -22,6 +22,7 @@ namespace Surgery_1.Controllers
             this._roomService = _roomService;
         }
 
+        #region Set Status
         [HttpPost]
         public IActionResult SetIntraoperativeStatus(int shiftId, string actualStartDateTime)
         {
@@ -56,11 +57,14 @@ namespace Surgery_1.Controllers
             var result = _surgeryService.CheckRecoveryStatus(shiftId);
             return StatusCode(200, result);
         }
+        #endregion
 
-        [HttpGet]
-        public IActionResult GetSurgeryShiftNoScheduleByProposedTime()
+        #region Make Schedule
+
+        [HttpPost]
+        public IActionResult RefreshSurgeryShift(int shiftId)
         {
-            var result = _surgeryService.GetSurgeryShiftNoScheduleByProposedTime();
+            var result = _surgeryService.RefreshSurgeryShift(shiftId);
             return StatusCode(200, result);
         }
 
@@ -78,6 +82,22 @@ namespace Surgery_1.Controllers
             return StatusCode(200, result);
         }
 
+        [HttpPost]
+        public IActionResult GetAvailableRoomForProposedTime([FromBody] EmerSurgeryShift emerShift)
+        {
+            var result = _surgeryService.GetAvailableRoomForProposedTime(emerShift);
+            return StatusCode(200, result);
+        }
+        [HttpPost]
+        public IActionResult AddEmergencyShift([FromBody] EmerSurgeryShift emerShift)
+        {
+            if (_surgeryService.AddEmergencyShift(emerShift))
+            {
+                return StatusCode(200, true);
+            }
+            return StatusCode(200, false);
+        }
+
         [HttpGet]
         public IActionResult GetSurgeryShiftsNoSchedule()
         {
@@ -85,6 +105,15 @@ namespace Surgery_1.Controllers
             return StatusCode(200, result);
         }
 
+        [HttpGet]
+        public IActionResult GetSurgeryShiftNoScheduleByProposedTime()
+        {
+            var result = _surgeryService.GetSurgeryShiftNoScheduleByProposedTime();
+            return StatusCode(200, result);
+        }
+        #endregion
+
+        #region Load Schedule
         [HttpGet]
         public IActionResult GetSurgeryShiftsByRoomAndDate(int roomId, int dayNumber)
         {
@@ -105,6 +134,7 @@ namespace Surgery_1.Controllers
 
             return StatusCode(200, result);
         }
+        #endregion
 
         #region Change Schedules
         [HttpGet]
