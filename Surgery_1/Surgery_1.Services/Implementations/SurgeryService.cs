@@ -522,6 +522,15 @@ namespace Surgery_1.Services.Implementations
             var shift = _context.SurgeryShifts.Find(shiftId);
             if (shift != null)
             {
+                var UsedProcedure = "";
+                if (shift.UsedProcedure != null & shift.UsedProcedure != "")
+                {
+                    UsedProcedure = shift.UsedProcedure;
+                }
+                else
+                {
+                    UsedProcedure = shift.SurgeryCatalog.Procedure;
+                }
                 var result = new SurgeryShiftDetailViewModel()
                 {
                     Id = shift.Id,
@@ -534,11 +543,19 @@ namespace Surgery_1.Services.Implementations
                     StartTime = shift.EstimatedStartDateTime,
                     EndTime = shift.EstimatedEndDateTime,
                     //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
-                    Procedure = shift.SurgeryCatalog.Procedure
+                    Procedure = UsedProcedure
                 };
                 return result;
             }
             return null;
+        }
+
+        public Boolean SaveSurgeryProcedure(SurgeryProcedureViewModel SurgeryProcedure)
+        {
+            var shift = _context.SurgeryShifts.Find(SurgeryProcedure.SurgeryShiftId);
+            shift.UsedProcedure = SurgeryProcedure.Procedure;
+            _context.SaveChanges();
+            return true;
         }
 
         #region Change Shift

@@ -106,6 +106,12 @@ namespace Surgery_1.Controllers
             return StatusCode(200, result);
         }
 
+        [HttpPost]
+        public Boolean SaveSurgeryProcedure([FromBody]SurgeryProcedureViewModel SurgeryProcedure)
+        {
+            _surgeryService.SaveSurgeryProcedure(SurgeryProcedure);
+            return true;
+        }
         #region Change Schedules
         [HttpGet]
         public IActionResult GetRoomInfo(int id)

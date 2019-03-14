@@ -127,4 +127,10 @@ namespace Surgery_1.Data.ViewModels
         public int FirstShiftId { get; set; }
         public int SecondShiftId { get; set; }
     }
+
+    public class SurgeryProcedureViewModel
+    {
+        public int SurgeryShiftId { get; set; }
+        public string Procedure { get; set; }
+    }
 }
