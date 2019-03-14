@@ -3,6 +3,7 @@ using Surgery_1.Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Surgery_1.Services.Interfaces
 {
@@ -24,5 +25,9 @@ namespace Surgery_1.Services.Interfaces
         ICollection<TreatmentReportViewModel> GetTodayTreatmentReportByShiftId(int shiftId);
         bool CreateTreatmentReportDrugs(ICollection<TreatmentReportDrugViewModel> treatmentReportDrugViewModels);
         TreatmentMedication GetDrugRequirementForNurse(int shiftId);
+        bool AssignNurse(int shiftId, int nurseId);
+        Task<ICollection<NurseViewModel>> GetAllNurse();
+        NurseViewModel GetNurseByShiftId(int shiftId);
+
     }
 }

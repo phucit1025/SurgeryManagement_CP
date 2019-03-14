@@ -30,8 +30,12 @@ namespace Surgery_1.Services.Implementations
         {
             this._context = _context;
         }
+<<<<<<< HEAD
         #region Status
         public bool SetPostoperativeStatus(int shiftId, string roomPost, string bedPost, string actualEndDateTime, int nurseId)
+=======
+        public bool SetPostoperativeStatus(int shiftId, string roomPost, string bedPost, string actualEndDateTime)
+>>>>>>> 808e5abc7f668c7e060239f4b69323a1d9b8d7d1
         {
             var shift = _context.SurgeryShifts.Find(shiftId);
             var status = _context.Statuses.Where(s => s.Name.Equals("Postoperative")).FirstOrDefault();
@@ -42,7 +46,6 @@ namespace Surgery_1.Services.Implementations
                 shift.PostBedName = bedPost;
                 shift.ActualEndDateTime = DateTime.ParseExact(actualEndDateTime, "yyyy-MM-dd HH:mm",
                                        System.Globalization.CultureInfo.InvariantCulture);
-                shift.NurseId = nurseId;
                 _context.Update(shift);
                 _context.SaveChanges();
                 return true;

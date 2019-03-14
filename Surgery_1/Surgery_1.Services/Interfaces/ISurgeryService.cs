@@ -19,7 +19,7 @@ namespace Surgery_1.Services.Interfaces
         bool RefreshSurgeryShift(int shiftId);
 
         //After make schedule
-        bool SetPostoperativeStatus(int shiftId, string roomPost, string postBed, string actualEndDateTime, int nurseId);
+        bool SetPostoperativeStatus(int shiftId, string roomPost, string postBed, string actualEndDateTime);
         bool SetIntraoperativeStatus(int shiftId, string actualStartDateTime);
         bool SetFinishedStatus(int shiftId);
         int CheckPostStatus(int shiftId);

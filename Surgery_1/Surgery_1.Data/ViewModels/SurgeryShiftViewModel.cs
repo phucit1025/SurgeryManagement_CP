@@ -135,6 +135,7 @@ namespace Surgery_1.Data.ViewModels
         public int ShiftId { get; set; }
         public int RoomId { get; set; }
         public bool ForcedSwap { get; set; }
+    }
     public class EmerSurgeryShift
     {
         public DateTime StartTime { get; set; }

@@ -22,7 +22,17 @@ namespace Surgery_1.Controllers
             this._roomService = _roomService;
         }
 
+<<<<<<< HEAD
         #region Set Status
+=======
+        [HttpGet]
+        public IActionResult GetServerTime()
+        {
+            String dateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            return StatusCode(200, dateTime);
+        }
+
+>>>>>>> 808e5abc7f668c7e060239f4b69323a1d9b8d7d1
         [HttpPost]
         public IActionResult SetIntraoperativeStatus(int shiftId, string actualStartDateTime)
         {
@@ -31,9 +41,9 @@ namespace Surgery_1.Controllers
             return StatusCode(200, result);
         }
         [HttpPost]
-        public IActionResult SetPostoperativeStatus(int shiftId, string roomPost, string bedPost, string actualEndDateTime, int nurseId)
+        public IActionResult SetPostoperativeStatus(int shiftId, string roomPost, string bedPost, string actualEndDateTime)
         {
-            var result = _surgeryService.SetPostoperativeStatus(shiftId, roomPost, bedPost, actualEndDateTime, nurseId);
+            var result = _surgeryService.SetPostoperativeStatus(shiftId, roomPost, bedPost, actualEndDateTime);
 
             return StatusCode(200, result);
         }
