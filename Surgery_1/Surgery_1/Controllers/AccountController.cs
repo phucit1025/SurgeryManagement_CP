@@ -43,16 +43,5 @@ namespace Surgery_1.Controllers
             }
             return StatusCode(400);
         }
-
-        [HttpGet]
-        public IActionResult GetAllNurse()
-        {
-            var result = _accountService.GetAllNurse().Result;
-            if (!result.IsNullOrEmpty())
-            {
-                return Ok(result);
-            }
-            return NotFound();
-        }
     }
 }

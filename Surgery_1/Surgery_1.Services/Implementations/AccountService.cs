@@ -113,27 +113,5 @@ namespace Surgery_1.Services.Implementations
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
-        public async Task<ICollection<NurseViewModel>> GetAllNurse()
-        {
-            var nurses = _context.UserInfo.Where(a => a.IsDeleted == false).ToList();
-            var result = new List<NurseViewModel>();
-            foreach (var item in nurses)
-            {
-                var user = _context.Users.Find(item.GuId);
-                var roleList = await _userManager.GetRolesAsync(user);
-                var userRole = roleList.FirstOrDefault();
-                if (userRole.Equals("Nurse"))
-                {
-                    var nurse = new NurseViewModel()
-                    {
-                        FullName = item.FullName,
-                        Id = item.Id
-                    };
-                    result.Add(nurse);
-                }
-            }
-            return result;
-        }
     }
 }
