@@ -31,6 +31,8 @@ namespace Surgery_1.Data.ViewModels
         public string SurgeryType { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
+        public DateTime? ActualStartTime { get; set; }
+        public DateTime? ActualEndTime { get; set; }
 
         //Surgery Info
         //public List<EkipMemberViewModel> EkipMembers { get; set; }
@@ -130,7 +132,7 @@ namespace Surgery_1.Data.ViewModels
 
     public class EmerSurgeryShift
     {
-        public DateTime startTime { get; set; }
-        public DateTime endTime { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
     }
 }

@@ -15,8 +15,8 @@ namespace Surgery_1.Services.Interfaces
         StringBuilder MakeScheduleList();
 
         bool AddEmergencyShift(EmerSurgeryShift emerShift);
-        int GetAvailableRoomForProposedTime(DateTime startTime, DateTime endTime);
-        int GetAvailableRoomForProposedTimeV2(EmerSurgeryShift emerShift);
+        int GetAvailableRoomForProposedTime(EmerSurgeryShift emerShift);
+        bool RefreshSurgeryShift(int shiftId);
 
         //After make schedule
         bool SetPostoperativeStatus(int shiftId, string roomPost, string postBed, string actualEndDateTime, int nurseId);

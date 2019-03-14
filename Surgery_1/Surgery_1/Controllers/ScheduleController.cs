@@ -60,6 +60,14 @@ namespace Surgery_1.Controllers
         #endregion
 
         #region Make Schedule
+
+        [HttpPost]
+        public IActionResult RefreshSurgeryShift(int shiftId)
+        {
+            var result = _surgeryService.RefreshSurgeryShift(shiftId);
+            return StatusCode(200, result);
+        }
+
         [HttpGet]
         public IActionResult MakeScheduleList()
         {
@@ -75,15 +83,9 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetAvailableRoomForProposedTime(DateTime startTime, DateTime endTime)
+        public IActionResult GetAvailableRoomForProposedTime([FromBody] EmerSurgeryShift emerShift)
         {
-            var result = _surgeryService.GetAvailableRoomForProposedTime(startTime, endTime);
-            return StatusCode(200, result);
-        }
-        [HttpPost]
-        public IActionResult GetAvailableRoomForProposedTimeV2([FromBody] EmerSurgeryShift emerShift)
-        {
-            var result = _surgeryService.GetAvailableRoomForProposedTimeV2(emerShift);
+            var result = _surgeryService.GetAvailableRoomForProposedTime(emerShift);
             return StatusCode(200, result);
         }
         [HttpPost]
