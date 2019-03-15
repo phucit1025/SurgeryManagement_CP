@@ -44,7 +44,7 @@ namespace Surgery_1.Data.Entities
         public int? PriorityNumberAlt { get; set; }
 
         public int? PatientId { get; set; }
-        public int? SurgeryRoomId { get; set; }
+        public int? SlotRoomId { get; set; }
         public int? SurgeryCatalogId { get; set; }
         public int? StatusId { get; set; }
         public int? EkipId { get; set; }
@@ -57,8 +57,8 @@ namespace Surgery_1.Data.Entities
 
         [ForeignKey("PatientId")]
         public virtual Patient Patient { get; set; }
-        [ForeignKey("SurgeryRoomId")]
-        public virtual SurgeryRoom SurgeryRoom { get; set; }
+        [ForeignKey("SlotRoomId")]
+        public virtual SlotRoom SlotRoom { get; set; }
         [ForeignKey("SurgeryCatalogId")]
         public virtual SurgeryCatalog SurgeryCatalog { get; set; }
         [ForeignKey("StatusId")]

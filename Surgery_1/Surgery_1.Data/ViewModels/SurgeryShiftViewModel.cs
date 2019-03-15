@@ -140,5 +140,6 @@ namespace Surgery_1.Data.ViewModels
     {
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public bool IsForceAdd { get; set; }
     }
 }

@@ -22,6 +22,13 @@ namespace Surgery_1.Controllers
             this._roomService = _roomService;
         }
 
+        [HttpGet]
+        public IActionResult GetSlotRooms()
+        {
+            var result = _surgeryService.GetSlotRooms();
+            return StatusCode(200, result);
+        }
+
         #region Set Status
         [HttpGet]
         public IActionResult GetServerTime()
@@ -122,9 +129,9 @@ namespace Surgery_1.Controllers
 
         #region Load Schedule
         [HttpGet]
-        public IActionResult GetSurgeryShiftsByRoomAndDate(int roomId, int dayNumber)
+        public IActionResult GetSurgeryShiftsByRoomAndDate(int slotRoomId, int dayNumber)
         {
-            var result = _surgeryService.GetSurgeryShiftsByRoomAndDate(roomId, dayNumber);
+            var result = _surgeryService.GetSurgeryShiftsByRoomAndDate(slotRoomId, dayNumber);
             return StatusCode(200, result);
         }
         [HttpGet]
@@ -143,109 +150,109 @@ namespace Surgery_1.Controllers
         }
         #endregion
 
-        #region Change Schedules
-        [HttpGet]
-        public IActionResult GetRoomInfo(int id)
-        {
-            return StatusCode(200, _roomService.GetRoom(id));
-        }
+        //#region Change Schedules
+        //[HttpGet]
+        //public IActionResult GetRoomInfo(int id)
+        //{
+        //    return StatusCode(200, _roomService.GetRoom(id));
+        //}
 
-        [HttpPost]
-        public IActionResult GetAvailableRoom([FromBody]AvailableRoomParamViewModel param)
-        {
-            var results = _surgeryService.GetAvailableRoom(param.StartDate, param.EndDate, param.ForcedChange);
-            if (results != null)
-            {
-                return StatusCode(200, results);
-            }
-            else
-            {
-                if (param.ForcedChange)
-                {
-                    return StatusCode(400, "There was an error during getting room.");
-                }
-                else
-                {
-                    return StatusCode(400, "Start Time cannot beyond 17:00.");
-                }
-            }
-        }
+        //[HttpPost]
+        //public IActionResult GetAvailableRoom([FromBody]AvailableRoomParamViewModel param)
+        //{
+        //    var results = _surgeryService.GetAvailableRoom(param.StartDate, param.EndDate, param.ForcedChange);
+        //    if (results != null)
+        //    {
+        //        return StatusCode(200, results);
+        //    }
+        //    else
+        //    {
+        //        if (param.ForcedChange)
+        //        {
+        //            return StatusCode(400, "There was an error during getting room.");
+        //        }
+        //        else
+        //        {
+        //            return StatusCode(400, "Start Time cannot beyond 17:00.");
+        //        }
+        //    }
+        //}
 
-        [HttpGet]
-        public IActionResult GetAvailableRoomForDuration(int hour, int minute)
-        {
-            var results = _surgeryService.GetAvailableRoom(hour, minute);
-            return StatusCode(200, results);
-        }
+        //[HttpGet]
+        //public IActionResult GetAvailableRoomForDuration(int hour, int minute)
+        //{
+        //    var results = _surgeryService.GetAvailableRoom(hour, minute);
+        //    return StatusCode(200, results);
+        //}
 
-        [HttpPost]
-        public IActionResult ChangeSchedule([FromBody] ShiftScheduleChangeViewModel newShift)
-        {
-            var result = _surgeryService.ChangeSchedule(newShift);
-            if (result) return StatusCode(200);
-            return StatusCode(400);
-        }
+        //[HttpPost]
+        //public IActionResult ChangeSchedule([FromBody] ShiftScheduleChangeViewModel newShift)
+        //{
+        //    var result = _surgeryService.ChangeSchedule(newShift);
+        //    if (result) return StatusCode(200);
+        //    return StatusCode(400);
+        //}
 
-        [HttpPost]
-        public IActionResult ChangeScheduleForDuration([FromBody] ShiftScheduleChangeViewModel newShift)
-        {
-            var result = _surgeryService.ChangeSchedule(newShift);
-            if (result) return StatusCode(200);
-            return StatusCode(400);
-        }
+        //[HttpPost]
+        //public IActionResult ChangeScheduleForDuration([FromBody] ShiftScheduleChangeViewModel newShift)
+        //{
+        //    var result = _surgeryService.ChangeSchedule(newShift);
+        //    if (result) return StatusCode(200);
+        //    return StatusCode(400);
+        //}
 
-        [HttpPost]
-        public IActionResult ChangeShiftPriority([FromBody] ShiftChangeViewModel newPriority)
-        {
-            if (_surgeryService.ChangeFirstPriority(newPriority)) return StatusCode(200);
-            return StatusCode(400);
+        //[HttpPost]
+        //public IActionResult ChangeShiftPriority([FromBody] ShiftChangeViewModel newPriority)
+        //{
+        //    if (_surgeryService.ChangeFirstPriority(newPriority)) return StatusCode(200);
+        //    return StatusCode(400);
 
-        }
+        //}
 
-        [HttpPost]
-        public IActionResult ChangeShiftStatus([FromBody] ShiftStatusChangeViewModel newStatus)
-        {
-            if (_surgeryService.ChangeShiftStatus(newStatus))
-            {
-                return StatusCode(200);
-            }
-            return StatusCode(400);
-        }
+        //[HttpPost]
+        //public IActionResult ChangeShiftStatus([FromBody] ShiftStatusChangeViewModel newStatus)
+        //{
+        //    if (_surgeryService.ChangeShiftStatus(newStatus))
+        //    {
+        //        return StatusCode(200);
+        //    }
+        //    return StatusCode(400);
+        //}
 
-        [HttpPost]
-        public IActionResult SwapShifts([FromBody] SwapShiftViewModel shifts)
-        {
-            var result = _surgeryService.SwapShift(shifts.FirstShiftId, shifts.SecondShiftId);
-            if (result.Succeed)
-            {
-                return StatusCode(200, result.AffectedShifts);
-            }
-            else
-            {
-                return StatusCode(400);
-            }
-        }
+        //[HttpPost]
+        //public IActionResult SwapShifts([FromBody] SwapShiftViewModel shifts)
+        //{
+        //    var result = _surgeryService.SwapShift(shifts.FirstShiftId, shifts.SecondShiftId);
+        //    if (result.Succeed)
+        //    {
+        //        return StatusCode(200, result.AffectedShifts);
+        //    }
+        //    else
+        //    {
+        //        return StatusCode(400);
+        //    }
+        //}
 
-        [HttpPost]
-        public IActionResult SwapShiftToRoom([FromBody] SwapShiftToRoomViewModel shift)
-        {
-            var result = _surgeryService.SwapShiftToRoom(shift.ShiftId, shift.RoomId, shift.ForcedSwap);
-            if (result.Succeed)
-            {
-                return StatusCode(200, result.AffectedShifts);
-            }
-            else
-            {
-                return StatusCode(400);
-            }
-        }
+        //[HttpPost]
+        //public IActionResult SwapShiftToRoom([FromBody] SwapShiftToRoomViewModel shift)
+        //{
+        //    var result = _surgeryService.SwapShiftToRoom(shift.ShiftId, shift.RoomId, shift.ForcedSwap);
+        //    if (result.Succeed)
+        //    {
+        //        return StatusCode(200, result.AffectedShifts);
+        //    }
+        //    else
+        //    {
+        //        return StatusCode(400);
+        //    }
+        //}
 
-        [HttpGet]
-        public IActionResult GetSwapableShifts()
-        {
-            var results = _surgeryService.GetSwapableShiftIds();
-            return StatusCode(200, results);
-        }
-        #endregion
+        //[HttpGet]
+        //public IActionResult GetSwapableShifts()
+        //{
+        //    var results = _surgeryService.GetSwapableShiftIds();
+        //    return StatusCode(200, results);
+        //}
+        //#endregion
     }
 }
