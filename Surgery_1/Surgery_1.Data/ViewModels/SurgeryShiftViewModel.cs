@@ -130,23 +130,24 @@ namespace Surgery_1.Data.ViewModels
         public int SecondShiftId { get; set; }
     }
 
-<<<<<<< HEAD
+
     public class SurgeryProcedureViewModel
     {
         public int SurgeryShiftId { get; set; }
         public string Procedure { get; set; }
-=======
+    }
+
     public class SwapShiftToRoomViewModel
     {
         public int ShiftId { get; set; }
         public int RoomId { get; set; }
         public bool ForcedSwap { get; set; }
     }
+
     public class EmerSurgeryShift
     {
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public bool IsForceAdd { get; set; }
->>>>>>> ae4f113b8295ea7fa041bbd5be5ff6b345241b81
     }
 }

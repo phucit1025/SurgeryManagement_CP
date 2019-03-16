@@ -33,7 +33,7 @@ namespace Surgery_1.Services.Interfaces
 
         SurgeryShiftDetailViewModel GetShiftDetail(int shiftId);
 
-<<<<<<< HEAD
+
         #region Change Surgery Business
         bool ChangeFirstPriority(ShiftChangeViewModel newShift);
         bool ChangeSchedule(ShiftScheduleChangeViewModel newShift);
@@ -44,7 +44,7 @@ namespace Surgery_1.Services.Interfaces
         List<int> GetSwapableShiftIds();
         Boolean SaveSurgeryProcedure(SurgeryProcedureViewModel SurgeryProcedure);
         #endregion
-=======
+
         //    #region Change Surgery Business
         //    bool ChangeFirstPriority(ShiftChangeViewModel newShift);
         //    bool ChangeSchedule(ShiftScheduleChangeViewModel newShift);
@@ -55,6 +55,5 @@ namespace Surgery_1.Services.Interfaces
         //    List<int> GetSwapableShiftIds();
         //    SwapShiftResultViewModel SwapShiftToRoom(int shiftId, int roomId, bool forcedSwap);
         //    #endregion
->>>>>>> ae4f113b8295ea7fa041bbd5be5ff6b345241b81
     }
 }

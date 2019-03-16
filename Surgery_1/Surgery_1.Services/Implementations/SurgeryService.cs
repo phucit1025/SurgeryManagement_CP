@@ -672,8 +672,6 @@ namespace Surgery_1.Services.Implementations
             }
             return null;
         }
-
-<<<<<<< HEAD
         public Boolean SaveSurgeryProcedure(SurgeryProcedureViewModel SurgeryProcedure)
         {
             var shift = _context.SurgeryShifts.Find(SurgeryProcedure.SurgeryShiftId);
@@ -1386,7 +1384,6 @@ namespace Surgery_1.Services.Implementations
             return false;
         }
         #endregion
-=======
         //#region Change Shift
         //public bool ChangeFirstPriority(ShiftChangeViewModel newShift)
         //{
@@ -2233,6 +2230,5 @@ namespace Surgery_1.Services.Implementations
         //    return shifts;
         //}
         //#endregion
->>>>>>> ae4f113b8295ea7fa041bbd5be5ff6b345241b81
     }
 }
