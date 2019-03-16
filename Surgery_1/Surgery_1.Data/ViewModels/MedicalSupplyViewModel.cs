@@ -16,6 +16,6 @@ namespace Surgery_1.Data.ViewModels
     {
         public int medicalSupplyId { get; set; }
         public String medicalSupplyName { get; set; }
-
+        public int quantity { get; set; }
     }
 }
