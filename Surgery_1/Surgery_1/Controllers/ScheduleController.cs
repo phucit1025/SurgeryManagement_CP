@@ -150,27 +150,27 @@ namespace Surgery_1.Controllers
         }
         #endregion
 
-<<<<<<< HEAD
+
         [HttpPost]
         public Boolean SaveSurgeryProcedure([FromBody]SurgeryProcedureViewModel SurgeryProcedure)
         {
             _surgeryService.SaveSurgeryProcedure(SurgeryProcedure);
             return true;
         }
-        #region Change Schedules
+
         [HttpGet]
         public IActionResult GetRoomInfo(int id)
         {
             return StatusCode(200, _roomService.GetRoom(id));
         }
-=======
+
         //#region Change Schedules
         //[HttpGet]
         //public IActionResult GetRoomInfo(int id)
         //{
         //    return StatusCode(200, _roomService.GetRoom(id));
         //}
->>>>>>> ae4f113b8295ea7fa041bbd5be5ff6b345241b81
+
 
         //[HttpPost]
         //public IActionResult GetAvailableRoom([FromBody]AvailableRoomParamViewModel param)

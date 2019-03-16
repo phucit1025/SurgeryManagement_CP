@@ -672,6 +672,7 @@ namespace Surgery_1.Services.Implementations
             }
             return null;
         }
+
         public Boolean SaveSurgeryProcedure(SurgeryProcedureViewModel SurgeryProcedure)
         {
             var shift = _context.SurgeryShifts.Find(SurgeryProcedure.SurgeryShiftId);
@@ -680,710 +681,710 @@ namespace Surgery_1.Services.Implementations
             return true;
         }
 
-        #region Change Shift
-        public bool ChangeFirstPriority(ShiftChangeViewModel newShift)
-        {
-            var shift = _context.SurgeryShifts.Find(newShift.Id);
-            if (shift != null)
-            {
-                var tracker = _context.Database.BeginTransaction();
-                try
-                {
-                    #region Update Shift
-                    shift.PriorityNumber = newShift.NewPriority;
-                    shift.DateUpdated = DateTime.Now;
-                    _context.Update(shift);
-                    _context.SaveChanges();
-                    #endregion
+        //#region Change Shift
+        //public bool ChangeFirstPriority(ShiftChangeViewModel newShift)
+        //{
+        //    var shift = _context.SurgeryShifts.Find(newShift.Id);
+        //    if (shift != null)
+        //    {
+        //        var tracker = _context.Database.BeginTransaction();
+        //        try
+        //        {
+        //            #region Update Shift
+        //            shift.PriorityNumber = newShift.NewPriority;
+        //            shift.DateUpdated = DateTime.Now;
+        //            _context.Update(shift);
+        //            _context.SaveChanges();
+        //            #endregion
 
-                    //#region Create Log
-                    //_context.SurgeryShiftChangeLogs.Add(new ShiftChangeLog()
-                    //{
-                    //    Description = newShift.ChangeLogDescription,
-                    //    ShiftId = shift.Id
-                    //});
-                    //_context.SaveChanges();
-                    //#endregion
+        //            //#region Create Log
+        //            //_context.SurgeryShiftChangeLogs.Add(new ShiftChangeLog()
+        //            //{
+        //            //    Description = newShift.ChangeLogDescription,
+        //            //    ShiftId = shift.Id
+        //            //});
+        //            //_context.SaveChanges();
+        //            //#endregion
 
-                    tracker.Commit();
-                    return true;
-                }
-                catch (DbUpdateException)
-                {
-                    tracker.Rollback();
-                    return false;
-                }
+        //            tracker.Commit();
+        //            return true;
+        //        }
+        //        catch (DbUpdateException)
+        //        {
+        //            tracker.Rollback();
+        //            return false;
+        //        }
 
-            }
-            return false;
-        }
+        //    }
+        //    return false;
+        //}
 
-        public bool ChangeSchedule(ShiftScheduleChangeViewModel newShift)
-        {
-            var shift = _context.SurgeryShifts.Find(newShift.Id);
-            if (shift != null)
-            {
-                var tracker = _context.Database.BeginTransaction();
+        //public bool ChangeSchedule(ShiftScheduleChangeViewModel newShift)
+        //{
+        //    var shift = _context.SurgeryShifts.Find(newShift.Id);
+        //    if (shift != null)
+        //    {
+        //        var tracker = _context.Database.BeginTransaction();
 
-                try
-                {
-                    #region Change Schedule
-                    shift.EstimatedStartDateTime = newShift.EstimatedStartDateTime;
-                    shift.EstimatedEndDateTime = newShift.EstimatedEndDateTime;
-                    shift.SurgeryRoomId = newShift.RoomId;
-                    shift.DateUpdated = DateTime.Now;
-                    _context.Update(shift);
-                    _context.SaveChanges();
-                    #endregion
+        //        try
+        //        {
+        //            #region Change Schedule
+        //            shift.EstimatedStartDateTime = newShift.EstimatedStartDateTime;
+        //            shift.EstimatedEndDateTime = newShift.EstimatedEndDateTime;
+        //            shift.SurgeryRoomId = newShift.RoomId;
+        //            shift.DateUpdated = DateTime.Now;
+        //            _context.Update(shift);
+        //            _context.SaveChanges();
+        //            #endregion
 
-                    //#region Create Log
-                    //_context.SurgeryShiftChangeLogs.Add(new ShiftChangeLog()
-                    //{
-                    //    Description = newShift.ChangeLogDescription,
-                    //    ShiftId = shift.Id
-                    //});
-                    //_context.SaveChanges();
-                    //#endregion
+        //            //#region Create Log
+        //            //_context.SurgeryShiftChangeLogs.Add(new ShiftChangeLog()
+        //            //{
+        //            //    Description = newShift.ChangeLogDescription,
+        //            //    ShiftId = shift.Id
+        //            //});
+        //            //_context.SaveChanges();
+        //            //#endregion
 
-                    tracker.Commit();
-                    return true;
-                }
-                catch (DbUpdateException)
-                {
-                    tracker.Rollback();
-                    return false;
-                }
-            }
-            return false;
-        }
+        //            tracker.Commit();
+        //            return true;
+        //        }
+        //        catch (DbUpdateException)
+        //        {
+        //            tracker.Rollback();
+        //            return false;
+        //        }
+        //    }
+        //    return false;
+        //}
 
-        public List<int> GetAvailableRoom(DateTime start, DateTime end, bool forcedChange)
-        {
-            if (!IsValidTime(start, end) && !forcedChange)
-            {
-                return null;
-            }
-            var rooms = _context.SurgeryRooms.Where(r => !r.IsDeleted);
-            var roomId = new List<int>();
-            foreach (var room in rooms)
-            {
-                var shifts = room.SurgeryShifts.Where(s =>
-                    !s.IsDeleted &&
-                    s.EstimatedStartDateTime.Value > DateTime.Now &&
-                    s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase))
-                    .ToList();
+        //public List<int> GetAvailableRoom(DateTime start, DateTime end, bool forcedChange)
+        //{
+        //    if (!IsValidTime(start, end) && !forcedChange)
+        //    {
+        //        return null;
+        //    }
+        //    var rooms = _context.SurgeryRooms.Where(r => !r.IsDeleted);
+        //    var roomId = new List<int>();
+        //    foreach (var room in rooms)
+        //    {
+        //        var shifts = room.SurgeryShifts.Where(s =>
+        //            !s.IsDeleted &&
+        //            s.EstimatedStartDateTime.Value > DateTime.Now &&
+        //            s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase))
+        //            .ToList();
 
-                if (shifts.Any())
-                {
-                    var affectedShifts = shifts.Where(s =>
-                                                    (s.EstimatedStartDateTime.Value >= start && s.EstimatedStartDateTime.Value < end)
-                                                    || (s.EstimatedEndDateTime.Value > start && s.EstimatedEndDateTime.Value <= end))
-                                                    .ToList();
-                    if (!affectedShifts.Any())
-                    {
-                        roomId.Add(room.Id);
-                    }
-                }
-                else
-                {
-                    roomId.Add(room.Id);
-                }
+        //        if (shifts.Any())
+        //        {
+        //            var affectedShifts = shifts.Where(s =>
+        //                                            (s.EstimatedStartDateTime.Value >= start && s.EstimatedStartDateTime.Value < end)
+        //                                            || (s.EstimatedEndDateTime.Value > start && s.EstimatedEndDateTime.Value <= end))
+        //                                            .ToList();
+        //            if (!affectedShifts.Any())
+        //            {
+        //                roomId.Add(room.Id);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            roomId.Add(room.Id);
+        //        }
 
-            }
-            return roomId.OrderBy(c => c).ToList();
-        }
+        //    }
+        //    return roomId.OrderBy(c => c).ToList();
+        //}
 
-        public List<AvailableRoomViewModel> GetAvailableRoom(int hour, int minute, int? longerShiftId = null, List<int> shiftIds = null)
-        {
-            var expectedTimeSpan = new TimeSpan(hour, minute, 0);
-            var results = new List<AvailableRoomViewModel>();
-            var rooms = _context.SurgeryRooms.Where(r => !r.IsDeleted).ToList();
-            foreach (var room in rooms)
-            {
-                var shifts = new List<SurgeryShift>();
-                if (longerShiftId.HasValue && shiftIds != null)
-                {
-                    shifts = room.SurgeryShifts.Where(s =>
-                        !s.IsDeleted &&
-                        s.EstimatedStartDateTime.Value > DateTime.Now &&
-                        s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase))
-                        .ToList();
-                    if (room.Id == _context.SurgeryShifts.Find(longerShiftId).SurgeryRoomId)
-                    {
-                        shifts.Add(_context.SurgeryShifts.Find(longerShiftId));
-                    }
-                    foreach (var shiftId in shiftIds)
-                    {
-                        if (room.Id == _context.SurgeryShifts.Find(shiftId).SurgeryRoomId)
-                        {
-                            shifts.Remove(_context.SurgeryShifts.Find(shiftId));
-                        }
-                    }
-                }
-                else
-                {
-                    shifts = room.SurgeryShifts.Where(s =>
-                        !s.IsDeleted &&
-                        s.EstimatedStartDateTime.Value > DateTime.Now &&
-                        s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase))
-                        .ToList();
-                }
-
-
-                if (shifts.Any())
-                {
-                    shifts = shifts.OrderBy(s => s.EstimatedStartDateTime).ToList();
-
-                    for (int i = 0; i < shifts.Count; i++)
-                    {
-                        var shift = shifts.ElementAt(i);
-
-                        if (IsLastShiftOfADay(shift, shifts) || i == shifts.Count - 1) // Last Shift of a day or Last Shift of that room
-                        {
-                            if (shift.EstimatedEndDateTime.Value.Hour < 17 && shift.EstimatedEndDateTime.Value.Hour >= 7)
-                            {
-                                if (!IsInBreakTime(shift.EstimatedEndDateTime.Value))
-                                {
-                                    results.Add(new AvailableRoomViewModel()
-                                    {
-                                        RoomId = room.Id,
-                                        StartDateTime = shift.EstimatedEndDateTime.Value,
-                                        EndDateTime = shift.EstimatedEndDateTime.Value.AddHours(hour).AddMinutes(minute)
-                                    });
-                                }
-                                else
-                                {
-                                    var startTime = AddToAfterBreakTime(shift.EstimatedEndDateTime.Value);
-                                    results.Add(new AvailableRoomViewModel()
-                                    {
-                                        RoomId = room.Id,
-                                        StartDateTime = startTime,
-                                        EndDateTime = startTime.AddHours(hour).AddMinutes(minute)
-                                    });
-                                }
-
-                            }
-                            else if (shift.EstimatedEndDateTime.Value.Hour >= 17 && i == shifts.Count - 1)
-                            {
-                                var start = GetCurrentDayWorkingHour(true, shift.EstimatedStartDateTime.Value).AddDays(1);
-                                results.Add(new AvailableRoomViewModel()
-                                {
-                                    RoomId = room.Id,
-                                    StartDateTime = start,
-                                    EndDateTime = start.AddHours(hour).AddMinutes(minute)
-                                });
-                            }
-                            else if (shift.EstimatedEndDateTime.Value.Hour < 7 && i == shifts.Count - 1)
-                            {
-                                var start = GetCurrentDayWorkingHour(true, shift.EstimatedEndDateTime.Value);
-                                results.Add(new AvailableRoomViewModel()
-                                {
-                                    RoomId = room.Id,
-                                    StartDateTime = start,
-                                    EndDateTime = start.AddHours(hour).AddMinutes(minute)
-                                });
-                            }
-                        }
-                        else
-                        {
-                            var shiftAfter = shifts.ElementAt(i + 1);
-                            var gap = shiftAfter.EstimatedStartDateTime.Value - shift.EstimatedEndDateTime.Value;
-                            if (expectedTimeSpan <= gap && !IsInBreakTime(shift.EstimatedEndDateTime.Value))
-                            {
-                                results.Add(new AvailableRoomViewModel()
-                                {
-                                    RoomId = room.Id,
-                                    StartDateTime = shift.EstimatedEndDateTime.Value,
-                                    EndDateTime = shift.EstimatedEndDateTime.Value.AddHours(hour).AddMinutes(minute)
-                                });
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    results.Add(new AvailableRoomViewModel()
-                    {
-                        RoomId = room.Id,
-                        StartDateTime = GetCurrentDayWorkingHour(true, DateTime.Now),
-                        EndDateTime = GetCurrentDayWorkingHour(true, DateTime.Now).AddHours(hour).AddMinutes(minute),
-                    });
-                }
-            }
-            return results.OrderBy(r => r.StartDateTime).ToList();
-        }
-
-        public bool ChangeShiftStatus(ShiftStatusChangeViewModel currentShift)
-        {
-            try
-            {
-                var shift = _context.SurgeryShifts.Find(currentShift.ShiftId);
-                if (shift != null)
-                {
-                    var enumStatus = new ShiftStatus();
-                    if (Enum.TryParse<ShiftStatus>(currentShift.CurrentStatus.Trim().ToUpper(), out enumStatus))
-                    {
-                        var nextStatus = (ShiftStatus)Enum.ToObject(typeof(ShiftStatus), (int)enumStatus + 1);
-                        var status = _context.Statuses.FirstOrDefault(s => s.Name.Equals(nextStatus.ToString(), StringComparison.CurrentCultureIgnoreCase));
-
-                        shift.StatusId = status.Id;
-                        shift.DateUpdated = DateTime.Now;
-                        _context.Update(shift);
-                        _context.SaveChanges();
-                    }
-
-                    return true;
-                }
-                return false;
-            }
-            catch (DbUpdateException)
-            {
-                return false;
-            }
-
-        }
-
-        public SwapShiftResultViewModel SwapShift(int shift1Id, int shift2Id)
-        {
-            //var transaction = _context.Database.BeginTransaction();
-            var result = new SwapShiftResultViewModel();
-            var longerShift = _context.SurgeryShifts.Find(shift1Id);
-            var shift = _context.SurgeryShifts.Find(shift2Id);
-            var longerDuration = longerShift.EstimatedEndDateTime.Value - longerShift.EstimatedStartDateTime.Value;
-            var duration = shift.EstimatedEndDateTime.Value - shift.EstimatedStartDateTime.Value;
-            try
-            {
-                var swapParamResult = SwapParamName(ref longerShift, ref shift, ref longerDuration, ref duration);
-                if (swapParamResult)
-                {
-                    if (shift.SurgeryRoomId != longerShift.SurgeryRoomId)
-                    {
-                        var longerShiftRoomId = longerShift.SurgeryRoomId.Value;
-                        var shiftRoomId = shift.SurgeryRoomId.Value;
-
-                        #region Swap and Disable Longer Shift
-                        //Shift Schedule Change VMs
-                        var shiftChangeVM = new ShiftScheduleChangeViewModel()
-                        {
-                            Id = shift.Id,
-                            RoomId = longerShiftRoomId,
-                            EstimatedStartDateTime = longerShift.EstimatedStartDateTime.Value,
-                            EstimatedEndDateTime = longerShift.EstimatedStartDateTime.Value + duration
-                        };
-                        var longerShiftChangeVM = new ShiftScheduleChangeViewModel()
-                        {
-                            Id = longerShift.Id,
-                            RoomId = shiftRoomId,
-                            EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
-                            EstimatedEndDateTime = shift.EstimatedStartDateTime.Value + longerDuration
-                        };
-
-                        var swapResult = ChangeSchedule(shiftChangeVM);
-                        swapResult = ChangeSchedule(longerShiftChangeVM);
-                        longerShift.IsDeleted = true;
-                        _context.Update(longerShift);
-                        _context.SaveChanges();
-                        #endregion
-
-                        var affectedShifts = GetAffectedShifts(longerShift, shift);
-                        var affectedShiftIds = affectedShifts.Select(s => s.Id).ToList();
-
-                        #region Resolve Affected Shifts
-                        if (affectedShifts.Any())
-                        {
-                            foreach (var affectedShift in affectedShifts)
-                            {
-                                var roomIds = GetAvailableRoom(affectedShift.EstimatedStartDateTime.Value, affectedShift.EstimatedEndDateTime.Value, false);
-                                if (roomIds.Any())
-                                {
-                                    var resolvedShift = new AffectedShiftResultViewModel()
-                                    {
-                                        ShiftId = affectedShift.Id,
-                                        OldRoomName = affectedShift.SurgeryRoom.Name,
-                                    };
-                                    result.Succeed = ChangeSchedule(new ShiftScheduleChangeViewModel()
-                                    {
-                                        Id = affectedShift.Id,
-                                        RoomId = roomIds.FirstOrDefault(),
-                                        EstimatedEndDateTime = affectedShift.EstimatedEndDateTime.Value,
-                                        EstimatedStartDateTime = affectedShift.EstimatedStartDateTime.Value
-                                    });
-                                    if (result.Succeed)
-                                    {
-                                        resolvedShift.NewRoomName = _context.SurgeryRooms.Find(roomIds.FirstOrDefault()).Name;
-                                        result.AffectedShifts.Add(resolvedShift);
-                                    }
-                                }
-                                else
-                                {
-
-                                    var affectedShiftDuration = affectedShift.EstimatedEndDateTime.Value - affectedShift.EstimatedStartDateTime.Value;
-                                    var rooms = GetAvailableRoom(affectedShiftDuration.Hours, affectedShiftDuration.Minutes, longerShift.Id, affectedShiftIds);
-                                    affectedShiftIds.Remove(affectedShift.Id);
-                                    rooms = rooms.Where(r =>
-                                                        r.StartDateTime >= longerShift.EstimatedEndDateTime.Value ||
-                                                        r.EndDateTime <= longerShift.EstimatedStartDateTime.Value)
-                                                        .ToList();
-                                    if (rooms.Any())
-                                    {
-                                        var resolvedShift = new AffectedShiftResultViewModel()
-                                        {
-                                            ShiftId = affectedShift.Id,
-                                            OldRoomName = affectedShift.SurgeryRoom.Name,
-                                            OldStart = affectedShift.EstimatedStartDateTime.Value,
-                                            OldEnd = affectedShift.EstimatedEndDateTime.Value
-                                        };
-
-                                        result.Succeed = ChangeSchedule(new ShiftScheduleChangeViewModel()
-                                        {
-                                            Id = affectedShift.Id,
-                                            RoomId = rooms.FirstOrDefault().RoomId,
-                                            EstimatedEndDateTime = rooms.FirstOrDefault().EndDateTime,
-                                            EstimatedStartDateTime = rooms.FirstOrDefault().StartDateTime
-                                        });
-
-                                        if (result.Succeed)
-                                        {
-                                            resolvedShift.NewRoomName = _context.SurgeryRooms.Find(rooms.FirstOrDefault().RoomId).Name;
-                                            resolvedShift.NewStart = rooms.FirstOrDefault().StartDateTime;
-                                            resolvedShift.NewEnd = rooms.FirstOrDefault().EndDateTime;
-                                            result.AffectedShifts.Add(resolvedShift);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        #endregion
-
-                        #region Enable Longer Shift
-                        longerShift.IsDeleted = false;
-                        _context.Update(longerShift);
-                        _context.SaveChanges();
-                        #endregion
-
-                        result.Succeed = true;
-                        return result;
-                    }
-                    else
-                    {
-                        if (IsNextTo(shift, longerShift))
-                        {
-                            var longerShiftRoomId = longerShift.SurgeryRoomId.Value;
-                            var shiftRoomId = shift.SurgeryRoomId.Value;
-
-                            //Shift Schedule Change VMs
-                            var longerShiftChangeVM = new ShiftScheduleChangeViewModel()
-                            {
-                                Id = longerShift.Id,
-                                RoomId = shiftRoomId,
-                                EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
-                                EstimatedEndDateTime = shift.EstimatedStartDateTime.Value + longerDuration
-                            };
-                            var shiftChangeVM = new ShiftScheduleChangeViewModel()
-                            {
-                                Id = shift.Id,
-                                RoomId = longerShiftRoomId,
-                                EstimatedStartDateTime = longerShiftChangeVM.EstimatedEndDateTime,
-                                EstimatedEndDateTime = longerShiftChangeVM.EstimatedEndDateTime + duration
-                            };
+        //public List<AvailableRoomViewModel> GetAvailableRoom(int hour, int minute, int? longerShiftId = null, List<int> shiftIds = null)
+        //{
+        //    var expectedTimeSpan = new TimeSpan(hour, minute, 0);
+        //    var results = new List<AvailableRoomViewModel>();
+        //    var rooms = _context.SurgeryRooms.Where(r => !r.IsDeleted).ToList();
+        //    foreach (var room in rooms)
+        //    {
+        //        var shifts = new List<SurgeryShift>();
+        //        if (longerShiftId.HasValue && shiftIds != null)
+        //        {
+        //            shifts = room.SurgeryShifts.Where(s =>
+        //                !s.IsDeleted &&
+        //                s.EstimatedStartDateTime.Value > DateTime.Now &&
+        //                s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase))
+        //                .ToList();
+        //            if (room.Id == _context.SurgeryShifts.Find(longerShiftId).SurgeryRoomId)
+        //            {
+        //                shifts.Add(_context.SurgeryShifts.Find(longerShiftId));
+        //            }
+        //            foreach (var shiftId in shiftIds)
+        //            {
+        //                if (room.Id == _context.SurgeryShifts.Find(shiftId).SurgeryRoomId)
+        //                {
+        //                    shifts.Remove(_context.SurgeryShifts.Find(shiftId));
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            shifts = room.SurgeryShifts.Where(s =>
+        //                !s.IsDeleted &&
+        //                s.EstimatedStartDateTime.Value > DateTime.Now &&
+        //                s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase))
+        //                .ToList();
+        //        }
 
 
-                            var swapResult = ChangeSchedule(shiftChangeVM);
-                            swapResult = ChangeSchedule(longerShiftChangeVM);
-                            result.Succeed = swapResult;
-                            return result;
-                        }
-                        else
-                        {
-                            var longerShiftRoomId = longerShift.SurgeryRoomId.Value;
-                            var shiftRoomId = shift.SurgeryRoomId.Value;
+        //        if (shifts.Any())
+        //        {
+        //            shifts = shifts.OrderBy(s => s.EstimatedStartDateTime).ToList();
 
-                            #region Swap and Disable Longer Shift
-                            //Shift Schedule Change VMs
-                            var shiftChangeVM = new ShiftScheduleChangeViewModel()
-                            {
-                                Id = shift.Id,
-                                RoomId = longerShiftRoomId,
-                                EstimatedStartDateTime = longerShift.EstimatedStartDateTime.Value,
-                                EstimatedEndDateTime = longerShift.EstimatedStartDateTime.Value + duration
-                            };
-                            var longerShiftChangeVM = new ShiftScheduleChangeViewModel()
-                            {
-                                Id = longerShift.Id,
-                                RoomId = shiftRoomId,
-                                EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
-                                EstimatedEndDateTime = shift.EstimatedStartDateTime.Value + longerDuration
-                            };
+        //            for (int i = 0; i < shifts.Count; i++)
+        //            {
+        //                var shift = shifts.ElementAt(i);
 
-                            var swapResult = ChangeSchedule(shiftChangeVM);
-                            swapResult = ChangeSchedule(longerShiftChangeVM);
-                            longerShift.IsDeleted = true;
-                            _context.Update(longerShift);
-                            _context.SaveChanges();
-                            #endregion
+        //                if (IsLastShiftOfADay(shift, shifts) || i == shifts.Count - 1) // Last Shift of a day or Last Shift of that room
+        //                {
+        //                    if (shift.EstimatedEndDateTime.Value.Hour < 17 && shift.EstimatedEndDateTime.Value.Hour >= 7)
+        //                    {
+        //                        if (!IsInBreakTime(shift.EstimatedEndDateTime.Value))
+        //                        {
+        //                            results.Add(new AvailableRoomViewModel()
+        //                            {
+        //                                RoomId = room.Id,
+        //                                StartDateTime = shift.EstimatedEndDateTime.Value,
+        //                                EndDateTime = shift.EstimatedEndDateTime.Value.AddHours(hour).AddMinutes(minute)
+        //                            });
+        //                        }
+        //                        else
+        //                        {
+        //                            var startTime = AddToAfterBreakTime(shift.EstimatedEndDateTime.Value);
+        //                            results.Add(new AvailableRoomViewModel()
+        //                            {
+        //                                RoomId = room.Id,
+        //                                StartDateTime = startTime,
+        //                                EndDateTime = startTime.AddHours(hour).AddMinutes(minute)
+        //                            });
+        //                        }
 
-                            var affectedShifts = GetAffectedShifts(longerShift, shift);
-                            var affectedShiftIds = affectedShifts.Select(s => s.Id).ToList();
+        //                    }
+        //                    else if (shift.EstimatedEndDateTime.Value.Hour >= 17 && i == shifts.Count - 1)
+        //                    {
+        //                        var start = GetCurrentDayWorkingHour(true, shift.EstimatedStartDateTime.Value).AddDays(1);
+        //                        results.Add(new AvailableRoomViewModel()
+        //                        {
+        //                            RoomId = room.Id,
+        //                            StartDateTime = start,
+        //                            EndDateTime = start.AddHours(hour).AddMinutes(minute)
+        //                        });
+        //                    }
+        //                    else if (shift.EstimatedEndDateTime.Value.Hour < 7 && i == shifts.Count - 1)
+        //                    {
+        //                        var start = GetCurrentDayWorkingHour(true, shift.EstimatedEndDateTime.Value);
+        //                        results.Add(new AvailableRoomViewModel()
+        //                        {
+        //                            RoomId = room.Id,
+        //                            StartDateTime = start,
+        //                            EndDateTime = start.AddHours(hour).AddMinutes(minute)
+        //                        });
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    var shiftAfter = shifts.ElementAt(i + 1);
+        //                    var gap = shiftAfter.EstimatedStartDateTime.Value - shift.EstimatedEndDateTime.Value;
+        //                    if (expectedTimeSpan <= gap && !IsInBreakTime(shift.EstimatedEndDateTime.Value))
+        //                    {
+        //                        results.Add(new AvailableRoomViewModel()
+        //                        {
+        //                            RoomId = room.Id,
+        //                            StartDateTime = shift.EstimatedEndDateTime.Value,
+        //                            EndDateTime = shift.EstimatedEndDateTime.Value.AddHours(hour).AddMinutes(minute)
+        //                        });
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            results.Add(new AvailableRoomViewModel()
+        //            {
+        //                RoomId = room.Id,
+        //                StartDateTime = GetCurrentDayWorkingHour(true, DateTime.Now),
+        //                EndDateTime = GetCurrentDayWorkingHour(true, DateTime.Now).AddHours(hour).AddMinutes(minute),
+        //            });
+        //        }
+        //    }
+        //    return results.OrderBy(r => r.StartDateTime).ToList();
+        //}
 
-                            #region Resolve Affected Shifts
-                            if (affectedShifts.Any())
-                            {
-                                foreach (var affectedShift in affectedShifts)
-                                {
-                                    var roomIds = GetAvailableRoom(affectedShift.EstimatedStartDateTime.Value, affectedShift.EstimatedEndDateTime.Value, false);
-                                    if (roomIds.Any())
-                                    {
-                                        var resolvedShift = new AffectedShiftResultViewModel()
-                                        {
-                                            ShiftId = affectedShift.Id,
-                                            OldRoomName = affectedShift.SurgeryRoom.Name,
-                                        };
-                                        result.Succeed = ChangeSchedule(new ShiftScheduleChangeViewModel()
-                                        {
-                                            Id = affectedShift.Id,
-                                            RoomId = roomIds.FirstOrDefault(),
-                                            EstimatedEndDateTime = affectedShift.EstimatedEndDateTime.Value,
-                                            EstimatedStartDateTime = affectedShift.EstimatedStartDateTime.Value
-                                        });
-                                        if (result.Succeed)
-                                        {
-                                            resolvedShift.NewRoomName = _context.SurgeryRooms.Find(roomIds.FirstOrDefault()).Name;
-                                            result.AffectedShifts.Add(resolvedShift);
-                                        }
-                                    }
-                                    else
-                                    {
+        //public bool ChangeShiftStatus(ShiftStatusChangeViewModel currentShift)
+        //{
+        //    try
+        //    {
+        //        var shift = _context.SurgeryShifts.Find(currentShift.ShiftId);
+        //        if (shift != null)
+        //        {
+        //            var enumStatus = new ShiftStatus();
+        //            if (Enum.TryParse<ShiftStatus>(currentShift.CurrentStatus.Trim().ToUpper(), out enumStatus))
+        //            {
+        //                var nextStatus = (ShiftStatus)Enum.ToObject(typeof(ShiftStatus), (int)enumStatus + 1);
+        //                var status = _context.Statuses.FirstOrDefault(s => s.Name.Equals(nextStatus.ToString(), StringComparison.CurrentCultureIgnoreCase));
 
-                                        var affectedShiftDuration = affectedShift.EstimatedEndDateTime.Value - affectedShift.EstimatedStartDateTime.Value;
-                                        var rooms = GetAvailableRoom(affectedShiftDuration.Hours, affectedShiftDuration.Minutes, longerShift.Id, affectedShiftIds);
-                                        affectedShiftIds.Remove(affectedShift.Id);
-                                        rooms = rooms.Where(r =>
-                                                            r.StartDateTime >= longerShift.EstimatedEndDateTime.Value ||
-                                                            r.EndDateTime <= longerShift.EstimatedStartDateTime.Value)
-                                                            .ToList();
-                                        if (rooms.Any())
-                                        {
-                                            var resolvedShift = new AffectedShiftResultViewModel()
-                                            {
-                                                ShiftId = affectedShift.Id,
-                                                OldRoomName = affectedShift.SurgeryRoom.Name,
-                                                OldStart = affectedShift.EstimatedStartDateTime.Value,
-                                                OldEnd = affectedShift.EstimatedEndDateTime.Value
-                                            };
+        //                shift.StatusId = status.Id;
+        //                shift.DateUpdated = DateTime.Now;
+        //                _context.Update(shift);
+        //                _context.SaveChanges();
+        //            }
 
-                                            result.Succeed = ChangeSchedule(new ShiftScheduleChangeViewModel()
-                                            {
-                                                Id = affectedShift.Id,
-                                                RoomId = rooms.FirstOrDefault().RoomId,
-                                                EstimatedEndDateTime = rooms.FirstOrDefault().EndDateTime,
-                                                EstimatedStartDateTime = rooms.FirstOrDefault().StartDateTime
-                                            });
+        //            return true;
+        //        }
+        //        return false;
+        //    }
+        //    catch (DbUpdateException)
+        //    {
+        //        return false;
+        //    }
 
-                                            if (result.Succeed)
-                                            {
-                                                resolvedShift.NewRoomName = _context.SurgeryRooms.Find(rooms.FirstOrDefault().RoomId).Name;
-                                                resolvedShift.NewStart = rooms.FirstOrDefault().StartDateTime;
-                                                resolvedShift.NewEnd = rooms.FirstOrDefault().EndDateTime;
-                                                result.AffectedShifts.Add(resolvedShift);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            #endregion
+        //}
 
-                            #region Enable Longer Shift
-                            longerShift.IsDeleted = false;
-                            _context.Update(longerShift);
-                            _context.SaveChanges();
-                            #endregion
+        //public SwapShiftResultViewModel SwapShift(int shift1Id, int shift2Id)
+        //{
+        //    //var transaction = _context.Database.BeginTransaction();
+        //    var result = new SwapShiftResultViewModel();
+        //    var longerShift = _context.SurgeryShifts.Find(shift1Id);
+        //    var shift = _context.SurgeryShifts.Find(shift2Id);
+        //    var longerDuration = longerShift.EstimatedEndDateTime.Value - longerShift.EstimatedStartDateTime.Value;
+        //    var duration = shift.EstimatedEndDateTime.Value - shift.EstimatedStartDateTime.Value;
+        //    try
+        //    {
+        //        var swapParamResult = SwapParamName(ref longerShift, ref shift, ref longerDuration, ref duration);
+        //        if (swapParamResult)
+        //        {
+        //            if (shift.SurgeryRoomId != longerShift.SurgeryRoomId)
+        //            {
+        //                var longerShiftRoomId = longerShift.SurgeryRoomId.Value;
+        //                var shiftRoomId = shift.SurgeryRoomId.Value;
 
-                            result.Succeed = true;
-                            return result;
-                        }
-                    }
-                }
-                else
-                {
-                    var shiftChangeVM = new ShiftScheduleChangeViewModel()
-                    {
-                        Id = shift.Id,
-                        RoomId = longerShift.SurgeryRoomId.Value,
-                        EstimatedStartDateTime = longerShift.EstimatedStartDateTime.Value,
-                        EstimatedEndDateTime = longerShift.EstimatedEndDateTime.Value
-                    };
+        //                #region Swap and Disable Longer Shift
+        //                //Shift Schedule Change VMs
+        //                var shiftChangeVM = new ShiftScheduleChangeViewModel()
+        //                {
+        //                    Id = shift.Id,
+        //                    RoomId = longerShiftRoomId,
+        //                    EstimatedStartDateTime = longerShift.EstimatedStartDateTime.Value,
+        //                    EstimatedEndDateTime = longerShift.EstimatedStartDateTime.Value + duration
+        //                };
+        //                var longerShiftChangeVM = new ShiftScheduleChangeViewModel()
+        //                {
+        //                    Id = longerShift.Id,
+        //                    RoomId = shiftRoomId,
+        //                    EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
+        //                    EstimatedEndDateTime = shift.EstimatedStartDateTime.Value + longerDuration
+        //                };
 
-                    var longerShiftChangeVM = new ShiftScheduleChangeViewModel()
-                    {
-                        Id = longerShift.Id,
-                        RoomId = shift.SurgeryRoomId.Value,
-                        EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
-                        EstimatedEndDateTime = shift.EstimatedEndDateTime.Value
-                    };
+        //                var swapResult = ChangeSchedule(shiftChangeVM);
+        //                swapResult = ChangeSchedule(longerShiftChangeVM);
+        //                longerShift.IsDeleted = true;
+        //                _context.Update(longerShift);
+        //                _context.SaveChanges();
+        //                #endregion
 
-                    result.Succeed = ChangeSchedule(shiftChangeVM);//Shift
-                    result.Succeed = ChangeSchedule(longerShiftChangeVM);//Longer Shift
+        //                var affectedShifts = GetAffectedShifts(longerShift, shift);
+        //                var affectedShiftIds = affectedShifts.Select(s => s.Id).ToList();
 
-                    return result;
-                }
-            }
-            catch (DbUpdateException)
-            {
-                ChangeSchedule(new ShiftScheduleChangeViewModel()
-                {
-                    Id = shift.Id,
-                    RoomId = longerShift.SurgeryRoomId.Value,
-                    EstimatedStartDateTime = longerShift.EstimatedStartDateTime.Value,
-                    EstimatedEndDateTime = longerShift.EstimatedStartDateTime.Value + duration
-                });//Shift
-                ChangeSchedule(new ShiftScheduleChangeViewModel()
-                {
-                    Id = longerShift.Id,
-                    RoomId = shift.SurgeryRoomId.Value,
-                    EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
-                    EstimatedEndDateTime = shift.EstimatedStartDateTime.Value + longerDuration
-                });//Longer Shift
-                return result;
-            }
-        }
+        //                #region Resolve Affected Shifts
+        //                if (affectedShifts.Any())
+        //                {
+        //                    foreach (var affectedShift in affectedShifts)
+        //                    {
+        //                        var roomIds = GetAvailableRoom(affectedShift.EstimatedStartDateTime.Value, affectedShift.EstimatedEndDateTime.Value, false);
+        //                        if (roomIds.Any())
+        //                        {
+        //                            var resolvedShift = new AffectedShiftResultViewModel()
+        //                            {
+        //                                ShiftId = affectedShift.Id,
+        //                                OldRoomName = affectedShift.SurgeryRoom.Name,
+        //                            };
+        //                            result.Succeed = ChangeSchedule(new ShiftScheduleChangeViewModel()
+        //                            {
+        //                                Id = affectedShift.Id,
+        //                                RoomId = roomIds.FirstOrDefault(),
+        //                                EstimatedEndDateTime = affectedShift.EstimatedEndDateTime.Value,
+        //                                EstimatedStartDateTime = affectedShift.EstimatedStartDateTime.Value
+        //                            });
+        //                            if (result.Succeed)
+        //                            {
+        //                                resolvedShift.NewRoomName = _context.SurgeryRooms.Find(roomIds.FirstOrDefault()).Name;
+        //                                result.AffectedShifts.Add(resolvedShift);
+        //                            }
+        //                        }
+        //                        else
+        //                        {
 
-        public List<int> GetSwapableShiftIds()
-        {
-            var results = new List<int>();
-            var rooms = _context.SurgeryRooms.Where(r => !r.IsDeleted);
-            foreach (var room in rooms)
-            {
-                var shifts = room.SurgeryShifts.Where(s =>
-                                                        !s.IsDeleted &&
-                                                        s.EstimatedStartDateTime.Value > DateTime.Now &&
-                                                        s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase))
-                                                        .Select(s => s.Id).ToList();
-                results.AddRange(shifts);
-            }
-            return results.OrderBy(r => r).ToList();
-        }
-        #endregion
+        //                            var affectedShiftDuration = affectedShift.EstimatedEndDateTime.Value - affectedShift.EstimatedStartDateTime.Value;
+        //                            var rooms = GetAvailableRoom(affectedShiftDuration.Hours, affectedShiftDuration.Minutes, longerShift.Id, affectedShiftIds);
+        //                            affectedShiftIds.Remove(affectedShift.Id);
+        //                            rooms = rooms.Where(r =>
+        //                                                r.StartDateTime >= longerShift.EstimatedEndDateTime.Value ||
+        //                                                r.EndDateTime <= longerShift.EstimatedStartDateTime.Value)
+        //                                                .ToList();
+        //                            if (rooms.Any())
+        //                            {
+        //                                var resolvedShift = new AffectedShiftResultViewModel()
+        //                                {
+        //                                    ShiftId = affectedShift.Id,
+        //                                    OldRoomName = affectedShift.SurgeryRoom.Name,
+        //                                    OldStart = affectedShift.EstimatedStartDateTime.Value,
+        //                                    OldEnd = affectedShift.EstimatedEndDateTime.Value
+        //                                };
 
-        #region Processing
-        private bool IsLastShiftOfADay(SurgeryShift currentShift, List<SurgeryShift> shiftList)
-        {
-            var currentShiftDay = currentShift.EstimatedStartDateTime.Value.ToShortDateString();
-            var currentDayShifts = shiftList.Where(s => s.EstimatedStartDateTime.Value.ToShortDateString().Equals(currentShiftDay)).ToList();
-            if (currentShift == currentDayShifts.LastOrDefault())
-            {
-                return true;
-            }
-            return false;
-        }
-        private bool IsInBreakTime(DateTime startTime)
-        {
-            if (startTime > GetCurrentDayBreakTime(true, startTime) && startTime < GetCurrentDayBreakTime(false, startTime))
-            {
-                return true;
-            }
-            return false;
-        }
-        private DateTime GetCurrentDayWorkingHour(bool isStartTime, DateTime currentDay)
-        {
-            var midnight = GetMidnight(currentDay);
-            if (isStartTime)
-            {
-                return midnight + new TimeSpan(7, 0, 0);
-            }
-            return midnight + new TimeSpan(17, 0, 0);
-        }
-        private DateTime GetCurrentDayBreakTime(bool isStartTime, DateTime currentDay)
-        {
+        //                                result.Succeed = ChangeSchedule(new ShiftScheduleChangeViewModel()
+        //                                {
+        //                                    Id = affectedShift.Id,
+        //                                    RoomId = rooms.FirstOrDefault().RoomId,
+        //                                    EstimatedEndDateTime = rooms.FirstOrDefault().EndDateTime,
+        //                                    EstimatedStartDateTime = rooms.FirstOrDefault().StartDateTime
+        //                                });
 
-            var midnight = GetMidnight(currentDay);
-            if (isStartTime)
-            {
-                return midnight + new TimeSpan(11, 0, 0);
-            }
-            return midnight + new TimeSpan(13, 0, 0);
-        }
-        private DateTime AddToAfterBreakTime(DateTime currentTime)
-        {
-            var gap = GetCurrentDayBreakTime(false, currentTime) - currentTime;
-            return currentTime + gap;
-        }
-        private bool SwapParamName(ref SurgeryShift longerShift, ref SurgeryShift shift, ref TimeSpan longerDuration, ref TimeSpan duration)
-        {
-            var tempShift = new SurgeryShift();
-            var tempDuration = new TimeSpan();
-            if (longerDuration < duration)
-            {
-                tempShift = shift;
-                shift = longerShift;
-                longerShift = tempShift;
+        //                                if (result.Succeed)
+        //                                {
+        //                                    resolvedShift.NewRoomName = _context.SurgeryRooms.Find(rooms.FirstOrDefault().RoomId).Name;
+        //                                    resolvedShift.NewStart = rooms.FirstOrDefault().StartDateTime;
+        //                                    resolvedShift.NewEnd = rooms.FirstOrDefault().EndDateTime;
+        //                                    result.AffectedShifts.Add(resolvedShift);
+        //                                }
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //                #endregion
 
-                tempDuration = duration;
-                duration = longerDuration;
-                longerDuration = tempDuration;
-                return true;
-            }
-            else if (longerDuration > duration)
-            {
-                return true;
-            }
-            return false;
-        }
-        private List<SurgeryShift> GetAffectedShifts(SurgeryShift longerShift, SurgeryShift shift)
-        {
-            var affectedRoom = longerShift.SurgeryRoom;
-            var shifts = affectedRoom.SurgeryShifts.Where(s =>
-                !s.IsDeleted &&
-                s.EstimatedStartDateTime.Value > DateTime.Now &&
-                s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase) &&
-                s.Id != longerShift.Id &&
-                s.EstimatedStartDateTime.Value < longerShift.EstimatedEndDateTime.Value &&
-                s.EstimatedStartDateTime.Value >= longerShift.EstimatedStartDateTime.Value)
-                .ToList();
-            return shifts;
-        }
-        private DateTime GetMidnight(DateTime date)
-        {
-            var hr = date.Hour;
-            var min = date.Minute;
-            var sec = date.Second;
-            var milliSec = date.Millisecond;
+        //                #region Enable Longer Shift
+        //                longerShift.IsDeleted = false;
+        //                _context.Update(longerShift);
+        //                _context.SaveChanges();
+        //                #endregion
 
-            var midnight = date
-                .AddHours(-hr)
-                .AddMinutes(-min)
-                .AddSeconds(-sec)
-                .AddMilliseconds(-milliSec);
+        //                result.Succeed = true;
+        //                return result;
+        //            }
+        //            else
+        //            {
+        //                if (IsNextTo(shift, longerShift))
+        //                {
+        //                    var longerShiftRoomId = longerShift.SurgeryRoomId.Value;
+        //                    var shiftRoomId = shift.SurgeryRoomId.Value;
 
-            return midnight;
-        }
-        private bool IsValidTime(DateTime start, DateTime end)
-        {
-            if (start.Day == end.Day)
-            {
-                var maximumStart = GetMidnight(start) + new TimeSpan(19, 0, 0);
-                if (start <= maximumStart)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        //                    //Shift Schedule Change VMs
+        //                    var longerShiftChangeVM = new ShiftScheduleChangeViewModel()
+        //                    {
+        //                        Id = longerShift.Id,
+        //                        RoomId = shiftRoomId,
+        //                        EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
+        //                        EstimatedEndDateTime = shift.EstimatedStartDateTime.Value + longerDuration
+        //                    };
+        //                    var shiftChangeVM = new ShiftScheduleChangeViewModel()
+        //                    {
+        //                        Id = shift.Id,
+        //                        RoomId = longerShiftRoomId,
+        //                        EstimatedStartDateTime = longerShiftChangeVM.EstimatedEndDateTime,
+        //                        EstimatedEndDateTime = longerShiftChangeVM.EstimatedEndDateTime + duration
+        //                    };
 
-        private bool IsNextTo(SurgeryShift shift, SurgeryShift longerShift)
-        {
-            if (shift.SurgeryRoomId == longerShift.SurgeryRoomId)
-            {
-                var shifts = shift.SurgeryRoom.SurgeryShifts.Where(s => !s.IsDeleted).OrderBy(s => s.EstimatedStartDateTime).ToList();
-                var shiftIndex = shifts.IndexOf(shift);
-                var longerShiftIndex = shifts.IndexOf(longerShift);
-                if (Math.Abs(shiftIndex - longerShiftIndex) == 1)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        #endregion
+
+        //                    var swapResult = ChangeSchedule(shiftChangeVM);
+        //                    swapResult = ChangeSchedule(longerShiftChangeVM);
+        //                    result.Succeed = swapResult;
+        //                    return result;
+        //                }
+        //                else
+        //                {
+        //                    var longerShiftRoomId = longerShift.SurgeryRoomId.Value;
+        //                    var shiftRoomId = shift.SurgeryRoomId.Value;
+
+        //                    #region Swap and Disable Longer Shift
+        //                    //Shift Schedule Change VMs
+        //                    var shiftChangeVM = new ShiftScheduleChangeViewModel()
+        //                    {
+        //                        Id = shift.Id,
+        //                        RoomId = longerShiftRoomId,
+        //                        EstimatedStartDateTime = longerShift.EstimatedStartDateTime.Value,
+        //                        EstimatedEndDateTime = longerShift.EstimatedStartDateTime.Value + duration
+        //                    };
+        //                    var longerShiftChangeVM = new ShiftScheduleChangeViewModel()
+        //                    {
+        //                        Id = longerShift.Id,
+        //                        RoomId = shiftRoomId,
+        //                        EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
+        //                        EstimatedEndDateTime = shift.EstimatedStartDateTime.Value + longerDuration
+        //                    };
+
+        //                    var swapResult = ChangeSchedule(shiftChangeVM);
+        //                    swapResult = ChangeSchedule(longerShiftChangeVM);
+        //                    longerShift.IsDeleted = true;
+        //                    _context.Update(longerShift);
+        //                    _context.SaveChanges();
+        //                    #endregion
+
+        //                    var affectedShifts = GetAffectedShifts(longerShift, shift);
+        //                    var affectedShiftIds = affectedShifts.Select(s => s.Id).ToList();
+
+        //                    #region Resolve Affected Shifts
+        //                    if (affectedShifts.Any())
+        //                    {
+        //                        foreach (var affectedShift in affectedShifts)
+        //                        {
+        //                            var roomIds = GetAvailableRoom(affectedShift.EstimatedStartDateTime.Value, affectedShift.EstimatedEndDateTime.Value, false);
+        //                            if (roomIds.Any())
+        //                            {
+        //                                var resolvedShift = new AffectedShiftResultViewModel()
+        //                                {
+        //                                    ShiftId = affectedShift.Id,
+        //                                    OldRoomName = affectedShift.SurgeryRoom.Name,
+        //                                };
+        //                                result.Succeed = ChangeSchedule(new ShiftScheduleChangeViewModel()
+        //                                {
+        //                                    Id = affectedShift.Id,
+        //                                    RoomId = roomIds.FirstOrDefault(),
+        //                                    EstimatedEndDateTime = affectedShift.EstimatedEndDateTime.Value,
+        //                                    EstimatedStartDateTime = affectedShift.EstimatedStartDateTime.Value
+        //                                });
+        //                                if (result.Succeed)
+        //                                {
+        //                                    resolvedShift.NewRoomName = _context.SurgeryRooms.Find(roomIds.FirstOrDefault()).Name;
+        //                                    result.AffectedShifts.Add(resolvedShift);
+        //                                }
+        //                            }
+        //                            else
+        //                            {
+
+        //                                var affectedShiftDuration = affectedShift.EstimatedEndDateTime.Value - affectedShift.EstimatedStartDateTime.Value;
+        //                                var rooms = GetAvailableRoom(affectedShiftDuration.Hours, affectedShiftDuration.Minutes, longerShift.Id, affectedShiftIds);
+        //                                affectedShiftIds.Remove(affectedShift.Id);
+        //                                rooms = rooms.Where(r =>
+        //                                                    r.StartDateTime >= longerShift.EstimatedEndDateTime.Value ||
+        //                                                    r.EndDateTime <= longerShift.EstimatedStartDateTime.Value)
+        //                                                    .ToList();
+        //                                if (rooms.Any())
+        //                                {
+        //                                    var resolvedShift = new AffectedShiftResultViewModel()
+        //                                    {
+        //                                        ShiftId = affectedShift.Id,
+        //                                        OldRoomName = affectedShift.SurgeryRoom.Name,
+        //                                        OldStart = affectedShift.EstimatedStartDateTime.Value,
+        //                                        OldEnd = affectedShift.EstimatedEndDateTime.Value
+        //                                    };
+
+        //                                    result.Succeed = ChangeSchedule(new ShiftScheduleChangeViewModel()
+        //                                    {
+        //                                        Id = affectedShift.Id,
+        //                                        RoomId = rooms.FirstOrDefault().RoomId,
+        //                                        EstimatedEndDateTime = rooms.FirstOrDefault().EndDateTime,
+        //                                        EstimatedStartDateTime = rooms.FirstOrDefault().StartDateTime
+        //                                    });
+
+        //                                    if (result.Succeed)
+        //                                    {
+        //                                        resolvedShift.NewRoomName = _context.SurgeryRooms.Find(rooms.FirstOrDefault().RoomId).Name;
+        //                                        resolvedShift.NewStart = rooms.FirstOrDefault().StartDateTime;
+        //                                        resolvedShift.NewEnd = rooms.FirstOrDefault().EndDateTime;
+        //                                        result.AffectedShifts.Add(resolvedShift);
+        //                                    }
+        //                                }
+        //                            }
+        //                        }
+        //                    }
+        //                    #endregion
+
+        //                    #region Enable Longer Shift
+        //                    longerShift.IsDeleted = false;
+        //                    _context.Update(longerShift);
+        //                    _context.SaveChanges();
+        //                    #endregion
+
+        //                    result.Succeed = true;
+        //                    return result;
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            var shiftChangeVM = new ShiftScheduleChangeViewModel()
+        //            {
+        //                Id = shift.Id,
+        //                RoomId = longerShift.SurgeryRoomId.Value,
+        //                EstimatedStartDateTime = longerShift.EstimatedStartDateTime.Value,
+        //                EstimatedEndDateTime = longerShift.EstimatedEndDateTime.Value
+        //            };
+
+        //            var longerShiftChangeVM = new ShiftScheduleChangeViewModel()
+        //            {
+        //                Id = longerShift.Id,
+        //                RoomId = shift.SurgeryRoomId.Value,
+        //                EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
+        //                EstimatedEndDateTime = shift.EstimatedEndDateTime.Value
+        //            };
+
+        //            result.Succeed = ChangeSchedule(shiftChangeVM);//Shift
+        //            result.Succeed = ChangeSchedule(longerShiftChangeVM);//Longer Shift
+
+        //            return result;
+        //        }
+        //    }
+        //    catch (DbUpdateException)
+        //    {
+        //        ChangeSchedule(new ShiftScheduleChangeViewModel()
+        //        {
+        //            Id = shift.Id,
+        //            RoomId = longerShift.SurgeryRoomId.Value,
+        //            EstimatedStartDateTime = longerShift.EstimatedStartDateTime.Value,
+        //            EstimatedEndDateTime = longerShift.EstimatedStartDateTime.Value + duration
+        //        });//Shift
+        //        ChangeSchedule(new ShiftScheduleChangeViewModel()
+        //        {
+        //            Id = longerShift.Id,
+        //            RoomId = shift.SurgeryRoomId.Value,
+        //            EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
+        //            EstimatedEndDateTime = shift.EstimatedStartDateTime.Value + longerDuration
+        //        });//Longer Shift
+        //        return result;
+        //    }
+        //}
+
+        //public List<int> GetSwapableShiftIds()
+        //{
+        //    var results = new List<int>();
+        //    var rooms = _context.SurgeryRooms.Where(r => !r.IsDeleted);
+        //    foreach (var room in rooms)
+        //    {
+        //        var shifts = room.SurgeryShifts.Where(s =>
+        //                                                !s.IsDeleted &&
+        //                                                s.EstimatedStartDateTime.Value > DateTime.Now &&
+        //                                                s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase))
+        //                                                .Select(s => s.Id).ToList();
+        //        results.AddRange(shifts);
+        //    }
+        //    return results.OrderBy(r => r).ToList();
+        //}
+        //#endregion
+
+        //#region Processing
+        //private bool IsLastShiftOfADay(SurgeryShift currentShift, List<SurgeryShift> shiftList)
+        //{
+        //    var currentShiftDay = currentShift.EstimatedStartDateTime.Value.ToShortDateString();
+        //    var currentDayShifts = shiftList.Where(s => s.EstimatedStartDateTime.Value.ToShortDateString().Equals(currentShiftDay)).ToList();
+        //    if (currentShift == currentDayShifts.LastOrDefault())
+        //    {
+        //        return true;
+        //    }
+        //    return false;
+        //}
+        //private bool IsInBreakTime(DateTime startTime)
+        //{
+        //    if (startTime > GetCurrentDayBreakTime(true, startTime) && startTime < GetCurrentDayBreakTime(false, startTime))
+        //    {
+        //        return true;
+        //    }
+        //    return false;
+        //}
+        //private DateTime GetCurrentDayWorkingHour(bool isStartTime, DateTime currentDay)
+        //{
+        //    var midnight = GetMidnight(currentDay);
+        //    if (isStartTime)
+        //    {
+        //        return midnight + new TimeSpan(7, 0, 0);
+        //    }
+        //    return midnight + new TimeSpan(17, 0, 0);
+        //}
+        //private DateTime GetCurrentDayBreakTime(bool isStartTime, DateTime currentDay)
+        //{
+
+        //    var midnight = GetMidnight(currentDay);
+        //    if (isStartTime)
+        //    {
+        //        return midnight + new TimeSpan(11, 0, 0);
+        //    }
+        //    return midnight + new TimeSpan(13, 0, 0);
+        //}
+        //private DateTime AddToAfterBreakTime(DateTime currentTime)
+        //{
+        //    var gap = GetCurrentDayBreakTime(false, currentTime) - currentTime;
+        //    return currentTime + gap;
+        //}
+        //private bool SwapParamName(ref SurgeryShift longerShift, ref SurgeryShift shift, ref TimeSpan longerDuration, ref TimeSpan duration)
+        //{
+        //    var tempShift = new SurgeryShift();
+        //    var tempDuration = new TimeSpan();
+        //    if (longerDuration < duration)
+        //    {
+        //        tempShift = shift;
+        //        shift = longerShift;
+        //        longerShift = tempShift;
+
+        //        tempDuration = duration;
+        //        duration = longerDuration;
+        //        longerDuration = tempDuration;
+        //        return true;
+        //    }
+        //    else if (longerDuration > duration)
+        //    {
+        //        return true;
+        //    }
+        //    return false;
+        //}
+        //private List<SurgeryShift> GetAffectedShifts(SurgeryShift longerShift, SurgeryShift shift)
+        //{
+        //    var affectedRoom = longerShift.SurgeryRoom;
+        //    var shifts = affectedRoom.SurgeryShifts.Where(s =>
+        //        !s.IsDeleted &&
+        //        s.EstimatedStartDateTime.Value > DateTime.Now &&
+        //        s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase) &&
+        //        s.Id != longerShift.Id &&
+        //        s.EstimatedStartDateTime.Value < longerShift.EstimatedEndDateTime.Value &&
+        //        s.EstimatedStartDateTime.Value >= longerShift.EstimatedStartDateTime.Value)
+        //        .ToList();
+        //    return shifts;
+        //}
+        //private DateTime GetMidnight(DateTime date)
+        //{
+        //    var hr = date.Hour;
+        //    var min = date.Minute;
+        //    var sec = date.Second;
+        //    var milliSec = date.Millisecond;
+
+        //    var midnight = date
+        //        .AddHours(-hr)
+        //        .AddMinutes(-min)
+        //        .AddSeconds(-sec)
+        //        .AddMilliseconds(-milliSec);
+
+        //    return midnight;
+        //}
+        //private bool IsValidTime(DateTime start, DateTime end)
+        //{
+        //    if (start.Day == end.Day)
+        //    {
+        //        var maximumStart = GetMidnight(start) + new TimeSpan(19, 0, 0);
+        //        if (start <= maximumStart)
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
+
+        //private bool IsNextTo(SurgeryShift shift, SurgeryShift longerShift)
+        //{
+        //    if (shift.SurgeryRoomId == longerShift.SurgeryRoomId)
+        //    {
+        //        var shifts = shift.SurgeryRoom.SurgeryShifts.Where(s => !s.IsDeleted).OrderBy(s => s.EstimatedStartDateTime).ToList();
+        //        var shiftIndex = shifts.IndexOf(shift);
+        //        var longerShiftIndex = shifts.IndexOf(longerShift);
+        //        if (Math.Abs(shiftIndex - longerShiftIndex) == 1)
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
+        //#endregion
         //#region Change Shift
         //public bool ChangeFirstPriority(ShiftChangeViewModel newShift)
         //{

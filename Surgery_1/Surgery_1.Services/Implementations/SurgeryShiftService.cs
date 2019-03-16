@@ -21,7 +21,7 @@ namespace Surgery_1.Services.Implementations
         public ICollection<SurgeryCatalogNamesViewModel> GetSurgeryName(ICollection<SurgeryCatalogIDsViewModel> ids)
         {
             var result = new List<SurgeryCatalogNamesViewModel>();
-            foreach(var id in ids)
+            foreach (var id in ids)
             {
                 SurgeryCatalogNamesViewModel sname = new SurgeryCatalogNamesViewModel();
                 sname.name = _context.SurgeryCatalogs.Where(a => a.Id == id.id).FirstOrDefault().Name;
@@ -79,6 +79,20 @@ namespace Surgery_1.Services.Implementations
                 if (surgeryShift == null)
                     continue;
                 shiftSupply.SurgeryShiftId = surgeryShift.Id;
+                shiftSupply.MedicalSupplyId = tmp.MedicalSupplyId;
+                shiftSupply.Quantity = tmp.Quantity;
+                _context.SurgeryShiftMedicalSupplies.Add(shiftSupply);
+            }
+            _context.SaveChanges();
+        }
+
+        public void AddMedicalSupply(ICollection<AddMedicalSupplyViewModel> medicalSupply)
+        {
+            foreach (var tmp in medicalSupply)
+            {
+                var shiftSupply = new SurgeryShiftMedicalSupply();
+
+                shiftSupply.SurgeryShiftId = tmp.SurgeryShiftId;
                 shiftSupply.MedicalSupplyId = tmp.MedicalSupplyId;
                 shiftSupply.Quantity = tmp.Quantity;
                 _context.SurgeryShiftMedicalSupplies.Add(shiftSupply);
