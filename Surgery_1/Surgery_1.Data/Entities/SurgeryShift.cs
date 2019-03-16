@@ -44,20 +44,21 @@ namespace Surgery_1.Data.Entities
         public int? PriorityNumberAlt { get; set; }
 
         public int? PatientId { get; set; }
-        public int? SurgeryRoomId { get; set; }
+        public int? SlotRoomId { get; set; }
         public int? SurgeryCatalogId { get; set; }
         public int? StatusId { get; set; }
         public int? EkipId { get; set; }
         public int? TreatmentDoctorId { get; set; }
         public int? NurseId { get; set; }
+        public int? TechId { get; set; }
 
 
         public string EkipIndex { get; set; }
 
         [ForeignKey("PatientId")]
         public virtual Patient Patient { get; set; }
-        [ForeignKey("SurgeryRoomId")]
-        public virtual SurgeryRoom SurgeryRoom { get; set; }
+        [ForeignKey("SlotRoomId")]
+        public virtual SlotRoom SlotRoom { get; set; }
         [ForeignKey("SurgeryCatalogId")]
         public virtual SurgeryCatalog SurgeryCatalog { get; set; }
         [ForeignKey("StatusId")]
@@ -68,6 +69,8 @@ namespace Surgery_1.Data.Entities
         public virtual Doctor TreatmentDoctor { get; set; }
         [ForeignKey("NurseId")]
         public virtual UserInfo Nurse { get; set; }
+        [ForeignKey("TechId")]
+        public virtual UserInfo TechnicalStaff { get; set; }
 
         public virtual ICollection<SurgeryShiftMedicalSupply> SurgeryShiftMedicalSupplies { get; set; }
         public virtual ICollection<HealthCareReport> HealthCareReports { get; set; }

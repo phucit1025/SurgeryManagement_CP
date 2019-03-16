@@ -10,7 +10,9 @@ namespace Surgery_1.Data.ViewModels
         public string DateCreated { get; set; }
         public string ProgressiveDisease { get; set; }
         public int ShiftId { get; set; }
+        public bool IsUsed { get; set; }
         public ICollection<TreatmentReportDrugViewModel> TreatmentReportDrugs { get; set; }
+        public ICollection<int> DeleteTreatmentReportId { get; set; }
     }
 
     public class TreatmentReportDrugViewModel

@@ -8,5 +8,6 @@ namespace Surgery_1.Data.ViewModels
     {
         public int Id { get; set; }
         public string FullName { get; set; }
+        public int Capacity { get; set; }
     }
 }

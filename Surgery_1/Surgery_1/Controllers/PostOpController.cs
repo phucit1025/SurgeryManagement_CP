@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Castle.Core.Internal;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Surgery_1.Data.ViewModels;
 using Surgery_1.Services.Interfaces;
+
 
 namespace Surgery_1.Controllers
 {
@@ -65,6 +67,7 @@ namespace Surgery_1.Controllers
             return Ok(result);
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult CreateHealthCareReport(HealthCareReportViewModel healthCareReportViewModel)
         {
@@ -98,6 +101,7 @@ namespace Surgery_1.Controllers
             return BadRequest();
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult FindPostOpSurgeryByQuery(string query)
         {
@@ -191,6 +195,39 @@ namespace Surgery_1.Controllers
         public IActionResult GetTreatmentReportById(int id)
         {
             var result = _postOpService.GetTreatmentReportById(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+       
+        [HttpGet]
+        public IActionResult AssignNurse(int shiftId, int nurseId)
+        {
+            var result = _postOpService.AssignNurse(shiftId, nurseId);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
+        }
+
+        [HttpGet]
+        public IActionResult GetAllNurse()
+        {
+            var result = _postOpService.GetAllNurse().Result;
+            if (!result.IsNullOrEmpty())
+            {
+                return Ok(result);
+            }
+            return NotFound();
+        }
+
+        [HttpGet]
+        public IActionResult GetNurseByShiftId(int shiftId)
+        {
+            var result = _postOpService.GetNurseByShiftId(shiftId);
             if (result == null)
             {
                 return NotFound();

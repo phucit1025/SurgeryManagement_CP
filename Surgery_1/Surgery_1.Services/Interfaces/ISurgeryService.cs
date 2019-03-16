@@ -8,13 +8,18 @@ namespace Surgery_1.Services.Interfaces
     public interface ISurgeryService
     {
         #region Tung
+        //Making schedule
         List<AvailableRoomViewModel> GetAvailableSlotRoom(int dateNumber);
         ICollection<SurgeryRoomViewModel> GetSurgeryRooms();
         ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int surgeryRoomId, int dateNumber);
         StringBuilder MakeScheduleList();
+        ICollection<SurgeryRoomViewModel> GetSlotRooms();
+        bool AddEmergencyShift(EmerSurgeryShift emerShift);
+        int GetAvailableRoomForProposedTime(EmerSurgeryShift emerShift);
+        bool RefreshSurgeryShift(int shiftId);
 
         //After make schedule
-        bool SetPostoperativeStatus(int shiftId, string roomPost, string postBed, string actualEndDateTime, int nurseId);
+        bool SetPostoperativeStatus(int shiftId, string roomPost, string postBed, string actualEndDateTime);
         bool SetIntraoperativeStatus(int shiftId, string actualStartDateTime);
         bool SetFinishedStatus(int shiftId);
         int CheckPostStatus(int shiftId);
@@ -28,6 +33,7 @@ namespace Surgery_1.Services.Interfaces
 
         SurgeryShiftDetailViewModel GetShiftDetail(int shiftId);
 
+<<<<<<< HEAD
         #region Change Surgery Business
         bool ChangeFirstPriority(ShiftChangeViewModel newShift);
         bool ChangeSchedule(ShiftScheduleChangeViewModel newShift);
@@ -38,5 +44,17 @@ namespace Surgery_1.Services.Interfaces
         List<int> GetSwapableShiftIds();
         Boolean SaveSurgeryProcedure(SurgeryProcedureViewModel SurgeryProcedure);
         #endregion
+=======
+        //    #region Change Surgery Business
+        //    bool ChangeFirstPriority(ShiftChangeViewModel newShift);
+        //    bool ChangeSchedule(ShiftScheduleChangeViewModel newShift);
+        //    List<int> GetAvailableRoom(DateTime start, DateTime end, bool forcedChange);
+        //    List<AvailableRoomViewModel> GetAvailableRoom(int hour, int minute, int? longerShiftId = null, List<int> shiftIds = null);
+        //    bool ChangeShiftStatus(ShiftStatusChangeViewModel currentShift);
+        //    SwapShiftResultViewModel SwapShift(int shift1Id, int shift2Id);
+        //    List<int> GetSwapableShiftIds();
+        //    SwapShiftResultViewModel SwapShiftToRoom(int shiftId, int roomId, bool forcedSwap);
+        //    #endregion
+>>>>>>> ae4f113b8295ea7fa041bbd5be5ff6b345241b81
     }
 }
