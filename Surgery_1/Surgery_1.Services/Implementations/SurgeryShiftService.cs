@@ -96,7 +96,7 @@ namespace Surgery_1.Services.Implementations
                 {
                     existed.Quantity += tmp.Quantity;
                 }
-                else
+                else if (tmp.Quantity > 0)
                 {
                     var shiftSupply = new SurgeryShiftMedicalSupply();
 
@@ -112,15 +112,12 @@ namespace Surgery_1.Services.Implementations
         public ICollection<MedicalSupplyInfoViewModel> GetSuppliesUsedInSurgery(int surgeryShiftId)
         {
             List<MedicalSupplyInfoViewModel> list = new List<MedicalSupplyInfoViewModel>();
-            var supplies = _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == surgeryShiftId).ToList();
-            UtilsService util = new UtilsService(_context);
-            List<MedicalSupplyInfoViewModel> u = new List<MedicalSupplyInfoViewModel>();
-            u = (List<MedicalSupplyInfoViewModel>)util.GetMedicalSupply();
+            var supplies = _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == surgeryShiftId).OrderBy(s => s.MedicalSupplyId).ToList();
             foreach (var supply in supplies)
             {
                 MedicalSupplyInfoViewModel s = new MedicalSupplyInfoViewModel();
                 s.medicalSupplyId = supply.MedicalSupplyId;
-                s.medicalSupplyName = u[supply.MedicalSupplyId].medicalSupplyName;
+                s.medicalSupplyName = _context.MedicalSupplies.Find(supply.MedicalSupplyId).Name;
                 s.quantity = supply.Quantity;
                 list.Add(s);
             }

@@ -30,7 +30,7 @@ namespace Surgery_1.Controllers
         {
             _surgeryShiftService.AddMedicalSupply(medicalSupplyAddList);
         }
-
+   
         [HttpGet]
         public IActionResult GetUsedSupply(int surgeryShiftId)
         {
