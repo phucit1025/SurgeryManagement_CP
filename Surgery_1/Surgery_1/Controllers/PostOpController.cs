@@ -205,7 +205,7 @@ namespace Surgery_1.Controllers
         [HttpGet]
         public IActionResult AssignNurse(int shiftId, int nurseId)
         {
-            var result = _postOpService.AssignNurse(shiftId, nurseId);
+            var result = _postOpService.AssignNurse(shiftId, nurseId).Result;
             if (result)
             {
                 return Ok(result);

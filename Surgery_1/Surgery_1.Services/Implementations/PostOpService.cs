@@ -15,12 +15,17 @@ using System.Security.Claims;
 using System.Text;
 using Surgery_1.Services.Extensions;
 using System.Threading.Tasks;
+using Firebase.Database;
+using Newtonsoft.Json;
+using System.Net.Http;
 
 namespace Surgery_1.Services.Implementations
 {
     public class PostOpService : IPostOpService
     {
-        private readonly int RECOVERY_STATE = 4;
+        private readonly string FIREBASE_DB_URL = "https://ebsms-dcebe.firebaseio.com/";
+        private readonly string SERVER_KEY = "AAAAUsOlx2E:APA91bEU7RZdpi29XOBScui7ceYb4kk0tNqvSG6rLgRMs5fd0pirZQ0qIVlJm5rj2TmBQKUlNpvWEUug-v4RHbS3xFOYIkzfckdIApYiCuIe5ZYlXTnDo6MdFnEWpkyHX5qAvVAxNw7C";
+        private readonly string SENDER_ID = "355469739873";
         private readonly AppDbContext _appDbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<IdentityUser> _userManager;
@@ -83,7 +88,7 @@ namespace Surgery_1.Services.Implementations
         public bool ChangeSurgeryShiftToRecovery(int surgeryShiftId, string postOpRoom, string postOpBed)
         {
             var surgeryShift = _appDbContext.SurgeryShifts.Find(surgeryShiftId);
-            surgeryShift.StatusId = RECOVERY_STATE;
+            //surgeryShift.StatusId = RECOVERY_STATE;
             surgeryShift.PostRoomName = postOpRoom;
             surgeryShift.PostBedName = postOpBed;
 
@@ -608,20 +613,63 @@ namespace Surgery_1.Services.Implementations
             }
         }
 
-        public bool AssignNurse(int shiftId, int nurseId)
+        public async Task<bool> AssignNurse(int shiftId, int nurseId)
         {
             var shift = _appDbContext.SurgeryShifts.Find(shiftId);
             shift.NurseId = nurseId;
+            var guid = _appDbContext.UserInfo.Find(nurseId).GuId;
+            var user = await _userManager.FindByIdAsync(guid);
+            var username = user.Email;
+            var firebase = new FirebaseClient(FIREBASE_DB_URL);
+            var deviceTokens = await firebase.Child($"/users/{username}/devices").OnceAsync<Dictionary<string, string>>();
             try
             {
                 _appDbContext.SurgeryShifts.Update(shift);
-                _appDbContext.SaveChanges();
+                int rs =  _appDbContext.SaveChanges();
+                if (rs > 0)
+                {
+                    foreach (var item in deviceTokens)
+                    {
+                        var token = item.Object.FirstOrDefault().Value;
+                        await Send(getAndroidMessage("New Surgery Shift", new { id = shiftId }, token));
+                    }
+                }
                 return true;
             }
-            catch (DbUpdateException)
+            catch (Exception)
             {
                 return false;
             }
+        }
+
+        public async Task Send(string notification)
+        {
+            var http = new HttpClient();
+            http.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "key=" + SERVER_KEY);
+            http.DefaultRequestHeaders.TryAddWithoutValidation("Sender", "id=" + SENDER_ID);
+            http.DefaultRequestHeaders.TryAddWithoutValidation("content-length", notification.Length.ToString());
+            var content = new StringContent(notification, System.Text.Encoding.UTF8, "application/json");
+
+            var response = await http.PostAsync("https://fcm.googleapis.com/fcm/send", content);
+        }
+
+        public string getAndroidMessage(string title, object objData, string regId)
+        {
+            var payload = new
+            {
+                to = regId,
+                priority = "high",
+                content_available = true,
+                notification = new
+                {
+                    body = "New PostOp Surgery Shift Incoming",
+                    title = "eBSMS",
+                    badge = 1
+                },
+                data = objData,
+            };
+
+            return JsonConvert.SerializeObject(payload);
         }
 
         public async Task<ICollection<NurseViewModel>> GetAllNurse()
