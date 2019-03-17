@@ -217,6 +217,8 @@ namespace Surgery_1.Services.Implementations
 
         public ICollection<PostOpSurgeryShiftViewModel> FindPostOpSurgeryByQuery(string query)
         {
+            int postStatus = _appDbContext.Statuses.Where(s => s.Name == "Postoperative").FirstOrDefault().Id;
+            int recoveryStatus = _appDbContext.Statuses.Where(s => s.Name == "Recovery").FirstOrDefault().Id;
             var guid = _httpContextAccessor.HttpContext.User.GetGuid();
             var nurse = _appDbContext.UserInfo.Where(a => a.GuId == guid).FirstOrDefault();
             try
@@ -226,7 +228,7 @@ namespace Surgery_1.Services.Implementations
                 if (success)
                 {
                     var surgeryShifts = _appDbContext.SurgeryShifts
-                     .Where(a => (a.StatusId == 5 || a.StatusId == 6) && a.IsDeleted == false
+                     .Where(a => (a.StatusId == postStatus || a.StatusId == recoveryStatus) && a.IsDeleted == false
                      && (a.Patient.FullName.Contains(query) || a.Id == id || a.TreatmentDoctor.FullName.Contains(query))
                      && a.NurseId == nurse.Id)
                      .ToList();
@@ -247,7 +249,7 @@ namespace Surgery_1.Services.Implementations
                 } else
                 {
                     var surgeryShifts = _appDbContext.SurgeryShifts
-                     .Where(a => (a.StatusId == 5 || a.StatusId == 6) && a.IsDeleted == false
+                     .Where(a => (a.StatusId == postStatus || a.StatusId == recoveryStatus) && a.IsDeleted == false
                      && (a.Patient.FullName.Contains(query) || a.TreatmentDoctor.FullName.Contains(query)))
                      .ToList();
                     var results = new List<PostOpSurgeryShiftViewModel>();

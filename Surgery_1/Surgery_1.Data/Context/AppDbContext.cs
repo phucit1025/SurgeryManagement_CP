@@ -11,7 +11,6 @@ namespace Surgery_1.Data.Context
     {
         public AppDbContext() : base((new DbContextOptionsBuilder())
             .UseLazyLoadingProxies()
-            //.UseSqlServer(@"Data Source=45.119.212.145;Initial Catalog=Surgery_CP_App;persist security info=True;Integrated Security=False;TrustServerCertificate=False;uid=sa;password=zaq@123;Trusted_Connection=False;MultipleActiveResultSets=true;")
             .UseSqlServer(@"Data Source=HOANH-TUNG\SQLEXPRESS;Initial Catalog=Surgery_CP_App;persist security info=True;Integrated Security=False;TrustServerCertificate=False;uid=sa;password=password;Trusted_Connection=False;MultipleActiveResultSets=true;")
             .Options)
         {
@@ -28,6 +27,7 @@ namespace Surgery_1.Data.Context
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<SurgeryCatalog> SurgeryCatalogs { get; set; }
         public DbSet<SurgeryRoom> SurgeryRooms { get; set; }
+        public DbSet<SlotRoom> SlotRooms { get; set; }
         public DbSet<SurgeryShift> SurgeryShifts { get; set; }
         public DbSet<SurgeryShiftMedicalSupply> SurgeryShiftMedicalSupplies { get; set; }
         public DbSet<Ekip> Ekips { get; set; }

@@ -9,7 +9,7 @@ namespace Surgery_1.Data.ViewModels
     {
         public int Id { get; set; }
         public string CatalogName { get; set; }
-        public int PriorityNumber { get; set; }
+        public int? PriorityNumber { get; set; }
         public List<string> SurgeonNames { get; set; }
         public string PatientName { get; set; }
         public DateTime EstimatedStartDateTime { get; set; }
@@ -31,6 +31,8 @@ namespace Surgery_1.Data.ViewModels
         public string SurgeryType { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
+        public DateTime? ActualStartTime { get; set; }
+        public DateTime? ActualEndTime { get; set; }
 
         //Surgery Info
         //public List<EkipMemberViewModel> EkipMembers { get; set; }
@@ -71,6 +73,13 @@ namespace Surgery_1.Data.ViewModels
     {
         public int MedicalSupplyId { get; set; }
         public String SurgeryShiftCode { get; set; }
+        public int Quantity { get; set; }
+    }
+
+    public class AddMedicalSupplyViewModel
+    {
+        public int MedicalSupplyId { get; set; }
+        public int SurgeryShiftId { get; set; }
         public int Quantity { get; set; }
     }
 
@@ -126,5 +135,26 @@ namespace Surgery_1.Data.ViewModels
     {
         public int FirstShiftId { get; set; }
         public int SecondShiftId { get; set; }
+    }
+
+
+    public class SurgeryProcedureViewModel
+    {
+        public int SurgeryShiftId { get; set; }
+        public string Procedure { get; set; }
+    }
+
+    public class SwapShiftToRoomViewModel
+    {
+        public int ShiftId { get; set; }
+        public int RoomId { get; set; }
+        public bool ForcedSwap { get; set; }
+    }
+
+    public class EmerSurgeryShift
+    {
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public bool IsForceAdd { get; set; }
     }
 }

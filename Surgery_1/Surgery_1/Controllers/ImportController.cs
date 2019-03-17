@@ -40,6 +40,6 @@ namespace Surgery_1.Controllers
         {
             var result = _surgeryShiftService.GetSurgeryName(SurgeryId);
             return Ok(result);
-        }
+        }        
     }
 }
