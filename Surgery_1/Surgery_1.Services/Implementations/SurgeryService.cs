@@ -23,6 +23,7 @@ namespace Surgery_1.Services.Implementations
         private readonly string POST_STATUS = "Postoperative";
         private readonly string INTRA_STATUS = "Intraoperative";
         private readonly string RECOVERY_STATUS = "Recovery";
+        private readonly string FINISHED_STATUS = "Finished";
         private readonly AppDbContext _context;
         StringBuilder notificationMakeSchedule = new StringBuilder();
 
@@ -30,83 +31,6 @@ namespace Surgery_1.Services.Implementations
         {
             this._context = _context;
         }
-        #region Status
-
-        public bool SetPostoperativeStatus(int shiftId, string roomPost, string bedPost, string actualEndDateTime)
-        {
-            var shift = _context.SurgeryShifts.Find(shiftId);
-            var status = _context.Statuses.Where(s => s.Name.Equals("Postoperative")).FirstOrDefault();
-            if (shift != null)
-            {
-                shift.StatusId = status.Id;
-                shift.PostRoomName = roomPost;
-                shift.PostBedName = bedPost;
-                shift.ActualEndDateTime = DateTime.ParseExact(actualEndDateTime, "yyyy-MM-dd HH:mm",
-                                       System.Globalization.CultureInfo.InvariantCulture);
-                _context.Update(shift);
-                _context.SaveChanges();
-                return true;
-            }
-            return false;
-        }
-        public bool SetIntraoperativeStatus(int shiftId, string actualStartDateTime)
-        {
-            var shift = _context.SurgeryShifts.Find(shiftId);
-            var status = _context.Statuses.Where(s => s.Name.Equals("Intraoperative")).FirstOrDefault();
-            if (shift != null)
-            {
-                shift.StatusId = status.Id;
-                shift.ActualStartDateTime = DateTime.ParseExact(actualStartDateTime, "yyyy-MM-dd HH:mm",
-                                       System.Globalization.CultureInfo.InvariantCulture);
-                _context.Update(shift);
-                _context.SaveChanges();
-                return true;
-            }
-            return false;
-        }
-        public bool SetFinishedStatus(int shiftId)
-        {
-            var shift = _context.SurgeryShifts.Find(shiftId);
-            var status = _context.Statuses.Where(s => s.Name.Equals("Finished")).FirstOrDefault();
-            if (shift != null)
-            {
-                shift.StatusId = status.Id;
-                _context.Update(shift);
-                _context.SaveChanges();
-                return true;
-            }
-            return false;
-        }
-        public int CheckPostStatus(int shiftId)
-        {
-            var shift = _context.SurgeryShifts.Find(shiftId);
-            int result = 0;
-            if (shift != null)
-            {
-                if (shift.Status.Name.Equals(INTRA_STATUS, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    result = 1; //Hiện nút khi ca mổ sau thời gian phẫu thuật
-                }
-                else if (shift.Status.Name.Equals(POST_STATUS, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    result = 2; //Disable nút khi đã set status
-                }
-            }
-            return result;
-        }
-        public bool CheckRecoveryStatus(int shiftId)
-        {
-            var shift = _context.SurgeryShifts.Find(shiftId);
-            if (shift != null)
-            {
-                if (shift.Status.Name.Equals(RECOVERY_STATUS, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        #endregion
 
         public bool RefreshSurgeryShift(int shiftId)
         {
