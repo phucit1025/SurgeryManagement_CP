@@ -13,5 +13,6 @@ namespace Surgery_1.Services.Interfaces
         ICollection<SurgeryCatalogNamesViewModel> GetSurgeryName(ICollection<SurgeryCatalogIDsViewModel> id);
         void AddMedicalSupply(ICollection<AddMedicalSupplyViewModel> medicalSupply);
         ICollection<MedicalSupplyInfoViewModel> GetSuppliesUsedInSurgery(int surgeryShiftId);
+        ICollection<EkipMemberViewModel> GetEkipMember(int surgeryShiftId);
     }
 }

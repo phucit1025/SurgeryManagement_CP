@@ -18,4 +18,11 @@ namespace Surgery_1.Data.ViewModels
         public String medicalSupplyName { get; set; }
         public int quantity { get; set; }
     }
+
+    public class AddMedicalSupplyViewModel
+    {
+        public int MedicalSupplyId { get; set; }
+        public int SurgeryShiftId { get; set; }
+        public int Quantity { get; set; }
+    }
 }

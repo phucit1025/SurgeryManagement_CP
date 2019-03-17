@@ -123,5 +123,30 @@ namespace Surgery_1.Services.Implementations
             }
             return list;
         }
+
+        public ICollection<EkipMemberViewModel> GetEkipMember(int surgeryShiftId)
+        {
+            List<EkipMemberViewModel> list = new List<EkipMemberViewModel>(); 
+            //Load Surgeons
+            var surgeons = _context.SurgeryShiftSurgeons.Where(a => a.SurgeryShiftId == surgeryShiftId);
+            foreach (var surgeon in surgeons)
+            {
+                EkipMemberViewModel member = new EkipMemberViewModel();
+                member.Name = _context.Doctors.Find(surgeon.SurgeonId).FullName;
+                member.WorkJob = "Surgeon";
+                list.Add(member);
+            }
+            //Load Ekip Members
+            var ekipId = _context.SurgeryShifts.Find(surgeryShiftId).EkipId;
+            var ekipMembers = _context.EkipMembers.Where(a => a.EkipId == ekipId).ToList();
+            foreach (var emember in ekipMembers)
+            {
+                EkipMemberViewModel member = new EkipMemberViewModel();
+                member.Name = emember.Name;
+                member.WorkJob = emember.WorkJob;
+                list.Add(member);
+            }
+            return list;
+        }
     }
 }
