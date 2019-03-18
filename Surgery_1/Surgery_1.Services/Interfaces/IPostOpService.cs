@@ -25,7 +25,7 @@ namespace Surgery_1.Services.Interfaces
         ICollection<TreatmentReportViewModel> GetTodayTreatmentReportByShiftId(int shiftId);
         bool CreateTreatmentReportDrugs(ICollection<TreatmentReportDrugViewModel> treatmentReportDrugViewModels);
         TreatmentMedication GetDrugRequirementForNurse(int shiftId);
-        bool AssignNurse(int shiftId, int nurseId);
+        Task<bool> AssignNurse(int shiftId, int nurseId);
         Task<ICollection<NurseViewModel>> GetAllNurse();
         NurseViewModel GetNurseByShiftId(int shiftId);
 
