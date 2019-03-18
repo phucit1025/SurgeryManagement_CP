@@ -32,6 +32,28 @@ namespace Surgery_1.Services.Implementations
             this._context = _context;
         }
 
+        public bool CheckStatusPreviousSurgeryShift(int shiftId)
+        {
+            var surgeryShift = _context.SurgeryShifts.Find(shiftId);
+            var slotRoom = _context.SlotRooms.Find(surgeryShift.SlotRoomId);
+            var previousShift = slotRoom.SurgeryShifts
+                .Where(s => UtilitiesDate.ConvertDateToNumber(s.ScheduleDate.Value) == UtilitiesDate.ConvertDateToNumber(surgeryShift.ScheduleDate.Value))
+                .Where(s => s.EstimatedEndDateTime <= surgeryShift.EstimatedStartDateTime).OrderByDescending(s => s.EstimatedEndDateTime)
+                .FirstOrDefault();
+
+            if (previousShift != null)
+            {
+                var statusName = previousShift.Status.Name;
+                if (statusName.Equals(POST_STATUS)) {
+                    return true;// cho hiện
+                }
+            } else
+            { // Không có thằng nào trước nó, tức nó đừng đầu
+                return true;
+            }           
+            return false;
+        }
+
         public bool RefreshSurgeryShift(int shiftId)
         {
             var surgeryShift = _context.SurgeryShifts.Find(shiftId);

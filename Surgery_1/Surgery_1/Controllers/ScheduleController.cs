@@ -36,6 +36,13 @@ namespace Surgery_1.Controllers
             return StatusCode(200, dateTime);
         }
 
+        [HttpGet]
+        public IActionResult CheckStatusPreviousSurgeryShift(int shiftId)
+        {
+            var result = _surgeryService.CheckStatusPreviousSurgeryShift(shiftId);
+            return StatusCode(200, result);
+        }
+
         #region Make Schedule
 
         [HttpPost]
