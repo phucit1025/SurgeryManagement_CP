@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Surgery_1.Data.ViewModels;
 using Surgery_1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,13 @@ namespace Surgery_1.Controllers
         {
             var result = _surgeryShiftService.GetEkipMember(surgeryShiftId);
             return StatusCode(200, result);
+        }
+
+        [HttpPost]
+        public Boolean UpdateMedicalSupply([FromBody]ICollection<ShiftMedicalSupplyViewModel> medicalSupply)
+        {
+            _surgeryShiftService.UpdateMedicalSupply(medicalSupply);
+            return true;
         }
     }
 }
