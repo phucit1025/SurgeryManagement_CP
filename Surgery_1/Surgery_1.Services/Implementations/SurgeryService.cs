@@ -113,7 +113,7 @@ namespace Surgery_1.Services.Implementations
                 int roomEmptyId = GetEmptyRoomForDate(dayNumber);
 
                 //// Lấy khoảng thời gian sau thời gian confirm
-                //var roomList = availableSlotRooms.Where(s => s.StartDateTime > shift.ConfirmDate).ToList();
+                availableSlotRooms = availableSlotRooms.Where(s => s.EndDateTime > shift.ConfirmDate).ToList();
 
                 //TODO: Trường hợp mổ theo chương trình, biến = true
                 if (shift.IsNormalSurgeryTime)
@@ -172,7 +172,6 @@ namespace Surgery_1.Services.Implementations
                     }
                 }
             }
-
             // TODO: =======================Xử lý qua ngày========================
             shifts = GetSurgeryShiftsNoSchedule();
             if (shifts.Count != 0)
