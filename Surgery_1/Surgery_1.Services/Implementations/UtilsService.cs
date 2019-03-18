@@ -13,6 +13,7 @@ namespace Surgery_1.Services.Implementations
         private static List<MedicalSupplyInfoViewModel> list = null;
 
         private readonly AppDbContext _context;
+
         public UtilsService(AppDbContext _context)
         {
             this._context = _context;
