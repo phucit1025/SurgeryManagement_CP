@@ -86,7 +86,7 @@ namespace Surgery_1.Services.Implementations
             _context.SaveChanges();
         }
 
-        public void AddMedicalSupply(ICollection<AddMedicalSupplyViewModel> medicalSupply)
+        public void AddMedicalSupply(ICollection<ShiftMedicalSupplyViewModel> medicalSupply)
         {
             foreach (var tmp in medicalSupply)
             {
@@ -115,6 +115,7 @@ namespace Surgery_1.Services.Implementations
             var supplies = _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == surgeryShiftId).OrderBy(s => s.MedicalSupplyId).ToList();
             foreach (var supply in supplies)
             {
+                if (supply.Quantity == 0) continue;
                 MedicalSupplyInfoViewModel s = new MedicalSupplyInfoViewModel();
                 s.medicalSupplyId = supply.MedicalSupplyId;
                 s.medicalSupplyName = _context.MedicalSupplies.Find(supply.MedicalSupplyId).Name;
@@ -126,7 +127,7 @@ namespace Surgery_1.Services.Implementations
 
         public ICollection<EkipMemberViewModel> GetEkipMember(int surgeryShiftId)
         {
-            List<EkipMemberViewModel> list = new List<EkipMemberViewModel>(); 
+            List<EkipMemberViewModel> list = new List<EkipMemberViewModel>();
             //Load Surgeons
             var surgeons = _context.SurgeryShiftSurgeons.Where(a => a.SurgeryShiftId == surgeryShiftId);
             foreach (var surgeon in surgeons)
@@ -147,6 +148,17 @@ namespace Surgery_1.Services.Implementations
                 list.Add(member);
             }
             return list;
+        }
+
+        public void UpdateMedicalSupply(ICollection<ShiftMedicalSupplyViewModel> medicalSupply)
+        {
+            foreach (var tmp in medicalSupply)
+            {
+               var shiftSupply =  _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == tmp.SurgeryShiftId)
+                    .Where(a => a.MedicalSupplyId == tmp.MedicalSupplyId).FirstOrDefault();
+                shiftSupply.Quantity = tmp.Quantity;
+            }
+            _context.SaveChanges();
         }
     }
 }

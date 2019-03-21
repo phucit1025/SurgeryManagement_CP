@@ -11,8 +11,9 @@ namespace Surgery_1.Services.Interfaces
         void ImportSurgeryShift(ICollection<ImportSurgeryShiftViewModel> surgeryShift);
         void ImportSurgeryShiftMedicalSupply(ICollection<ImportMedicalSupplyViewModel> medicalSupply);
         ICollection<SurgeryCatalogNamesViewModel> GetSurgeryName(ICollection<SurgeryCatalogIDsViewModel> id);
-        void AddMedicalSupply(ICollection<AddMedicalSupplyViewModel> medicalSupply);
+        void AddMedicalSupply(ICollection<ShiftMedicalSupplyViewModel> medicalSupply);
         ICollection<MedicalSupplyInfoViewModel> GetSuppliesUsedInSurgery(int surgeryShiftId);
         ICollection<EkipMemberViewModel> GetEkipMember(int surgeryShiftId);
+        void UpdateMedicalSupply(ICollection<ShiftMedicalSupplyViewModel> medicalSupply);
     }
 }
