@@ -44,13 +44,15 @@ namespace Surgery_1.Services.Implementations
             if (previousShift != null)
             {
                 var statusName = previousShift.Status.Name;
-                if (statusName.Equals(POST_STATUS)) {
+                if (statusName.Equals(POST_STATUS))
+                {
                     return true;// cho hiện
                 }
-            } else
+            }
+            else
             { // Không có thằng nào trước nó, tức nó đừng đầu
                 return true;
-            }           
+            }
             return false;
         }
 
@@ -251,7 +253,7 @@ namespace Surgery_1.Services.Implementations
                         //======= Lấy khoảng ở giữa các ca mổ==========
                         for (int i = 0; i < result.Count - 1; i++)
                         {
-     
+
                             var tmpEnd = result.ElementAt(i).EstimatedEndDateTime;
                             if (result.ElementAt(i).ActualEndDateTime != null)
                             {
@@ -392,7 +394,8 @@ namespace Surgery_1.Services.Implementations
                 {
                     return false;
                 }
-            } else
+            }
+            else
             {
                 //if (emerShift.IsForceAdd)
                 //{
@@ -482,6 +485,7 @@ namespace Surgery_1.Services.Implementations
                     results.Add(new SurgeryShiftViewModel()
                     {
                         Id = shift.Id,
+                        CatalogCode = shift.SurgeryCatalog.Code,
                         CatalogName = shift.SurgeryCatalog.Name,
                         PriorityNumber = shift.PriorityNumber,
                         EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
@@ -608,7 +612,8 @@ namespace Surgery_1.Services.Implementations
                     ActualStartTime = shift.ActualStartDateTime,
                     ActualEndTime = shift.ActualEndDateTime,
                     //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
-                    Procedure = UsedProcedure
+                    Procedure = UsedProcedure,
+                    StatusName = shift.Status.Name
                 };
                 return result;
             }

@@ -17,7 +17,7 @@ namespace Surgery_1.Controllers
         private readonly IRoomService _roomService;
         private readonly ISurgeryShiftService _surgeryShiftService;
 
-        public ScheduleController(ISurgeryService _surgeryService, IRoomService _roomService, 
+        public ScheduleController(ISurgeryService _surgeryService, IRoomService _roomService,
             ISurgeryShiftService _surgeryShiftService)
         {
             this._surgeryService = _surgeryService;
@@ -30,7 +30,7 @@ namespace Surgery_1.Controllers
         {
             _surgeryShiftService.AddMedicalSupply(medicalSupplyAddList);
         }
-   
+
         [HttpGet]
         public IActionResult GetUsedSupply(int surgeryShiftId)
         {
