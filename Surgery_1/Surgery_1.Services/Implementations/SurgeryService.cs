@@ -32,6 +32,30 @@ namespace Surgery_1.Services.Implementations
             this._context = _context;
         }
 
+        public bool CheckStatusPreviousSurgeryShift(int shiftId)
+        {
+            var surgeryShift = _context.SurgeryShifts.Find(shiftId);
+            var slotRoom = _context.SlotRooms.Find(surgeryShift.SlotRoomId);
+            var previousShift = slotRoom.SurgeryShifts
+                .Where(s => UtilitiesDate.ConvertDateToNumber(s.ScheduleDate.Value) == UtilitiesDate.ConvertDateToNumber(surgeryShift.ScheduleDate.Value))
+                .Where(s => s.EstimatedEndDateTime <= surgeryShift.EstimatedStartDateTime).OrderByDescending(s => s.EstimatedEndDateTime)
+                .FirstOrDefault();
+
+            if (previousShift != null)
+            {
+                var statusName = previousShift.Status.Name;
+                if (statusName.Equals(POST_STATUS))
+                {
+                    return true;// cho hiện
+                }
+            }
+            else
+            { // Không có thằng nào trước nó, tức nó đừng đầu
+                return true;
+            }
+            return false;
+        }
+
         public bool RefreshSurgeryShift(int shiftId)
         {
             var surgeryShift = _context.SurgeryShifts.Find(shiftId);
@@ -54,7 +78,6 @@ namespace Surgery_1.Services.Implementations
                         {
                             for (int i = 0; i < shiftInRoom.Count - 1; i++)
                             {
-                                //shiftInRoom = GetRealtimeShiftByRoom(room, surgeryShift);
                                 var realShift = _context.SurgeryShifts.Find(shiftInRoom.ElementAt(i).Id);
                                 if (realShift.EstimatedEndDateTime > shiftInRoom.ElementAt(i + 1).EstimatedStartDateTime)
                                 {
@@ -92,7 +115,7 @@ namespace Surgery_1.Services.Implementations
                 int roomEmptyId = GetEmptyRoomForDate(dayNumber);
 
                 //// Lấy khoảng thời gian sau thời gian confirm
-                //var roomList = availableSlotRooms.Where(s => s.StartDateTime > shift.ConfirmDate).ToList();
+                availableSlotRooms = availableSlotRooms.Where(s => s.EndDateTime > shift.ConfirmDate).ToList();
 
                 //TODO: Trường hợp mổ theo chương trình, biến = true
                 if (shift.IsNormalSurgeryTime)
@@ -151,7 +174,6 @@ namespace Surgery_1.Services.Implementations
                     }
                 }
             }
-
             // TODO: =======================Xử lý qua ngày========================
             shifts = GetSurgeryShiftsNoSchedule();
             if (shifts.Count != 0)
@@ -188,20 +210,20 @@ namespace Surgery_1.Services.Implementations
         public List<AvailableRoomViewModel> GetAvailableSlotRoom(int dateNumber)
         {
             // TODO: Lấy khoảng thời gian của ConfirmDate, sau khi confirm thì lên lịch ngay
-            var rooms = _context.SlotRooms.ToList();
+            var slotRooms = _context.SlotRooms.ToList();
             var availableRooms = new List<AvailableRoomViewModel>();
-            foreach (var room in rooms)
+            foreach (var slot in slotRooms)
             {
                 // TODO: Lấy các ca phẫu thuật theo từng phòng, sắp xếp tăng dần theo EstimatedStartDateTime
-                var result = room.SurgeryShifts
+                var result = slot.SurgeryShifts
                     .Where(s => UtilitiesDate.ConvertDateToNumber(s.ScheduleDate.Value) == dateNumber
                     && s.IsAvailableMedicalSupplies == true
-                    && s.EstimatedStartDateTime.Value.TimeOfDay >= startAMWorkingHour
-                    && s.EstimatedEndDateTime.Value.TimeOfDay <= endPMWorkingHour)
+                    && s.EstimatedEndDateTime.Value.TimeOfDay >= startAMWorkingHour
+                    && s.EstimatedStartDateTime.Value.TimeOfDay <= endPMWorkingHour)
                     .OrderBy(s => s.EstimatedStartDateTime).ToList();
                 if (result.Count > 0)
                 {
-                    var start = result.First().ScheduleDate.Value + startAMWorkingHour;
+                    var start = result.First().ScheduleDate.Value + startAMWorkingHour; //7h
                     var end = result.First().EstimatedStartDateTime.Value;
                     //nếu có actual
                     if (result.First().ActualStartDateTime != null)
@@ -209,21 +231,21 @@ namespace Surgery_1.Services.Implementations
                         end = result.First().ActualStartDateTime.Value;
                     }
                     // Lấy khoảng ở ngoài các ca mổ [7h - 17h]
-                    if (start != end)
+                    if (start != end && end.TimeOfDay >= startAMWorkingHour)
                     { // Lấy khoảng từ 7h ->
-                        AddAvailableSlotExceptBreakTime(availableRooms, start, end, room.Id);
+                        AddAvailableSlotExceptBreakTime(availableRooms, start, end, slot.Id);
                     }
 
                     start = result.Last().EstimatedEndDateTime.Value;
-                    end = result.Last().ScheduleDate.Value + endPMWorkingHour;
+                    end = result.Last().ScheduleDate.Value + endPMWorkingHour;//17h
                     //nếu có actual
                     if (result.Last().ActualEndDateTime != null)
                     {
-                        end = result.Last().ActualEndDateTime.Value;
+                        start = result.Last().ActualEndDateTime.Value;
                     }
-                    if (start != end)
+                    if (start != end && start.TimeOfDay <= endPMWorkingHour)
                     { // Lấy khoảng từ -> 17h
-                        AddAvailableSlotExceptBreakTime(availableRooms, start, end, room.Id);
+                        AddAvailableSlotExceptBreakTime(availableRooms, start, end, slot.Id);
 
                     }
                     if (result.Count != 1)
@@ -231,8 +253,7 @@ namespace Surgery_1.Services.Implementations
                         //======= Lấy khoảng ở giữa các ca mổ==========
                         for (int i = 0; i < result.Count - 1; i++)
                         {
-                            //if (result.Last().EstimatedEndDateTime.Value.TimeOfDay <= endPMWorkingHour)
-                            //{
+
                             var tmpEnd = result.ElementAt(i).EstimatedEndDateTime;
                             if (result.ElementAt(i).ActualEndDateTime != null)
                             {
@@ -247,16 +268,15 @@ namespace Surgery_1.Services.Implementations
                             {
                                 start = tmpEnd.Value;
                                 end = tmpStart.Value;
-                                AddAvailableSlotExceptBreakTime(availableRooms, start, end, room.Id);
+                                AddAvailableSlotExceptBreakTime(availableRooms, start, end, slot.Id);
                             }
-                            //}
                         }
                     }
                 }
-
             }
             return availableRooms.ToList();
         }
+
         public int GetAvailableRoomForProposedTime(EmerSurgeryShift emerShift)
         {
             var parentRooms = _context.SlotRooms.ToList();
@@ -374,7 +394,8 @@ namespace Surgery_1.Services.Implementations
                 {
                     return false;
                 }
-            } else
+            }
+            else
             {
                 //if (emerShift.IsForceAdd)
                 //{
@@ -464,6 +485,7 @@ namespace Surgery_1.Services.Implementations
                     results.Add(new SurgeryShiftViewModel()
                     {
                         Id = shift.Id,
+                        CatalogCode = shift.SurgeryCatalog.Code,
                         CatalogName = shift.SurgeryCatalog.Name,
                         PriorityNumber = shift.PriorityNumber,
                         EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
@@ -590,7 +612,8 @@ namespace Surgery_1.Services.Implementations
                     ActualStartTime = shift.ActualStartDateTime,
                     ActualEndTime = shift.ActualEndDateTime,
                     //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
-                    Procedure = UsedProcedure
+                    Procedure = UsedProcedure,
+                    StatusName = shift.Status.Name
                 };
                 return result;
             }

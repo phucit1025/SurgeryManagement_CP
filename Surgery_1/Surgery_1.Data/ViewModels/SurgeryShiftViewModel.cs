@@ -9,6 +9,7 @@ namespace Surgery_1.Data.ViewModels
     {
         public int Id { get; set; }
         public string CatalogName { get; set; }
+        public string CatalogCode { get; set; }
         public int? PriorityNumber { get; set; }
         public List<string> SurgeonNames { get; set; }
         public string PatientName { get; set; }
@@ -33,6 +34,7 @@ namespace Surgery_1.Data.ViewModels
         public DateTime? EndTime { get; set; }
         public DateTime? ActualStartTime { get; set; }
         public DateTime? ActualEndTime { get; set; }
+        public string StatusName { get; set; }
 
         //Surgery Info
         //public List<EkipMemberViewModel> EkipMembers { get; set; }
@@ -73,13 +75,6 @@ namespace Surgery_1.Data.ViewModels
     {
         public int MedicalSupplyId { get; set; }
         public String SurgeryShiftCode { get; set; }
-        public int Quantity { get; set; }
-    }
-
-    public class AddMedicalSupplyViewModel
-    {
-        public int MedicalSupplyId { get; set; }
-        public int SurgeryShiftId { get; set; }
         public int Quantity { get; set; }
     }
 

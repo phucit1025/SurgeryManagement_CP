@@ -17,6 +17,7 @@ namespace Surgery_1.Services.Interfaces
         bool AddEmergencyShift(EmerSurgeryShift emerShift);
         int GetAvailableRoomForProposedTime(EmerSurgeryShift emerShift);
         bool RefreshSurgeryShift(int shiftId);
+        bool CheckStatusPreviousSurgeryShift(int shiftId);
 
 
         // Lấy những ca mổ cần lên lịch theo ngày

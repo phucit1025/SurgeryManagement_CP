@@ -32,9 +32,9 @@ namespace Surgery_1.Services.Implementations
 
         public void ImportSurgeryShift(ICollection<ImportSurgeryShiftViewModel> surgeryShift)
         {
-            var list = surgeryShift;
             foreach (var s in surgeryShift)
             {
+                //var status = _context.Statuses;
                 var shift = new SurgeryShift();
                 shift.IsDeleted = false;
                 shift.DateCreated = DateTime.Now;
@@ -86,19 +86,79 @@ namespace Surgery_1.Services.Implementations
             _context.SaveChanges();
         }
 
-        public void AddMedicalSupply(ICollection<AddMedicalSupplyViewModel> medicalSupply)
+        public void AddMedicalSupply(ICollection<ShiftMedicalSupplyViewModel> medicalSupply)
         {
             foreach (var tmp in medicalSupply)
             {
-                var shiftSupply = new SurgeryShiftMedicalSupply();
+                var existed = _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == tmp.SurgeryShiftId)
+                    .Where(a => a.MedicalSupplyId == tmp.MedicalSupplyId).FirstOrDefault();
+                if (existed != null)
+                {
+                    existed.Quantity += tmp.Quantity;
+                }
+                else if (tmp.Quantity > 0)
+                {
+                    var shiftSupply = new SurgeryShiftMedicalSupply();
 
-                shiftSupply.SurgeryShiftId = tmp.SurgeryShiftId;
-                shiftSupply.MedicalSupplyId = tmp.MedicalSupplyId;
-                shiftSupply.Quantity = tmp.Quantity;
-                _context.SurgeryShiftMedicalSupplies.Add(shiftSupply);
+                    shiftSupply.SurgeryShiftId = tmp.SurgeryShiftId;
+                    shiftSupply.MedicalSupplyId = tmp.MedicalSupplyId;
+                    shiftSupply.Quantity = tmp.Quantity;
+                    _context.SurgeryShiftMedicalSupplies.Add(shiftSupply);
+                }
             }
             _context.SaveChanges();
         }
 
+        public ICollection<MedicalSupplyInfoViewModel> GetSuppliesUsedInSurgery(int surgeryShiftId)
+        {
+            List<MedicalSupplyInfoViewModel> list = new List<MedicalSupplyInfoViewModel>();
+            var supplies = _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == surgeryShiftId).OrderBy(s => s.MedicalSupplyId).ToList();
+            foreach (var supply in supplies)
+            {
+                if (supply.Quantity == 0) continue;
+                MedicalSupplyInfoViewModel s = new MedicalSupplyInfoViewModel();
+                s.medicalSupplyId = supply.MedicalSupplyId;
+                s.medicalSupplyName = _context.MedicalSupplies.Find(supply.MedicalSupplyId).Name;
+                s.quantity = supply.Quantity;
+                list.Add(s);
+            }
+            return list;
+        }
+
+        public ICollection<EkipMemberViewModel> GetEkipMember(int surgeryShiftId)
+        {
+            List<EkipMemberViewModel> list = new List<EkipMemberViewModel>();
+            //Load Surgeons
+            var surgeons = _context.SurgeryShiftSurgeons.Where(a => a.SurgeryShiftId == surgeryShiftId);
+            foreach (var surgeon in surgeons)
+            {
+                EkipMemberViewModel member = new EkipMemberViewModel();
+                member.Name = _context.Doctors.Find(surgeon.SurgeonId).FullName;
+                member.WorkJob = "Surgeon";
+                list.Add(member);
+            }
+            //Load Ekip Members
+            var ekipId = _context.SurgeryShifts.Find(surgeryShiftId).EkipId;
+            var ekipMembers = _context.EkipMembers.Where(a => a.EkipId == ekipId).ToList();
+            foreach (var emember in ekipMembers)
+            {
+                EkipMemberViewModel member = new EkipMemberViewModel();
+                member.Name = emember.Name;
+                member.WorkJob = emember.WorkJob;
+                list.Add(member);
+            }
+            return list;
+        }
+
+        public void UpdateMedicalSupply(ICollection<ShiftMedicalSupplyViewModel> medicalSupply)
+        {
+            foreach (var tmp in medicalSupply)
+            {
+               var shiftSupply =  _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == tmp.SurgeryShiftId)
+                    .Where(a => a.MedicalSupplyId == tmp.MedicalSupplyId).FirstOrDefault();
+                shiftSupply.Quantity = tmp.Quantity;
+            }
+            _context.SaveChanges();
+        }
     }
 }
