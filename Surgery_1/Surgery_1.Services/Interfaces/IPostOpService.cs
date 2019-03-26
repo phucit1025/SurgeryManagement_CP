@@ -28,6 +28,7 @@ namespace Surgery_1.Services.Interfaces
         Task<bool> AssignNurse(int shiftId, int nurseId);
         Task<ICollection<NurseViewModel>> GetAllNurse();
         NurseViewModel GetNurseByShiftId(int shiftId);
-
+        bool SoftDeleteTreatmentReport(int treatmentReportId);
+        byte[] CreateSurgeryPdf(string styleSheets, int id);
     }
 }

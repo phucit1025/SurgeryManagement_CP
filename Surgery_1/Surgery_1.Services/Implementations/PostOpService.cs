@@ -18,6 +18,11 @@ using System.Threading.Tasks;
 using Firebase.Database;
 using Newtonsoft.Json;
 using System.Net.Http;
+using Polly;
+using System.Net;
+using DinkToPdf.Contracts;
+using DinkToPdf;
+using System.IO;
 
 namespace Surgery_1.Services.Implementations
 {
@@ -29,12 +34,15 @@ namespace Surgery_1.Services.Implementations
         private readonly AppDbContext _appDbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IConverter _converter;
 
-        public PostOpService(AppDbContext appDbContext, IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager)
+        public PostOpService(AppDbContext appDbContext, IHttpContextAccessor httpContextAccessor
+            , UserManager<IdentityUser> userManager, IConverter converter)
         {
             _appDbContext = appDbContext;
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
+            _converter = converter;
         }
 
         public ICollection<HealthCareReportViewModel> GetHealthCareRerportBySurgeryShiftId(int surgeryShiftId)
@@ -107,40 +115,44 @@ namespace Surgery_1.Services.Implementations
         public RecoverySurgeryShiftViewModel GetRecoverySurgeryShiftById(int id)
         {
             var surgeryShift = _appDbContext.SurgeryShifts.Find(id);
-            var patient = surgeryShift.Patient;
-            var surgeryCatalog = surgeryShift.SurgeryCatalog;
+            if (surgeryShift != null)
+            {
+                var patient = surgeryShift.Patient;
+                var surgeryCatalog = surgeryShift.SurgeryCatalog;
 
-            var healthCareReports = _appDbContext.HealthCareReports
-                .Where(a => a.SurgeryShiftId == surgeryShift.Id && a.IsDeleted == false)
-                .OrderByDescending(a => a.DateCreated)
-                .ToList();
-            var healthCareReportsViewModelList = new List<HealthCareReportViewModel>();
-            foreach (var healthCareRerport in healthCareReports)
-            {
-                healthCareReportsViewModelList.Add(new HealthCareReportViewModel()
+                var healthCareReports = _appDbContext.HealthCareReports
+                    .Where(a => a.SurgeryShiftId == surgeryShift.Id && a.IsDeleted == false)
+                    .OrderByDescending(a => a.DateCreated)
+                    .ToList();
+                var healthCareReportsViewModelList = new List<HealthCareReportViewModel>();
+                foreach (var healthCareRerport in healthCareReports)
                 {
-                    Id = healthCareRerport.Id,
-                    DateCreated = healthCareRerport.DateCreated.Value.ToString("dd-MM-yyyy HH:mm:ss"),
-                    VisitReason = healthCareRerport.CareReason,
-                    EventContent = healthCareRerport.EventContent,
-                    CareContent = healthCareRerport.CareContent,
-                    WoundConditionDescription = healthCareRerport.WoundConditionDescription,
-                    WoundCondition = healthCareRerport.WoundCondition,
-                    SurgeryShiftId = healthCareRerport.SurgeryShiftId
-                });
+                    healthCareReportsViewModelList.Add(new HealthCareReportViewModel()
+                    {
+                        Id = healthCareRerport.Id,
+                        DateCreated = healthCareRerport.DateCreated.Value.ToString("dd-MM-yyyy HH:mm:ss"),
+                        VisitReason = healthCareRerport.CareReason,
+                        EventContent = healthCareRerport.EventContent,
+                        CareContent = healthCareRerport.CareContent,
+                        WoundConditionDescription = healthCareRerport.WoundConditionDescription,
+                        WoundCondition = healthCareRerport.WoundCondition,
+                        SurgeryShiftId = healthCareRerport.SurgeryShiftId
+                    });
+                }
+                RecoverySurgeryShiftViewModel recoverySurgeryShiftViewModel = new RecoverySurgeryShiftViewModel()
+                {
+                    Id = surgeryShift.Id,
+                    PatientName = patient.FullName,
+                    PatientAge = DateTime.Now.Year - patient.YearOfBirth,
+                    PatientGender = patient.Gender,
+                    Diagnose = surgeryCatalog.Name,
+                    PostOpBed = surgeryShift.PostBedName,
+                    PostOpRooom = surgeryShift.PostRoomName,
+                    CareReports = healthCareReportsViewModelList
+                };
+                return recoverySurgeryShiftViewModel;
             }
-            RecoverySurgeryShiftViewModel recoverySurgeryShiftViewModel = new RecoverySurgeryShiftViewModel()
-            {
-                Id = surgeryShift.Id,
-                PatientName = patient.FullName,
-                PatientAge = DateTime.Now.Year - patient.YearOfBirth,
-                PatientGender = patient.Gender,
-                Diagnose = surgeryCatalog.Name,
-                PostOpBed = surgeryShift.PostBedName,
-                PostOpRooom = surgeryShift.PostRoomName,
-                CareReports = healthCareReportsViewModelList
-            };
-            return recoverySurgeryShiftViewModel;
+            return null;
         }
 
         public bool CreateHealthCareReport(HealthCareReportViewModel healthCareReportViewModel)
@@ -194,25 +206,32 @@ namespace Surgery_1.Services.Implementations
 
         public bool UpdateHealthCareReport(HealthCareReportViewModel healthCareReportViewModel)
         {
-            var healthCareReport = _appDbContext.HealthCareReports.Find(healthCareReportViewModel.Id);
-            healthCareReport.CareReason = healthCareReportViewModel.VisitReason;
-            healthCareReport.EventContent = healthCareReportViewModel.EventContent;
-            healthCareReport.CareContent = healthCareReportViewModel.CareContent;
-            healthCareReport.WoundCondition = healthCareReportViewModel.WoundCondition;
-            healthCareReport.WoundConditionDescription = healthCareReportViewModel.WoundConditionDescription;
-            DateTime date = new DateTime();
-            healthCareReport.DateUpdated = date;
-            try
-            {
-                _appDbContext.Update(healthCareReport);
-                _appDbContext.SaveChanges();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+            var guid = _httpContextAccessor.HttpContext.User.GetGuid();
+            var nurseId = _appDbContext.UserInfo.Where(a => a.GuId == guid).FirstOrDefault().Id;
 
+            var healthCareReport = _appDbContext.HealthCareReports.Find(healthCareReportViewModel.Id);
+
+            if (nurseId.Equals(healthCareReport.NurseId))
+            {
+                healthCareReport.CareReason = healthCareReportViewModel.VisitReason;
+                healthCareReport.EventContent = healthCareReportViewModel.EventContent;
+                healthCareReport.CareContent = healthCareReportViewModel.CareContent;
+                healthCareReport.WoundCondition = healthCareReportViewModel.WoundCondition;
+                healthCareReport.WoundConditionDescription = healthCareReportViewModel.WoundConditionDescription;
+                DateTime date = new DateTime();
+                healthCareReport.DateUpdated = date;
+                try
+                {
+                    _appDbContext.Update(healthCareReport);
+                    _appDbContext.SaveChanges();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
+            }
+            return false;
         }
 
         public ICollection<PostOpSurgeryShiftViewModel> FindPostOpSurgeryByQuery(string query)
@@ -354,6 +373,7 @@ namespace Surgery_1.Services.Implementations
                     treatmentReportDrugs.Add(new TreatmentReportDrugViewModel()
                     {   
                         Id = treatmentReportDrug.Id,
+                        DrugId = treatmentReportDrug.DrugId,
                         Name = treatmentReportDrug.Drug.DrugName,
                         MorningQuantity = treatmentReportDrug.MorningQuantity,
                         AfternoonQuantity = treatmentReportDrug.AfternoonQuantity,
@@ -589,13 +609,15 @@ namespace Surgery_1.Services.Implementations
                     _appDbContext.SaveChanges();
                 }
                 treatmentReport.TreatmentReportDrugs = treatmentReportDrugs;
-
-                foreach (var item in treatmentReportViewModel.DeleteTreatmentReportId)
+                if (treatmentReportViewModel.DeleteTreatmentReportId != null)
                 {
-                    TreatmentReportDrug treatmentReportDrug = _appDbContext.TreatmentReportDrugs.Find(item);
-                    treatmentReportDrug.IsDeleted = true;
-                    _appDbContext.TreatmentReportDrugs.Update(treatmentReportDrug);
-                    _appDbContext.SaveChanges();
+                    foreach (var item in treatmentReportViewModel.DeleteTreatmentReportId)
+                    {
+                        TreatmentReportDrug treatmentReportDrug = _appDbContext.TreatmentReportDrugs.Find(item);
+                        treatmentReportDrug.IsDeleted = true;
+                        _appDbContext.TreatmentReportDrugs.Update(treatmentReportDrug);
+                        _appDbContext.SaveChanges();
+                    }
                 }
                 try
                 {
@@ -631,7 +653,7 @@ namespace Surgery_1.Services.Implementations
                     foreach (var item in deviceTokens)
                     {
                         var token = item.Object.FirstOrDefault().Value;
-                        await Send(getAndroidMessage("New Surgery Shift", new { id = shiftId }, token));
+                        await Send(getAndroidMessage(shiftId, new { id = shiftId }, token));
                     }
                 }
                 return true;
@@ -649,11 +671,27 @@ namespace Surgery_1.Services.Implementations
             http.DefaultRequestHeaders.TryAddWithoutValidation("Sender", "id=" + SENDER_ID);
             http.DefaultRequestHeaders.TryAddWithoutValidation("content-length", notification.Length.ToString());
             var content = new StringContent(notification, System.Text.Encoding.UTF8, "application/json");
-
-            var response = await http.PostAsync("https://fcm.googleapis.com/fcm/send", content);
+            HttpStatusCode[] httpStatusCodesWorthRetrying = {
+               HttpStatusCode.RequestTimeout, // 408
+               HttpStatusCode.InternalServerError, // 500
+               HttpStatusCode.BadGateway, // 502
+               HttpStatusCode.ServiceUnavailable, // 503
+               HttpStatusCode.GatewayTimeout // 504
+            };
+            var retryPolicy = Policy
+               .Handle<HttpRequestException>()
+               .OrResult<HttpResponseMessage>(r => httpStatusCodesWorthRetrying.Contains(r.StatusCode))
+               .WaitAndRetryAsync(10, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+            await retryPolicy.ExecuteAsync(async () =>
+            {
+                var response = await http.PostAsync("https://fcm.googleapis.com/fcm/send", content);
+                return response;
+            });
+           
+           
         }
 
-        public string getAndroidMessage(string title, object objData, string regId)
+        public string getAndroidMessage(int shiftId, object objData, string regId)
         {
             var payload = new
             {
@@ -662,9 +700,10 @@ namespace Surgery_1.Services.Implementations
                 content_available = true,
                 notification = new
                 {
-                    body = "New PostOp Surgery Shift Incoming",
+                    click_action = ".activity.FirebaseClickActionActivity",
+                    body = "New PostOp Surgery Shift - ID: " + shiftId,
                     title = "eBSMS",
-                    badge = 1
+                    badge = 1   
                 },
                 data = objData,
             };
@@ -711,6 +750,54 @@ namespace Surgery_1.Services.Implementations
                 return rs;
             }
             return null;
+        }
+
+        public bool SoftDeleteTreatmentReport(int treatmentReportId)
+        {
+            var treatmentReport = _appDbContext.TreatmentReports.Find(treatmentReportId);
+            treatmentReport.IsDeleted = true;
+            try
+            {
+                _appDbContext.Update(treatmentReport);
+                _appDbContext.SaveChanges();
+                return true;
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }
+        }
+
+        public byte[] CreateSurgeryPdf(string styleSheets, int id)
+        {
+            var rs = _appDbContext.SurgeryShifts.Find(id);
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Portrait,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report",
+            };
+
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = TemplateGenerator.GetHTMLString(rs),
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = styleSheets},
+                HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
+            };
+
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+
+            var file = _converter.Convert(pdf);
+            return file;
+            
         }
     }
 }
