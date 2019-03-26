@@ -17,4 +17,10 @@ namespace Surgery_1.Data.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
     }
+
+    public class ShiftSlotRoomViewModel
+    {
+        public int SlotId { get; set; }
+        public int NumberOfShift { get; set; }
+    }
 }
