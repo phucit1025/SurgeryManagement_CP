@@ -27,7 +27,7 @@ namespace Surgery_1.Controllers
         public IActionResult GetSurgeryByStatusId(int statusId)
         {
             var result = _postOpService.GetSurgeryByStatusId(statusId);
-            if (result == null)
+            if (result.IsNullOrEmpty())
             {
                 return NotFound();
             }
@@ -79,6 +79,7 @@ namespace Surgery_1.Controllers
             return BadRequest();
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult UpdateHealthCareReport(HealthCareReportViewModel healthCareReportViewModel)
         {
@@ -101,12 +102,23 @@ namespace Surgery_1.Controllers
             return BadRequest();
         }
 
+        [HttpGet]
+        public IActionResult SoftDeleteTreatmentReport(int id)
+        {
+            var result = _postOpService.SoftDeleteTreatmentReport(id);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
+        }
+
         [Authorize]
         [HttpGet]
         public IActionResult FindPostOpSurgeryByQuery(string query)
         {
             var result = _postOpService.FindPostOpSurgeryByQuery(query);
-            if (result == null)
+            if (result.IsNullOrEmpty())
             {
                 return NotFound();
             }
