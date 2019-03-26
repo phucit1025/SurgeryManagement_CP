@@ -16,7 +16,9 @@ using NSwag.SwaggerGeneration.Processors.Security;
 using Surgery_1.Data.Context;
 using Surgery_1.Services.Implementations;
 using Surgery_1.Services.Interfaces;
+using Surgery_1.Services.Utilities;
 using System;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -97,7 +99,8 @@ namespace Surgery_1
             services.AddAuthorization();
             #endregion
 
-
+            var context = new CustomAssemblyLoadContext();
+            context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox.dll"));
             services.AddCors(options => options.AddPolicy("AllowAll", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().AllowCredentials()));
             services.AddAutoMapper();
             services.AddSwagger();

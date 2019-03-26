@@ -149,7 +149,7 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public IActionResult get(TreatmentReportViewModel treatmentReportViewModel)
+        public IActionResult EditTreatmentReport(TreatmentReportViewModel treatmentReportViewModel)
         {
             var result = _postOpService.EditTreatmentReport(treatmentReportViewModel);
             if (result)
@@ -255,7 +255,7 @@ namespace Surgery_1.Controllers
             var result = _postOpService.CreateSurgeryPdf(styleSheets, id);
             if (!result.IsNullOrEmpty())
             {
-                return File(result, "application/pdf", "EmployeeReport.pdf");
+                return File(result, "application/pdf", "SurgeryReport.pdf");
             }
             return NotFound();
         }

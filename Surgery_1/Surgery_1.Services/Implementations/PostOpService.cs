@@ -159,7 +159,7 @@ namespace Surgery_1.Services.Implementations
         {
             var guid = _httpContextAccessor.HttpContext.User.GetGuid();
             var nurseId = _appDbContext.UserInfo.Where(a => a.GuId == guid).FirstOrDefault().Id;
-            var tr = _appDbContext.TreatmentReports.OrderByDescending(a => a.DateCreated).FirstOrDefault();
+            var tr = _appDbContext.TreatmentReports.LastOrDefault(a => a.SurgeryShiftId == healthCareReportViewModel.SurgeryShiftId);
             tr.IsUsed = true;
             var healthCareReport = new HealthCareReport()
             {
@@ -469,75 +469,76 @@ namespace Surgery_1.Services.Implementations
                 time = 4;
             }
 
-            var tr = _appDbContext.TreatmentReports.Max(a => a.DateCreated);
-            switch (time)
-            {   
-                case 1:
-                   
-                    var rs1 = _appDbContext.TreatmentReportDrugs.Where(a => !a.IsDeleted
-                            && a.MorningQuantity > 0
-                            && a.TreatmentReport.SurgeryShiftId == shiftId
-                            && a.TreatmentReport.DateCreated == tr)
-                            .ToList();
-                    foreach (var item in rs1)
-                    {
-                        drugs.Add(new TreatmentReportDrugViewModel()
+            var lastedTreatment = _appDbContext.TreatmentReports.Where(a => a.SurgeryShiftId == shiftId).LastOrDefault();
+            if (lastedTreatment != null)
+            {
+                var id = lastedTreatment.Id;
+                switch (time)
+                {
+                    case 1:
+
+                        var rs1 = _appDbContext.TreatmentReportDrugs.Where(a => !a.IsDeleted
+                                && a.MorningQuantity > 0
+                                && a.TreatmentReport.Id == id)
+                                .ToList();
+                        foreach (var item in rs1)
                         {
-                            Name = item.Drug.DrugName,
-                            MorningQuantity = item.MorningQuantity,
-                            Unit = item.Drug.Unit
-                        });
-                    }
-                    break;
-                case 2:
-                    var rs2 = _appDbContext.TreatmentReportDrugs.Where(a => !a.IsDeleted
-                            && a.AfternoonQuantity > 0
-                            && a.TreatmentReport.SurgeryShiftId == shiftId
-                            && a.TreatmentReport.DateCreated == tr)
-                            .ToList();
-                    foreach (var item in rs2)
-                    {
-                        drugs.Add(new TreatmentReportDrugViewModel()
+                            drugs.Add(new TreatmentReportDrugViewModel()
+                            {
+                                Name = item.Drug.DrugName,
+                                MorningQuantity = item.MorningQuantity,
+                                Unit = item.Drug.Unit
+                            });
+                        }
+                        break;
+                    case 2:
+                        var rs2 = _appDbContext.TreatmentReportDrugs.Where(a => !a.IsDeleted
+                                && a.AfternoonQuantity > 0
+                                && a.TreatmentReport.Id == id)
+                                .ToList();
+                        foreach (var item in rs2)
                         {
-                            Name = item.Drug.DrugName,
-                            AfternoonQuantity = item.AfternoonQuantity,
-                            Unit = item.Drug.Unit
-                        });
-                    }
-                    break;
-                case 3:
-                    var rs3 = _appDbContext.TreatmentReportDrugs.Where(a => !a.IsDeleted
-                            && a.EveningQuantity > 0
-                            && a.TreatmentReport.SurgeryShiftId == shiftId
-                            && a.TreatmentReport.DateCreated == tr)
-                            .ToList();
-                    foreach (var item in rs3)
-                    {
-                        drugs.Add(new TreatmentReportDrugViewModel()
+                            drugs.Add(new TreatmentReportDrugViewModel()
+                            {
+                                Name = item.Drug.DrugName,
+                                AfternoonQuantity = item.AfternoonQuantity,
+                                Unit = item.Drug.Unit
+                            });
+                        }
+                        break;
+                    case 3:
+                        var rs3 = _appDbContext.TreatmentReportDrugs.Where(a => !a.IsDeleted
+                                && a.EveningQuantity > 0
+                                && a.TreatmentReport.Id == id)
+                                .ToList();
+                        foreach (var item in rs3)
                         {
-                            Name = item.Drug.DrugName,
-                            EveningQuantity = item.EveningQuantity,
-                            Unit = item.Drug.Unit
-                        });
-                    }
-                    break;
-                case 4:
-                    var rs4 = _appDbContext.TreatmentReportDrugs.Where(a => !a.IsDeleted
-                            && a.NightQuantity > 0
-                            && a.TreatmentReport.SurgeryShiftId == shiftId
-                            && a.TreatmentReport.DateCreated == tr)
-                            .ToList();
-                    foreach (var item in rs4)
-                    {
-                        drugs.Add(new TreatmentReportDrugViewModel()
+                            drugs.Add(new TreatmentReportDrugViewModel()
+                            {
+                                Name = item.Drug.DrugName,
+                                EveningQuantity = item.EveningQuantity,
+                                Unit = item.Drug.Unit
+                            });
+                        }
+                        break;
+                    case 4:
+                        var rs4 = _appDbContext.TreatmentReportDrugs.Where(a => !a.IsDeleted
+                                && a.NightQuantity > 0
+                                && a.TreatmentReport.Id == id)
+                                .ToList();
+                        foreach (var item in rs4)
                         {
-                            Name = item.Drug.DrugName,
-                            NightQuantity = item.NightQuantity,
-                            Unit = item.Drug.Unit
-                        });
-                    }
-                    break;
+                            drugs.Add(new TreatmentReportDrugViewModel()
+                            {
+                                Name = item.Drug.DrugName,
+                                NightQuantity = item.NightQuantity,
+                                Unit = item.Drug.Unit
+                            });
+                        }
+                        break;
+                }
             }
+            
             var result = new TreatmentMedication()
             {
                 drugs = drugs,
@@ -789,10 +790,19 @@ namespace Surgery_1.Services.Implementations
                 FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
             };
 
+            var objectSettings1 = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = TemplateGenerator.GetHTMLStringHealthcare(rs),
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = styleSheets },
+                HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
+            };
+
             var pdf = new HtmlToPdfDocument()
             {
                 GlobalSettings = globalSettings,
-                Objects = { objectSettings }
+                Objects = { objectSettings, objectSettings1 }
             };
 
             var file = _converter.Convert(pdf);
