@@ -20,6 +20,9 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using Polly;
 using System.Net;
+using DinkToPdf.Contracts;
+using DinkToPdf;
+using System.IO;
 
 namespace Surgery_1.Services.Implementations
 {
@@ -31,12 +34,15 @@ namespace Surgery_1.Services.Implementations
         private readonly AppDbContext _appDbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IConverter _converter;
 
-        public PostOpService(AppDbContext appDbContext, IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager)
+        public PostOpService(AppDbContext appDbContext, IHttpContextAccessor httpContextAccessor
+            , UserManager<IdentityUser> userManager, IConverter converter)
         {
             _appDbContext = appDbContext;
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
+            _converter = converter;
         }
 
         public ICollection<HealthCareReportViewModel> GetHealthCareRerportBySurgeryShiftId(int surgeryShiftId)
@@ -760,6 +766,38 @@ namespace Surgery_1.Services.Implementations
             {
                 return false;
             }
+        }
+
+        public byte[] CreateSurgeryPdf(string styleSheets, int id)
+        {
+            var rs = _appDbContext.SurgeryShifts.Find(id);
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Portrait,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report",
+            };
+
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = TemplateGenerator.GetHTMLString(rs),
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = styleSheets},
+                HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
+            };
+
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+
+            var file = _converter.Convert(pdf);
+            return file;
+            
         }
     }
 }

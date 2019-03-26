@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
@@ -148,7 +149,7 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditTreatmentReport(TreatmentReportViewModel treatmentReportViewModel)
+        public IActionResult get(TreatmentReportViewModel treatmentReportViewModel)
         {
             var result = _postOpService.EditTreatmentReport(treatmentReportViewModel);
             if (result)
@@ -245,6 +246,18 @@ namespace Surgery_1.Controllers
                 return NotFound();
             }
             return Ok(result);
+        }
+       
+        [HttpGet]
+        public IActionResult CreateSurgeryPdf(int id)
+        {
+            string styleSheets = Path.Combine(Directory.GetCurrentDirectory(), "assets", "styles.css");
+            var result = _postOpService.CreateSurgeryPdf(styleSheets, id);
+            if (!result.IsNullOrEmpty())
+            {
+                return File(result, "application/pdf", "EmployeeReport.pdf");
+            }
+            return NotFound();
         }
     }
 }
