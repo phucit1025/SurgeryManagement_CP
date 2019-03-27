@@ -422,6 +422,7 @@ namespace Surgery_1.Services.Implementations
                         var insertedShift = new SurgeryShift();
                         insertedShift.EstimatedStartDateTime = emerShift.StartTime;
                         insertedShift.EstimatedEndDateTime = emerShift.EndTime;
+                        insertedShift.ExpectedSurgeryDuration = (float)(emerShift.EndTime - emerShift.StartTime).TotalHours;
                         insertedShift.ScheduleDate = emerShift.StartTime.Date;
                         insertedShift.ConfirmDate = DateTime.Now;
                         insertedShift.IsAvailableMedicalSupplies = true;
