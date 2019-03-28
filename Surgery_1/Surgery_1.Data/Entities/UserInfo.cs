@@ -11,7 +11,6 @@ namespace Surgery_1.Data.Entities
         {
             NurseSurgeryShifts = new HashSet<SurgeryShift>();
             TechSurgeryShifts = new HashSet<SurgeryShift>();
-            HealthCareReports = new HashSet<HealthCareReport>();
         }
         public string FullName { get; set; }
         public string PhoneNumber { get; set; }
@@ -22,6 +21,5 @@ namespace Surgery_1.Data.Entities
         public virtual ICollection<SurgeryShift> NurseSurgeryShifts { get; set; }
         [InverseProperty(nameof(SurgeryShift.TechnicalStaff))]
         public virtual ICollection<SurgeryShift> TechSurgeryShifts { get; set; }
-        public virtual ICollection<HealthCareReport> HealthCareReports { get; set; }
     }
 }

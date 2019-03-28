@@ -4,6 +4,7 @@ using Surgery_1.Data.ViewModels;
 using Surgery_1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Surgery_1.Services.Implementations
@@ -47,6 +48,22 @@ namespace Surgery_1.Services.Implementations
                 
             }
             _context.SaveChanges();
+        }
+
+        public ICollection<DrugViewModel> SearchDrugOnQuery(string query)
+        {
+            var drugs = _context.Drugs.Where(a => a.DrugName.Contains(query)).OrderBy(a => a.DrugName).Take(10).ToList();
+            var resuts = new List<DrugViewModel>();
+            foreach (var drug in drugs)
+            {
+                resuts.Add(new DrugViewModel()
+                {
+                    Id = drug.Id,
+                    Name = drug.DrugName,
+                    Unit = drug.Unit
+                });
+            }
+            return resuts;
         }
     }
 }

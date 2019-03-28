@@ -9,5 +9,6 @@ namespace Surgery_1.Services.Interfaces
     {
         void ImportDrug(ICollection<DrugViewModel> surgeryShift);
         ICollection<DrugViewModel> GetAllDrug();
+        ICollection<DrugViewModel> SearchDrugOnQuery(string query);
     }
 }
