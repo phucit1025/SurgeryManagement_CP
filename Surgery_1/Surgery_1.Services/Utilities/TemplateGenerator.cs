@@ -148,7 +148,7 @@ namespace Surgery_1.Services.Utilities
                                             <td style=' border: 1px solid black;'>{1}</td>
                                             <td style=' border: 1px solid black;'>{2}</td>
                                             <td style=' border: 1px solid black;'>{3}</td>
-                                        </tr>", item.DateCreated, item.EventContent, item.CareContent, item.nurse.FullName);
+                                        </tr>", item.DateCreated, item.EventContent, item.CareContent, item.NurseId);
                 }
                
             }
