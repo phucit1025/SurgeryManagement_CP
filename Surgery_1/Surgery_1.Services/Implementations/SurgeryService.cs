@@ -37,7 +37,7 @@ namespace Surgery_1.Services.Implementations
             var surgeryShift = _context.SurgeryShifts.Find(shiftId);
             var slotRoom = _context.SlotRooms.Find(surgeryShift.SlotRoomId);
             var previousShift = slotRoom.SurgeryShifts
-                .Where(s => UtilitiesDate.ConvertDateToNumber(s.ScheduleDate.Value) == UtilitiesDate.ConvertDateToNumber(surgeryShift.ScheduleDate.Value))
+                .Where(s => s.ScheduleDate.Value == surgeryShift.ScheduleDate.Value)
                 .Where(s => s.EstimatedEndDateTime <= surgeryShift.EstimatedStartDateTime).OrderByDescending(s => s.EstimatedEndDateTime)
                 .FirstOrDefault();
 
@@ -178,7 +178,7 @@ namespace Surgery_1.Services.Implementations
                 foreach (var shift in shifts)
                 {
                     var item = _context.SurgeryShifts.Find(shift.SurgeryShiftId);
-                    if (!shift.IsNormalSurgeryTime)
+                    if (!shift.IsNormalSurgeryTime) //chỉ định chuyển qua bình thường
                     {
                         item.IsNormalSurgeryTime = true;
                     }
@@ -499,14 +499,12 @@ namespace Surgery_1.Services.Implementations
         public ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int slotRoomId, int dateNumber)
         {
             var results = new List<SurgeryShiftViewModel>();
-            foreach (var shift in _context.SurgeryShifts
+            var shiftSlotRooms = _context.SlotRooms.Find(slotRoomId);
+            foreach (var shift in shiftSlotRooms.SurgeryShifts
                 .Where(s => (s.EstimatedStartDateTime != null && s.EstimatedEndDateTime != null)
-                && (UtilitiesDate.ConvertDateToNumber(s.EstimatedStartDateTime.Value) == dateNumber) //mm/dd/YYYY
-                && (s.SlotRoomId == slotRoomId))
+                && (UtilitiesDate.ConvertDateToNumber(s.EstimatedStartDateTime.Value) == dateNumber)) //mm/dd/YYYY
                 .OrderBy(s => s.EstimatedStartDateTime))
             {
-                //try
-                //{
                 if (shift.SurgeryCatalog != null && shift.Patient != null)
                 {
                     results.Add(new SurgeryShiftViewModel()
@@ -539,12 +537,6 @@ namespace Surgery_1.Services.Implementations
 
                     });
                 }
-                //}
-                //catch (Exception)
-                //{
-
-                //}
-
             }
             return results;
         }
