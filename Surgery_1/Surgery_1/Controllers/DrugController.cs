@@ -36,5 +36,16 @@ namespace Surgery_1.Controllers
             }
             return Ok(result);
         }
+
+        [HttpGet]
+        public IActionResult SearchDrugOnQuery(string q)
+        {
+            var result = _drugService.SearchDrugOnQuery(q);
+            if (!result.Any())
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
     }
 }
