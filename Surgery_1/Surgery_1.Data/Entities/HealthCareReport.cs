@@ -18,6 +18,5 @@ namespace Surgery_1.Data.Entities
         public string CareContent { get; set; }
 
         public virtual SurgeryShift SurgeryShift { get; set; }
-        public virtual UserInfo nurse { get; set; }
     }
 }
