@@ -13,6 +13,7 @@ namespace Surgery_1.Services.Implementations
     public class SurgeryShiftService : ISurgeryShiftService
     {
         private readonly AppDbContext _context;
+
         public SurgeryShiftService(AppDbContext _context)
         {
             this._context = _context;
@@ -67,6 +68,12 @@ namespace Surgery_1.Services.Implementations
                 }
                 _context.SurgeryShifts.Add(shift);
             }
+            int countNoti = _context.SaveChanges();
+            var notification = new Notification
+            {
+                Content = "There are " + countNoti + " new medical supplies request need to be confirmed",
+            };
+            _context.Notification.Add(notification);
             _context.SaveChanges();
         }
 
