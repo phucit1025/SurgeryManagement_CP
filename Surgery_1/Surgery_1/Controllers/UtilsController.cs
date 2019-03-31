@@ -25,5 +25,16 @@ namespace Surgery_1.Controllers
             var result = _utilsService.GetMedicalSupply();
             return StatusCode(200, result);
         }
+
+        [HttpGet]
+        public IActionResult GetMedicalSupplyOnQuery(string q)
+        {
+            var result = _utilsService.GetMedicalSupplyOnQuery(q);
+            if (!result.Any())
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
     }
 }
