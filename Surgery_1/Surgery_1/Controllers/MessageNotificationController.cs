@@ -29,7 +29,7 @@ namespace Surgery_1.Controllers
             try
             {
                 var result = _notificationService.GetNotifications();
-            _hubContext.Clients.All.GetNotifications(result.ToList());
+                _hubContext.Clients.All.GetNotifications(result.ToList());
             }
             catch (Exception e)
             {
