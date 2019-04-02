@@ -8,5 +8,6 @@ namespace Surgery_1.Services.Interfaces
     public interface IUtilsService
     {
         ICollection<MedicalSupplyInfoViewModel> GetMedicalSupply();
+        ICollection<MedicalSupplyInfoViewModel> GetMedicalSupplyOnQuery(string q);
     }
 }

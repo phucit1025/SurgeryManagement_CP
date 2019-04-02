@@ -36,5 +36,20 @@ namespace Surgery_1.Services.Implementations
             }
             return list;
         }
+
+        public ICollection<MedicalSupplyInfoViewModel> GetMedicalSupplyOnQuery(string q)
+        {
+            var supplies = _context.MedicalSupplies.Where(a => a.Name.Contains(q)).OrderBy(a => a.Name).Take(10).ToList();
+            var resuts = new List<MedicalSupplyInfoViewModel>();
+            foreach (var supply in supplies)
+            {
+                resuts.Add(new MedicalSupplyInfoViewModel()
+                {
+                    medicalSupplyId = supply.Id,
+                    medicalSupplyName = supply.Name,
+                });
+            }
+            return resuts;
+        }
     }
 }
