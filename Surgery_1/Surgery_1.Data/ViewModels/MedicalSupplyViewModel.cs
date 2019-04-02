@@ -13,7 +13,8 @@ namespace Surgery_1.Data.ViewModels
     }
 
     public class MedicalSupplyInfoViewModel
-    {
+    {   
+        public int id { get; set; }
         public int medicalSupplyId { get; set; }
         public String medicalSupplyName { get; set; }
         public int quantity { get; set; }
@@ -24,5 +25,11 @@ namespace Surgery_1.Data.ViewModels
         public int MedicalSupplyId { get; set; }
         public int SurgeryShiftId { get; set; }
         public int Quantity { get; set; }
+    }
+
+    public class ShiftMedicalSuppliesViewModel
+    {
+        public ICollection<ShiftMedicalSupplyViewModel> ShiftMedicals { get; set; }
+        public ICollection<int> DeleteMedicalSupplyIds { get; set; }
     }
 }

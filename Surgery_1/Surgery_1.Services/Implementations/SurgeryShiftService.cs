@@ -86,15 +86,19 @@ namespace Surgery_1.Services.Implementations
             _context.SaveChanges();
         }
 
-        public void AddMedicalSupply(ICollection<ShiftMedicalSupplyViewModel> medicalSupply)
+        public void AddMedicalSupply(ShiftMedicalSuppliesViewModel medicalSupply)
         {
-            foreach (var tmp in medicalSupply)
+            foreach (var tmp in medicalSupply.ShiftMedicals)
             {
                 var existed = _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == tmp.SurgeryShiftId)
                     .Where(a => a.MedicalSupplyId == tmp.MedicalSupplyId).FirstOrDefault();
                 if (existed != null)
                 {
-                    existed.Quantity += tmp.Quantity;
+                    existed.Quantity = tmp.Quantity;
+                    if (existed.IsDeleted)
+                    {
+                        existed.IsDeleted = false;
+                    }
                 }
                 else if (tmp.Quantity > 0)
                 {
@@ -106,17 +110,24 @@ namespace Surgery_1.Services.Implementations
                     _context.SurgeryShiftMedicalSupplies.Add(shiftSupply);
                 }
             }
+            foreach (var id in medicalSupply.DeleteMedicalSupplyIds)
+            {
+                var rs = _context.SurgeryShiftMedicalSupplies.Find(id);
+                rs.IsDeleted = true;
+                _context.SurgeryShiftMedicalSupplies.Update(rs);
+            }
             _context.SaveChanges();
         }
 
         public ICollection<MedicalSupplyInfoViewModel> GetSuppliesUsedInSurgery(int surgeryShiftId)
         {
             List<MedicalSupplyInfoViewModel> list = new List<MedicalSupplyInfoViewModel>();
-            var supplies = _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == surgeryShiftId).OrderBy(s => s.MedicalSupplyId).ToList();
+            var supplies = _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == surgeryShiftId && !a.IsDeleted).OrderBy(s => s.MedicalSupplyId).ToList();
             foreach (var supply in supplies)
             {
                 if (supply.Quantity == 0) continue;
                 MedicalSupplyInfoViewModel s = new MedicalSupplyInfoViewModel();
+                s.id = supply.Id;
                 s.medicalSupplyId = supply.MedicalSupplyId;
                 s.medicalSupplyName = _context.MedicalSupplies.Find(supply.MedicalSupplyId).Name;
                 s.quantity = supply.Quantity;
