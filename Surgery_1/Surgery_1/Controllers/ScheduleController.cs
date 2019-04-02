@@ -26,7 +26,7 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public void AddUsedMedicalSupply([FromBody]ICollection<ShiftMedicalSupplyViewModel> medicalSupplyAddList)
+        public void AddUsedMedicalSupply([FromBody]ShiftMedicalSuppliesViewModel medicalSupplyAddList)
         {
             _surgeryShiftService.AddMedicalSupply(medicalSupplyAddList);
         }

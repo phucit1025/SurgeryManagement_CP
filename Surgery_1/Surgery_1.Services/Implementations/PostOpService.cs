@@ -607,7 +607,6 @@ namespace Surgery_1.Services.Implementations
                         };
                         treatmentReportDrugs.Add(treatmentReportDrug);
                     }
-                    _appDbContext.SaveChanges();
                 }
                 treatmentReport.TreatmentReportDrugs = treatmentReportDrugs;
                 if (treatmentReportViewModel.DeleteTreatmentReportId != null)
@@ -617,7 +616,6 @@ namespace Surgery_1.Services.Implementations
                         TreatmentReportDrug treatmentReportDrug = _appDbContext.TreatmentReportDrugs.Find(item);
                         treatmentReportDrug.IsDeleted = true;
                         _appDbContext.TreatmentReportDrugs.Update(treatmentReportDrug);
-                        _appDbContext.SaveChanges();
                     }
                 }
                 try
