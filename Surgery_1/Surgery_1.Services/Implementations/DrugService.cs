@@ -52,7 +52,7 @@ namespace Surgery_1.Services.Implementations
 
         public ICollection<DrugViewModel> SearchDrugOnQuery(string query)
         {
-            var drugs = _context.Drugs.Where(a => a.DrugName.Contains(query)).OrderBy(a => a.DrugName).Take(10).ToList();
+            var drugs = _context.Drugs.Where(a => a.DrugName.Contains(query)).Take(10).OrderBy(a => a.DrugName).ToList();
             var resuts = new List<DrugViewModel>();
             foreach (var drug in drugs)
             {

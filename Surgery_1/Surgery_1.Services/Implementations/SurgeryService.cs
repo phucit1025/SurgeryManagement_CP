@@ -746,9 +746,9 @@ namespace Surgery_1.Services.Implementations
                 if (shifts.Any())
                 {
                     var affectedShifts = shifts.Where(s =>
-                                                    (s.EstimatedStartDateTime.Value >= start && s.EstimatedStartDateTime.Value < end)
-                                                    || (s.EstimatedEndDateTime.Value > start && s.EstimatedEndDateTime.Value <= end))
-                                                    .ToList();
+                        (s.EstimatedStartDateTime.Value >= start && s.EstimatedStartDateTime.Value < end)
+                        || (s.EstimatedEndDateTime.Value > start && s.EstimatedEndDateTime.Value <= end))
+                        .ToList();
                     if (!affectedShifts.Any())
                     {
                         roomId.Add(room.Id);
