@@ -55,7 +55,7 @@ namespace Surgery_1.Data.ViewModels
     public class ImportSurgeryShiftViewModel
     {
         public float ExpectedSurgeryDuration { get; set; }
-        public int PriorityNumber { get; set; }
+        public int Priority { get; set; }
 
         //Patient Info
         public string PatientID { get; set; }

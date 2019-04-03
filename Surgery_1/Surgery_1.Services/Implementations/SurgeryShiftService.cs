@@ -46,7 +46,7 @@ namespace Surgery_1.Services.Implementations
                     var status = _context.Statuses.Where(x => x.Name.Equals("Preoperative")).FirstOrDefault();
                     shift.StatusId = status.Id;
                     shift.ExpectedSurgeryDuration = s.ExpectedSurgeryDuration;
-                    shift.PriorityNumber = s.PriorityNumber;
+                    shift.PriorityNumber = s.Priority;
                     var patient = _context.Patients.Where(p => p.IdentityNumber == s.PatientID).FirstOrDefault();
                     if (patient == null)
                     {
