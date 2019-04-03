@@ -13,6 +13,9 @@ namespace Surgery_1.Services.Implementations
     public class SurgeryShiftService : ISurgeryShiftService
     {
         private readonly AppDbContext _context;
+        private readonly string SUPPLYSTAFF = "MedicalSupplier";
+        private readonly string PREOPERATIVE = "Preoperative";
+
         public SurgeryShiftService(AppDbContext _context)
         {
             this._context = _context;
@@ -38,13 +41,9 @@ namespace Surgery_1.Services.Implementations
             {
                 foreach (var s in surgeryShifts)
                 {
-                    //var status = _context.Statuses;
                     var shift = new SurgeryShift();
-                    shift.IsDeleted = false;
-                    shift.DateCreated = DateTime.Now;
                     shift.IsAvailableMedicalSupplies = false;
-                    var status = _context.Statuses.Where(x => x.Name.Equals("Preoperative")).FirstOrDefault();
-                    shift.StatusId = status.Id;
+                    shift.StatusId = _context.Statuses.Where(x => x.Name.Equals(PREOPERATIVE)).FirstOrDefault().Id;
                     shift.ExpectedSurgeryDuration = s.ExpectedSurgeryDuration;
                     shift.PriorityNumber = s.PriorityNumber;
                     var patient = _context.Patients.Where(p => p.IdentityNumber == s.PatientID).FirstOrDefault();
@@ -71,6 +70,14 @@ namespace Surgery_1.Services.Implementations
                     }
                     _context.SurgeryShifts.Add(shift);
                 }
+                            // Xử lý notification
+                int countNoti = _context.SaveChanges();
+                var notification = new Notification
+                {
+                    Content = "There are " + countNoti + " new medical supplies request need to be confirmed",
+                    RoleToken = SUPPLYSTAFF
+                };
+                _context.Notification.Add(notification);
                 _context.SaveChanges();
                 isImportShiftSuccess = true;
             }

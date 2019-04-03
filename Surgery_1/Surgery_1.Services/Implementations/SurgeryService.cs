@@ -170,6 +170,8 @@ namespace Surgery_1.Services.Implementations
                         }
                     }
                 }
+
+
             }
             // TODO: =======================Xử lý qua ngày========================
             shifts = GetSurgeryShiftsNoSchedule();

@@ -14,6 +14,7 @@ using NSwag;
 using NSwag.AspNetCore;
 using NSwag.SwaggerGeneration.Processors.Security;
 using Surgery_1.Data.Context;
+using Surgery_1.Hubs;
 using Surgery_1.Services.Implementations;
 using Surgery_1.Services.Interfaces;
 using Surgery_1.Services.Utilities;
@@ -72,6 +73,7 @@ namespace Surgery_1
             services.AddScoped<IRoomService, RoomService>();
             services.AddScoped<IUtilsService, UtilsService>();
             services.AddScoped<IStatusService, StatusService>();
+            services.AddScoped<INotificationService, NotificationService>();
             #endregion
 
             #region JWT Config
@@ -107,6 +109,7 @@ namespace Surgery_1
             services.AddHttpContextAccessor();
             services.AddDirectoryBrowser();
             services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -147,7 +150,12 @@ namespace Surgery_1
             app.UseCors("AllowAll");
             app.UseHttpsRedirection();
             app.UseAuthentication();
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<NotifyHub>("/notify");
+            });
             app.UseMvc();
+            
 
             #region Init Users
             InitIdentities(serviceProvider, "MedicalSupplier", "supplier1", "zxc@123456");
