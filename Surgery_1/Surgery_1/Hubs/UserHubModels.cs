@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Surgery_1.Hubs
 {
-    public class MessageNoti
+    public class UserHubModels
     {
-        public string Content { get; set; }
-        public string Payload { get; set; }
+        public string roleName { get; set; }
+        public HashSet<string> ConnectionIds { get; set; }
     }
 }

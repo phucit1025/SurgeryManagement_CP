@@ -10,10 +10,8 @@ namespace Surgery_1.Hubs
     {
         Task BroadcastMessage(string type, string payload);
 
-        Task GetNotifications(List<MessageNotificationViewModel> messages);
+        Task GetNotifications(string roleName, List<MessageNotificationViewModel> messages);
 
-
-
-
+        Task ConnectUser(string roleName);
     }
 }

@@ -8,7 +8,8 @@ namespace Surgery_1.Services.Interfaces
 {
     public interface INotificationService
     {
-        ICollection<MessageNotificationViewModel> GetNotifications();
+        ICollection<MessageNotificationViewModel> GetNotifications(string tokenRole);
         void AddNotification(Notification notification);
+        bool SetIsReadNotification(string roleToken);
     }
 }

@@ -37,6 +37,12 @@ namespace Surgery_1.Controllers
             var result = _surgeryShiftService.GetSuppliesUsedInSurgery(surgeryShiftId);
             return StatusCode(200, result);
         }
+        [HttpPost]
+        public Boolean SaveSurgeryProcedure([FromBody]SurgeryProcedureViewModel SurgeryProcedure)
+        {
+            _surgeryService.SaveSurgeryProcedure(SurgeryProcedure);
+            return true;
+        }
 
         [HttpGet]
         public IActionResult GetSlotRooms()
@@ -137,12 +143,7 @@ namespace Surgery_1.Controllers
         #endregion
 
 
-        [HttpPost]
-        public Boolean SaveSurgeryProcedure([FromBody]SurgeryProcedureViewModel SurgeryProcedure)
-        {
-            _surgeryService.SaveSurgeryProcedure(SurgeryProcedure);
-            return true;
-        }
+
 
         #region Change Schedules
         [HttpGet]

@@ -23,13 +23,13 @@ namespace Surgery_1.Controllers
         }
 
         [HttpGet]
-        public string GetAllNotification()
+        public string GetAllNotification(string roleName)
         {
             string messageNotification = string.Empty;
             try
             {
-                var result = _notificationService.GetNotifications();
-                _hubContext.Clients.All.GetNotifications(result.ToList());
+                var result = _notificationService.GetNotifications(roleName);
+                _hubContext.Clients.All.GetNotifications(roleName, result.ToList());
             }
             catch (Exception e)
             {
@@ -37,6 +37,25 @@ namespace Surgery_1.Controllers
             }
             return messageNotification;
         }
+
+        [HttpGet]
+        public IActionResult GetNotifications(string roleName)
+        {
+            var result = _notificationService.GetNotifications(roleName).ToList();
+            return StatusCode(200, result);
+        }
+
+        [HttpPost]
+        public IActionResult SetIsReadNotification(string roleName)
+        {
+            if (_notificationService.SetIsReadNotification(roleName))
+            {
+                return StatusCode(200);
+            }
+            
+            return StatusCode(400);
+        }
+    
 
     }
 }
