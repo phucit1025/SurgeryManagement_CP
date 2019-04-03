@@ -70,7 +70,7 @@ namespace Surgery_1.Services.Implementations
                     }
                     _context.SurgeryShifts.Add(shift);
                 }
-                            // Xử lý notification
+                // Xử lý notification
                 int countNoti = _context.SaveChanges();
                 var notification = new Notification
                 {
@@ -205,8 +205,8 @@ namespace Surgery_1.Services.Implementations
         {
             foreach (var tmp in medicalSupply)
             {
-               var shiftSupply =  _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == tmp.SurgeryShiftId)
-                    .Where(a => a.MedicalSupplyId == tmp.MedicalSupplyId).FirstOrDefault();
+                var shiftSupply = _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == tmp.SurgeryShiftId)
+                     .Where(a => a.MedicalSupplyId == tmp.MedicalSupplyId).FirstOrDefault();
                 shiftSupply.Quantity = tmp.Quantity;
             }
             _context.SaveChanges();
