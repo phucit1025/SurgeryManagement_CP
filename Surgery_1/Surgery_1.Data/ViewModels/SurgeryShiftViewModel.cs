@@ -153,4 +153,10 @@ namespace Surgery_1.Data.ViewModels
         public bool IsForceAdd { get; set; }
         public int? SlotRoomId { get; set; }
     }
+
+    public class ImportViewModel
+    {
+        public ICollection<ImportSurgeryShiftViewModel> surgeryShifts;
+        public ICollection<ImportMedicalSupplyViewModel> medicalSupply;
+    }
 }

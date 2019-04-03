@@ -30,44 +30,77 @@ namespace Surgery_1.Services.Implementations
             return result;
         }
 
-        public void ImportSurgeryShift(ICollection<ImportSurgeryShiftViewModel> surgeryShift)
+        public bool ImportSurgeryShift(ICollection<ImportSurgeryShiftViewModel> surgeryShifts, ICollection<ImportMedicalSupplyViewModel> medicalSupply)
         {
-            foreach (var s in surgeryShift)
+            bool isImportShiftSuccess = false;
+            bool isImportSupplySuccess = false;
+            try
             {
-                //var status = _context.Statuses;
-                var shift = new SurgeryShift();
-                shift.IsDeleted = false;
-                shift.DateCreated = DateTime.Now;
-                shift.IsAvailableMedicalSupplies = false;
-                var status = _context.Statuses.Where(x => x.Name.Equals("Preoperative")).FirstOrDefault();
-                shift.StatusId = status.Id;
-                shift.ExpectedSurgeryDuration = s.ExpectedSurgeryDuration;
-                shift.PriorityNumber = s.PriorityNumber;
-                var patient = _context.Patients.Where(p => p.IdentityNumber == s.PatientID).FirstOrDefault();
-                if (patient == null)
+                foreach (var s in surgeryShifts)
                 {
-                    patient = new Patient();
-                    patient.IdentityNumber = s.PatientID;
-                    patient.YearOfBirth = s.YearOfBirth;
-                    patient.FullName = s.PatientName;
-                    patient.Gender = s.Gender;
-                    _context.Patients.Add(patient);
-                    _context.SaveChanges();
-                    patient = _context.Patients.Where(p => p.IdentityNumber == s.PatientID).Single();
+                    //var status = _context.Statuses;
+                    var shift = new SurgeryShift();
+                    shift.IsDeleted = false;
+                    shift.DateCreated = DateTime.Now;
+                    shift.IsAvailableMedicalSupplies = false;
+                    var status = _context.Statuses.Where(x => x.Name.Equals("Preoperative")).FirstOrDefault();
+                    shift.StatusId = status.Id;
+                    shift.ExpectedSurgeryDuration = s.ExpectedSurgeryDuration;
+                    shift.PriorityNumber = s.PriorityNumber;
+                    var patient = _context.Patients.Where(p => p.IdentityNumber == s.PatientID).FirstOrDefault();
+                    if (patient == null)
+                    {
+                        patient = new Patient();
+                        patient.IdentityNumber = s.PatientID;
+                        patient.YearOfBirth = s.YearOfBirth;
+                        patient.FullName = s.PatientName;
+                        patient.Gender = s.Gender;
+                        _context.Patients.Add(patient);
+                        _context.SaveChanges();
+                        patient = _context.Patients.Where(p => p.IdentityNumber == s.PatientID).Single();
+                    }
+                    shift.PatientId = patient.Id;
+                    shift.SurgeryCatalogId = s.SurgeryCatalogID;
+                    shift.SurgeryShiftCode = s.SurgeryShiftCode;
+                    shift.ProposedStartDateTime = s.ProposedStartDateTime;
+                    shift.ProposedEndDateTime = s.ProposedEndDateTime;
+                    shift.TreatmentDoctorId = s.DoctorId;
+                    if (s.ProposedStartDateTime != null && s.ProposedEndDateTime != null)
+                    {
+                        shift.IsNormalSurgeryTime = false; //Cờ để phân biệt mổ chỉ định vs mổ bình thường, mặc định là true
+                    }
+                    _context.SurgeryShifts.Add(shift);
                 }
-                shift.PatientId = patient.Id;
-                shift.SurgeryCatalogId = s.SurgeryCatalogID;
-                shift.SurgeryShiftCode = s.SurgeryShiftCode;
-                shift.ProposedStartDateTime = s.ProposedStartDateTime;
-                shift.ProposedEndDateTime = s.ProposedEndDateTime;
-                shift.TreatmentDoctorId = s.DoctorId;
-                if (s.ProposedStartDateTime != null && s.ProposedEndDateTime != null)
-                {
-                    shift.IsNormalSurgeryTime = false; //Cờ để phân biệt mổ chỉ định vs mổ bình thường, mặc định là true
-                }
-                _context.SurgeryShifts.Add(shift);
+                _context.SaveChanges();
+                isImportShiftSuccess = true;
             }
-            _context.SaveChanges();
+            catch (Exception e)
+            {
+                isImportShiftSuccess = false;
+            }
+
+            try
+            {
+                foreach (var tmp in medicalSupply)
+                {
+                    var shiftSupply = new SurgeryShiftMedicalSupply();
+                    var surgeryShift = _context.SurgeryShifts.Where(a => a.SurgeryShiftCode == tmp.SurgeryShiftCode).FirstOrDefault();
+                    if (surgeryShift == null)
+                        continue;
+                    shiftSupply.SurgeryShiftId = surgeryShift.Id;
+                    shiftSupply.MedicalSupplyId = tmp.MedicalSupplyId;
+                    shiftSupply.Quantity = tmp.Quantity;
+                    _context.SurgeryShiftMedicalSupplies.Add(shiftSupply);
+                }
+                _context.SaveChanges();
+                isImportSupplySuccess = true;
+            }
+            catch (Exception)
+            {
+                isImportSupplySuccess = false;
+            }
+
+            return isImportShiftSuccess && isImportSupplySuccess;
         }
 
         public void ImportSurgeryShiftMedicalSupply(ICollection<ImportMedicalSupplyViewModel> medicalSupply)

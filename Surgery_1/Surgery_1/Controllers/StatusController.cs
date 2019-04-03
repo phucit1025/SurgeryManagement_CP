@@ -27,9 +27,9 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public IActionResult SetPostoperativeStatus(int shiftId, string roomPost, string bedPost, string actualEndDateTime)
+        public IActionResult SetPostoperativeStatus(int shiftId, string roomPost, string bedPost, string actualEndDateTime, int roomType)
         {
-            var result = _statusService.SetPostoperativeStatus(shiftId, roomPost, bedPost, actualEndDateTime);
+            var result = _statusService.SetPostoperativeStatus(shiftId, roomPost, bedPost, actualEndDateTime, roomType);
 
             return StatusCode(200, result);
         }

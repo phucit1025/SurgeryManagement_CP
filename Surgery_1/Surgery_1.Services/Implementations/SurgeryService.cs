@@ -44,7 +44,7 @@ namespace Surgery_1.Services.Implementations
             if (previousShift != null)
             {
                 var statusName = previousShift.Status.Name;
-                if (statusName.Equals(POST_STATUS))
+                if (statusName.Equals(POST_STATUS) || statusName.Equals(RECOVERY_STATUS))
                 {
                     return true;// cho hiện
                 }

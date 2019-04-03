@@ -32,13 +32,13 @@ namespace Surgery_1.Services.Implementations
             return "";
         }
 
-        public bool SetPostoperativeStatus(int shiftId, string roomPost, string bedPost, string actualEndDateTime)
+        public bool SetPostoperativeStatus(int shiftId, string roomPost, string bedPost, string actualEndDateTime, int roomType)
         {
             var shift = _context.SurgeryShifts.Find(shiftId);
             var status = _context.Statuses.Where(s => s.Name.Equals(POST_STATUS)).FirstOrDefault();
             if (shift != null)
             {
-                shift.StatusId = status.Id;
+                shift.StatusId = roomType;
                 shift.PostRoomName = roomPost;
                 shift.PostBedName = bedPost;
                 shift.ActualEndDateTime = DateTime.ParseExact(actualEndDateTime, "yyyy-MM-dd HH:mm",

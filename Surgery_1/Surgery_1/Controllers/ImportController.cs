@@ -22,10 +22,14 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public bool ImportSurgeryShift([FromBody]ICollection<ImportSurgeryShiftViewModel> surgeryShift)
+        public IActionResult ImportSurgeryShift(ImportViewModel importViewModel)
         {
-            _surgeryShiftService.ImportSurgeryShift(surgeryShift);
-            return true;
+            var result = _surgeryShiftService.ImportSurgeryShift(importViewModel.surgeryShifts, importViewModel.medicalSupply);
+            if (result)
+            {
+                return StatusCode(200,result);
+            }
+            return StatusCode(500);
         }
 
         [HttpPost]

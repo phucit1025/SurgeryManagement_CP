@@ -11,6 +11,7 @@ namespace Surgery_1.Data.ViewModels
         public string SurgeryName { get; set; }
         public string SurgeryCatalogId { get; set; }
         public string CreatedDate { get; set; }
+        public ICollection<MedicalSupplyRequestDetailViewModel> MedicalSupplies { get; set; }
     }
 
     public class MedicalSupplyDetailImportViewModel
@@ -21,9 +22,10 @@ namespace Surgery_1.Data.ViewModels
     }
 
     public class MedicalSupplyRequestDetailViewModel
-    {
-        public int code { get; set; }
-        public string name { get; set; }
+    {   
+        public int id { get; set; }
+        public int supplyId { get; set; }
+        public string supplyName { get; set; }
         public int quantity { get; set; }
     }
     public class MedicalSupplyIdConfirmViewModel

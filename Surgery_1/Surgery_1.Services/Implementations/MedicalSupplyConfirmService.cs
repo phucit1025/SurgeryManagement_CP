@@ -42,13 +42,16 @@ namespace Surgery_1.Services.Implementations
             var request = _context.SurgeryShifts.Where(a => a.IsAvailableMedicalSupplies == false).ToList();
             foreach (var r in request)
             {
+                var supplies = _context.SurgeryShiftMedicalSupplies.Where(s => s.SurgeryShiftId == r.Id).ToList();
+                var suppliesViewModels = GetMedicalSupplyRequestDetail(r.Id);
                 result.Add(new MedicalSupplyRequestViewModel()
                 {
                     Id = r.Id,
                     PatientName = r.Patient.FullName,
                     SurgeryName = r.SurgeryCatalog.Name,
                     SurgeryCatalogId = r.SurgeryCatalogId.ToString(),
-                    CreatedDate = r.DateCreated.ToString()
+                    CreatedDate = r.DateCreated.ToString(),
+                    MedicalSupplies = suppliesViewModels,
                 });
             }
             return result;
@@ -82,8 +85,9 @@ namespace Surgery_1.Services.Implementations
             {
                 detail.Add(new MedicalSupplyRequestDetailViewModel()
                 {
-                    code = d.Id,
-                    name = d.MedicalSupply.Name,
+                    id = d.Id,
+                    supplyId = d.MedicalSupplyId,
+                    supplyName = d.MedicalSupply.Name,
                     quantity = d.Quantity
                 }
                 );
