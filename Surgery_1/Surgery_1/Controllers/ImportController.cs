@@ -24,7 +24,7 @@ namespace Surgery_1.Controllers
         [HttpPost]
         public IActionResult ImportSurgeryShift(ImportViewModel importViewModel)
         {
-            var result = _surgeryShiftService.ImportSurgeryShift(importViewModel.surgeryShifts, importViewModel.medicalSupply);
+            var result = _surgeryShiftService.ImportSurgeryShift(importViewModel.surgeryShifts);
             if (result)
             {
                 return StatusCode(200,result);

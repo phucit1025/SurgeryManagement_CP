@@ -69,11 +69,12 @@ namespace Surgery_1.Data.ViewModels
         public DateTime? ProposedStartDateTime { get; set; }
         public DateTime? ProposedEndDateTime { get; set; }
 
+        public ICollection<ImportMedicalSupplyViewModel> DetailMedical { get; set; }
     }
 
     public class ImportMedicalSupplyViewModel
     {
-        public int MedicalSupplyId { get; set; }
+        public int Code { get; set; }
         public String SurgeryShiftCode { get; set; }
         public int Quantity { get; set; }
     }

@@ -8,7 +8,7 @@ namespace Surgery_1.Services.Interfaces
 {
     public interface ISurgeryShiftService
     {
-        bool ImportSurgeryShift(ICollection<ImportSurgeryShiftViewModel> surgeryShifts, ICollection<ImportMedicalSupplyViewModel> medicalSupply);
+        bool ImportSurgeryShift(ICollection<ImportSurgeryShiftViewModel> surgeryShifts);
         void ImportSurgeryShiftMedicalSupply(ICollection<ImportMedicalSupplyViewModel> medicalSupply);
         ICollection<SurgeryCatalogNamesViewModel> GetSurgeryName(ICollection<SurgeryCatalogIDsViewModel> id);
         void AddMedicalSupply(ShiftMedicalSuppliesViewModel medicalSupply);

@@ -30,10 +30,8 @@ namespace Surgery_1.Services.Implementations
             return result;
         }
 
-        public bool ImportSurgeryShift(ICollection<ImportSurgeryShiftViewModel> surgeryShifts, ICollection<ImportMedicalSupplyViewModel> medicalSupply)
+        public bool ImportSurgeryShift(ICollection<ImportSurgeryShiftViewModel> surgeryShifts)
         {
-            bool isImportShiftSuccess = false;
-            bool isImportSupplySuccess = false;
             try
             {
                 foreach (var s in surgeryShifts)
@@ -70,37 +68,24 @@ namespace Surgery_1.Services.Implementations
                         shift.IsNormalSurgeryTime = false; //Cờ để phân biệt mổ chỉ định vs mổ bình thường, mặc định là true
                     }
                     _context.SurgeryShifts.Add(shift);
-                }
-                _context.SaveChanges();
-                isImportShiftSuccess = true;
+                    _context.SaveChanges();
+
+                    var shiftId = shift.Id;
+                    foreach (var tmp in s.DetailMedical)
+                    {
+                        var shiftSupply = new SurgeryShiftMedicalSupply();
+                        shiftSupply.SurgeryShiftId = shiftId;
+                        shiftSupply.MedicalSupplyId = tmp.Code;
+                        shiftSupply.Quantity = tmp.Quantity;
+                        _context.SurgeryShiftMedicalSupplies.Add(shiftSupply);
+                    }
+                    _context.SaveChanges();
+                }                return true;
             }
             catch (Exception e)
             {
-                isImportShiftSuccess = false;
+                return false;
             }
-
-            try
-            {
-                foreach (var tmp in medicalSupply)
-                {
-                    var shiftSupply = new SurgeryShiftMedicalSupply();
-                    var surgeryShift = _context.SurgeryShifts.Where(a => a.SurgeryShiftCode == tmp.SurgeryShiftCode).FirstOrDefault();
-                    if (surgeryShift == null)
-                        continue;
-                    shiftSupply.SurgeryShiftId = surgeryShift.Id;
-                    shiftSupply.MedicalSupplyId = tmp.MedicalSupplyId;
-                    shiftSupply.Quantity = tmp.Quantity;
-                    _context.SurgeryShiftMedicalSupplies.Add(shiftSupply);
-                }
-                _context.SaveChanges();
-                isImportSupplySuccess = true;
-            }
-            catch (Exception)
-            {
-                isImportSupplySuccess = false;
-            }
-
-            return isImportShiftSuccess && isImportSupplySuccess;
         }
 
         public void ImportSurgeryShiftMedicalSupply(ICollection<ImportMedicalSupplyViewModel> medicalSupply)
@@ -112,7 +97,7 @@ namespace Surgery_1.Services.Implementations
                 if (surgeryShift == null)
                     continue;
                 shiftSupply.SurgeryShiftId = surgeryShift.Id;
-                shiftSupply.MedicalSupplyId = tmp.MedicalSupplyId;
+                shiftSupply.MedicalSupplyId = tmp.Code;
                 shiftSupply.Quantity = tmp.Quantity;
                 _context.SurgeryShiftMedicalSupplies.Add(shiftSupply);
             }
