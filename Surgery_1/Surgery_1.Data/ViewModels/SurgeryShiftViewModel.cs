@@ -55,7 +55,7 @@ namespace Surgery_1.Data.ViewModels
     public class ImportSurgeryShiftViewModel
     {
         public float ExpectedSurgeryDuration { get; set; }
-        public int PriorityNumber { get; set; }
+        public int Priority { get; set; }
 
         //Patient Info
         public string PatientID { get; set; }
@@ -69,11 +69,12 @@ namespace Surgery_1.Data.ViewModels
         public DateTime? ProposedStartDateTime { get; set; }
         public DateTime? ProposedEndDateTime { get; set; }
 
+        public ICollection<ImportMedicalSupplyViewModel> DetailMedical { get; set; }
     }
 
     public class ImportMedicalSupplyViewModel
     {
-        public int MedicalSupplyId { get; set; }
+        public int Code { get; set; }
         public String SurgeryShiftCode { get; set; }
         public int Quantity { get; set; }
     }
