@@ -12,7 +12,7 @@ namespace Surgery_1.Services.Interfaces
         List<AvailableRoomViewModel> GetAvailableSlotRoom(int dateNumber);
         ICollection<SurgeryRoomViewModel> GetSurgeryRooms();
         ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int surgeryRoomId, int dateNumber);
-        StringBuilder MakeScheduleList();
+        bool MakeScheduleList();
         ICollection<SurgeryRoomViewModel> GetSlotRooms();
         bool AddEmergencyShift(EmerSurgeryShift emerShift);
         int GetAvailableRoomForProposedTime(EmerSurgeryShift emerShift);

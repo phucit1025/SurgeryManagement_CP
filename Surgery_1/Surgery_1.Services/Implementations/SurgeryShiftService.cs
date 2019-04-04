@@ -13,6 +13,9 @@ namespace Surgery_1.Services.Implementations
     public class SurgeryShiftService : ISurgeryShiftService
     {
         private readonly AppDbContext _context;
+        private readonly string SUPPLYSTAFF = "MedicalSupplier";
+        private readonly string PREOPERATIVE = "Preoperative";
+
         public SurgeryShiftService(AppDbContext _context)
         {
             this._context = _context;
@@ -36,13 +39,9 @@ namespace Surgery_1.Services.Implementations
             {
                 foreach (var s in surgeryShifts)
                 {
-                    //var status = _context.Statuses;
                     var shift = new SurgeryShift();
-                    shift.IsDeleted = false;
-                    shift.DateCreated = DateTime.Now;
                     shift.IsAvailableMedicalSupplies = false;
-                    var status = _context.Statuses.Where(x => x.Name.Equals("Preoperative")).FirstOrDefault();
-                    shift.StatusId = status.Id;
+                    shift.StatusId = _context.Statuses.Where(x => x.Name.Equals(PREOPERATIVE)).FirstOrDefault().Id;
                     shift.ExpectedSurgeryDuration = s.ExpectedSurgeryDuration;
                     shift.PriorityNumber = s.Priority;
                     var patient = _context.Patients.Where(p => p.IdentityNumber == s.PatientID).FirstOrDefault();
@@ -68,7 +67,17 @@ namespace Surgery_1.Services.Implementations
                         shift.IsNormalSurgeryTime = false; //Cờ để phân biệt mổ chỉ định vs mổ bình thường, mặc định là true
                     }
                     _context.SurgeryShifts.Add(shift);
-                    _context.SaveChanges();
+                }
+                // Xử lý notification
+                int countNoti = _context.SaveChanges();
+                var notification = new Notification
+                {
+                    Content = "There are " + countNoti + " new medical supplies request need to be confirmed",
+                    RoleToken = SUPPLYSTAFF
+                };
+                _context.Notification.Add(notification);
+                _context.SaveChanges();
+
 
                     var shiftId = shift.Id;
                     foreach (var tmp in s.DetailMedical)
@@ -183,8 +192,8 @@ namespace Surgery_1.Services.Implementations
         {
             foreach (var tmp in medicalSupply)
             {
-               var shiftSupply =  _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == tmp.SurgeryShiftId)
-                    .Where(a => a.MedicalSupplyId == tmp.MedicalSupplyId).FirstOrDefault();
+                var shiftSupply = _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == tmp.SurgeryShiftId)
+                     .Where(a => a.MedicalSupplyId == tmp.MedicalSupplyId).FirstOrDefault();
                 shiftSupply.Quantity = tmp.Quantity;
             }
             _context.SaveChanges();
