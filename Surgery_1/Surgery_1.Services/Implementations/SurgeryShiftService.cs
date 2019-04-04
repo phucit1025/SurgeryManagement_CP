@@ -67,17 +67,7 @@ namespace Surgery_1.Services.Implementations
                         shift.IsNormalSurgeryTime = false; //Cờ để phân biệt mổ chỉ định vs mổ bình thường, mặc định là true
                     }
                     _context.SurgeryShifts.Add(shift);
-                }
-                // Xử lý notification
-                int countNoti = _context.SaveChanges();
-                var notification = new Notification
-                {
-                    Content = "There are " + countNoti + " new medical supplies request need to be confirmed",
-                    RoleToken = SUPPLYSTAFF
-                };
-                _context.Notification.Add(notification);
-                _context.SaveChanges();
-
+                    _context.SaveChanges();
 
                     var shiftId = shift.Id;
                     foreach (var tmp in s.DetailMedical)
@@ -89,11 +79,21 @@ namespace Surgery_1.Services.Implementations
                         _context.SurgeryShiftMedicalSupplies.Add(shiftSupply);
                     }
                     _context.SaveChanges();
-                }                return true;
+                }
+                // Xử lý notification
+                int countNoti = surgeryShifts.Count;
+                var notification = new Notification
+                {
+                    Content = "There are " + countNoti + " new medical supplies request need to be confirmed",
+                    RoleToken = SUPPLYSTAFF
+                };
+                _context.Notification.Add(notification);
+                _context.SaveChanges();
+                return true;
             }
             catch (Exception e)
             {
-                return false;
+                throw;
             }
         }
 

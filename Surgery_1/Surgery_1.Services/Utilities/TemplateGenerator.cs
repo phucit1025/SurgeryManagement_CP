@@ -7,7 +7,7 @@ namespace Surgery_1.Services.Utilities
 {
     class TemplateGenerator
     {
-        public static string GetHTMLString(SurgeryShift surgery)
+        public static string GetHTMLString(SurgeryShift surgery, String path)
         {
             var patient = surgery.Patient;
             var surgeryCatalog = surgery.SurgeryCatalog;
@@ -17,6 +17,15 @@ namespace Surgery_1.Services.Utilities
                             <head>
                             </head>
                             <body>
+                                    <table align='center' style='width: 100%'>
+                                        <tbody>
+                                        <tr>
+                                             <td valign='top'>BỘ QUỐC PHÒNG<br>BỆNH VIỆN QUÂN Y 175</td>
+                                            <td><img style='width: 100;' src='{12}'/></td>
+                                            <td align='right' valign='top'>SỐ PHIẾU PT/TT: {11}</td>
+                                        </tr>
+                                    </tbody>
+                                    </table>
                                 <div class='header' align='center'><h2>BIÊN BẢN PHẪU THUẬT</h2></div>
                                 <table align='center'>
                                     <tbody>
@@ -58,7 +67,8 @@ namespace Surgery_1.Services.Utilities
             , patient.FullName, patient.Gender > 0 ? "Male" : "Female", DateTime.Now.Year - patient.YearOfBirth
             , surgery.ActualStartDateTime, surgery.ActualEndDateTime
             , surgeryCatalog.Speciality.Name, surgeryCatalog.Name, surgeryCatalog.Price, surgeryCatalog.Type
-            , surgeryCatalog.AnesthesiaMethod, surgeryCatalog.Code);
+            , surgeryCatalog.AnesthesiaMethod, surgeryCatalog.Code
+            , surgery.Id, path);
             if (ekip != null)
             {
                 foreach (var emp in ekip.Members)

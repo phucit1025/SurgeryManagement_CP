@@ -782,8 +782,8 @@ namespace Surgery_1.Services.Implementations
             var objectSettings = new ObjectSettings
             {
                 PagesCount = true,
-                HtmlContent = TemplateGenerator.GetHTMLString(rs),
-                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = styleSheets},
+                HtmlContent = TemplateGenerator.GetHTMLString(rs,styleSheets),
+                WebSettings = { DefaultEncoding = "utf-8"},
                 HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
                 FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
             };
@@ -792,7 +792,7 @@ namespace Surgery_1.Services.Implementations
             {
                 PagesCount = true,
                 HtmlContent = TemplateGenerator.GetHTMLStringHealthcare(rs),
-                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = styleSheets },
+                WebSettings = { DefaultEncoding = "utf-8"},
                 HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
                 FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
             };
