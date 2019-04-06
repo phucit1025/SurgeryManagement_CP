@@ -15,8 +15,9 @@ namespace Surgery_1.Data.Entities
         public int Capacity { get; set; }
 
         public virtual ICollection<SlotRoom> SlotRooms { get; set; }
-        [ForeignKey("SpecialityGroupId")]
-        public virtual Specialty SpecialityGroup { get; set; }
+
+        [ForeignKey("SpecialtyGroupId")]
+        public virtual SpecialtyGroup SpecialityGroup { get; set; }
 
     }
 }

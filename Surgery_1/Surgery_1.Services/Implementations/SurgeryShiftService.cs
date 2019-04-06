@@ -87,7 +87,7 @@ namespace Surgery_1.Services.Implementations
                     Content = "There are " + countNoti + " new medical supplies request need to be confirmed",
                     RoleToken = SUPPLYSTAFF
                 };
-                _context.Notification.Add(notification);
+                _context.Notifications.Add(notification);
                 _context.SaveChanges();
                 return true;
             }

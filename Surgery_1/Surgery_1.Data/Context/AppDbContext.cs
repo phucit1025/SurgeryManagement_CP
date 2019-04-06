@@ -36,7 +36,7 @@ namespace Surgery_1.Data.Context
         public DbSet<Drug> Drugs { get; set; }
         public DbSet<TreatmentReportDrug> TreatmentReportDrugs { get; set; }
         public DbSet<UserInfo> UserInfo { get; set; }
-        public DbSet<Notification> Notification { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
         public DbSet<SpecialtyGroup> SpecialtyGroups { get; set; }
         #endregion
 
