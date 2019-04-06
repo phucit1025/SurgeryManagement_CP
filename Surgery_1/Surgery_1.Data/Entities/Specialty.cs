@@ -15,7 +15,7 @@ namespace Surgery_1.Data.Entities
         public string Name { get; set; }
 
         [ForeignKey("SpecialityGroupId")]
-        public virtual Specialty SpecialityGroup { get; set; }
+        public virtual SpecialtyGroup SpecialityGroup { get; set; }
 
         public virtual ICollection<SurgeryCatalog> SurgeryCatalogs { get; set; }
     }
