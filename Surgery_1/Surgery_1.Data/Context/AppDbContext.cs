@@ -22,7 +22,7 @@ namespace Surgery_1.Data.Context
         public DbSet<TreatmentReport> TreatmentReports { get; set; }
         public DbSet<MedicalSupply> MedicalSupplies { get; set; }
         public DbSet<Patient> Patients { get; set; }
-        public DbSet<Speciality> Specialities { get; set; }
+        public DbSet<Specialty> Specialties { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<SurgeryCatalog> SurgeryCatalogs { get; set; }
@@ -37,6 +37,7 @@ namespace Surgery_1.Data.Context
         public DbSet<TreatmentReportDrug> TreatmentReportDrugs { get; set; }
         public DbSet<UserInfo> UserInfo { get; set; }
         public DbSet<Notification> Notification { get; set; }
+        public DbSet<SpecialtyGroup> SpecialtyGroups { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder builder)
