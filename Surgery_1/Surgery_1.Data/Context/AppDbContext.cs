@@ -11,7 +11,7 @@ namespace Surgery_1.Data.Context
     {
         public AppDbContext() : base((new DbContextOptionsBuilder())
             .UseLazyLoadingProxies()
-            .UseSqlServer(@"Data Source=LINHNDHSE61828\SQLEXPRESS;Initial Catalog=Surgery_CP_App;persist security info=True;Integrated Security=False;TrustServerCertificate=False;uid=sa;password=123456789;Trusted_Connection=False;MultipleActiveResultSets=true;")
+            .UseSqlServer(@"Data Source=livjng4k\SQLEXPRESS;Initial Catalog=Surgery_CP_App;persist security info=True;Integrated Security=False;TrustServerCertificate=False;uid=sa;password=123456789;Trusted_Connection=False;MultipleActiveResultSets=true;")
             .Options)
         {
 
