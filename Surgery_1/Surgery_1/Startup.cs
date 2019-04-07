@@ -74,6 +74,7 @@ namespace Surgery_1
             services.AddScoped<IUtilsService, UtilsService>();
             services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<ISpecialtyService, SpecialtyService>();
             #endregion
 
             #region JWT Config
