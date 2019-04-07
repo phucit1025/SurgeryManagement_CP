@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Surgery_1.Data.Entities
 {
-    public class Speciality : BaseEntity
+    public class Specialty : BaseEntity
     {
-        public Speciality()
+        public Specialty()
         {
             SurgeryCatalogs = new HashSet<SurgeryCatalog>();
         }
 
         public string Name { get; set; }
+
+        [ForeignKey("SpecialtyGroupId")]
+        public virtual SpecialtyGroup SpecialtyGroup { get; set; }
 
         public virtual ICollection<SurgeryCatalog> SurgeryCatalogs { get; set; }
     }
