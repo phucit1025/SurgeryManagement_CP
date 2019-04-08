@@ -66,7 +66,7 @@ namespace Surgery_1.Services.Utilities
                                 <table align='center'>"
             , patient.FullName, patient.Gender > 0 ? "Male" : "Female", DateTime.Now.Year - patient.YearOfBirth
             , surgery.ActualStartDateTime, surgery.ActualEndDateTime
-            , surgeryCatalog.Speciality.Name, surgeryCatalog.Name, surgeryCatalog.Price, surgeryCatalog.Type
+            , surgeryCatalog.Specialty.Name, surgeryCatalog.Name, surgeryCatalog.Price, surgeryCatalog.Type
             , surgeryCatalog.AnesthesiaMethod, surgeryCatalog.Code
             , surgery.Id, path);
             if (ekip != null)

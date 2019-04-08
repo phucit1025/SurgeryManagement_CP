@@ -42,5 +42,12 @@ namespace Surgery_1.Services.Implementations
             }
             return results;
         }
+
+        public ICollection<string> GetSpecialtyGroupByRoomId(int roomId)
+        {
+            var specialties = _context.SurgeryRooms.Find(roomId).SpecialtyGroup.Specialties.Select(s => s.Name).ToList();
+            return specialties;
+        }
+
     }
 }

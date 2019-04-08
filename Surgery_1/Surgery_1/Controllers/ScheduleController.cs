@@ -24,6 +24,12 @@ namespace Surgery_1.Controllers
             this._roomService = _roomService;
             this._surgeryShiftService = _surgeryShiftService;
         }
+        [HttpGet]
+        public IActionResult GetSpecialtyByRoomId(int roomId)
+        {
+            var result = _roomService.GetSpecialtyGroupByRoomId(roomId);
+            return StatusCode(200, result);
+        }
 
         [HttpPost]
         public void AddUsedMedicalSupply([FromBody]ShiftMedicalSuppliesViewModel medicalSupplyAddList)
@@ -77,23 +83,26 @@ namespace Surgery_1.Controllers
         [HttpGet]
         public IActionResult MakeScheduleList()
         {
-            var result = _surgeryService.MakeScheduleList();
+            var result = true;
+            try
+            {
+                result = _surgeryService.MakeScheduleList();
+
+            } catch (Exception)
+            {
+                result = false;
+            }
+            
             return StatusCode(200, result);
         }
 
         [HttpPost]
-        public IActionResult GetAvailableSlotRoom(int dateNumber)
+        public IActionResult GetAvailableSlotRoom(int dateNumber, int surgeryCatalogId)
         {
-            var result = _surgeryService.GetAvailableSlotRoom(dateNumber);
+            var result = _surgeryService.GetAvailableSlotRoom(dateNumber, surgeryCatalogId);
             return StatusCode(200, result);
         }
 
-        [HttpPost]
-        public IActionResult GetAvailableRoomForProposedTime([FromBody] EmerSurgeryShift emerShift)
-        {
-            var result = _surgeryService.GetAvailableRoomForProposedTime(emerShift);
-            return StatusCode(200, result);
-        }
         [HttpPost]
         public IActionResult AddEmergencyShift([FromBody] EmerSurgeryShift emerShift)
         {

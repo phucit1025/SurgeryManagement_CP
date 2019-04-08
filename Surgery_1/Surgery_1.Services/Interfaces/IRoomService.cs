@@ -7,5 +7,6 @@ namespace Surgery_1.Services.Interfaces
     {
         ICollection<RoomViewModel> GetRooms();
         RoomViewModel GetRoom(int id);
+        ICollection<string> GetSpecialtyGroupByRoomId(int roomId);
     }
 }

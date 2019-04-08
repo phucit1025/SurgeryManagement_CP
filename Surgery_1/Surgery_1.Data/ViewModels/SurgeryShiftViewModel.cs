@@ -8,6 +8,7 @@ namespace Surgery_1.Data.ViewModels
     public class SurgeryShiftViewModel
     {
         public int Id { get; set; }
+        public string SpecialtyName { get; set; }
         public string CatalogName { get; set; }
         public string CatalogCode { get; set; }
         public int? PriorityNumber { get; set; }
@@ -152,6 +153,7 @@ namespace Surgery_1.Data.ViewModels
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public bool IsForceAdd { get; set; }
+        public bool IsEmergency { get; set; } = false;
         public int? SlotRoomId { get; set; }
     }
 

@@ -66,11 +66,11 @@ namespace Surgery_1.Services.Implementations
                 shift.ConfirmDate = DateTime.Now;
                 if (shift.ProposedStartDateTime != null && shift.ProposedEndDateTime != null)
                 {
-                    shift.ScheduleDate = new DateTime(shift.ProposedStartDateTime.Value.Year, shift.ProposedStartDateTime.Value.Month, shift.ProposedStartDateTime.Value.Day);
+                    shift.ScheduleDate = shift.ProposedStartDateTime.Value.Date;
                 }
                 else
                 {
-                    shift.ScheduleDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                    shift.ScheduleDate = shift.ConfirmDate.Value.Date;
                 }
             }
             _context.SaveChanges();
