@@ -34,7 +34,7 @@ namespace Surgery_1.Services.Implementations
 
         public ICollection<MessageNotificationViewModel> GetNotifications(string roleName)
         {
-            var result = _context.Notification.Where(s => s.RoleToken.Equals(roleName)).OrderByDescending(s => s.DateCreated);
+            var result = _context.Notifications.Where(s => s.RoleToken.Equals(roleName)).OrderByDescending(s => s.DateCreated);
             ICollection<MessageNotificationViewModel> messages = new List<MessageNotificationViewModel>();
             foreach(var message in result)
             {
@@ -49,7 +49,7 @@ namespace Surgery_1.Services.Implementations
 
         public bool SetIsReadNotification(string roleName)
         {
-            _context.Notification.Where(s => s.RoleToken.Equals(roleName)).ToList().ForEach(item => { item.IsRead = true; });
+            _context.Notifications.Where(s => s.RoleToken.Equals(roleName)).ToList().ForEach(item => { item.IsRead = true; });
             return _context.SaveChanges() > 0 ? true : false;
         }
     }

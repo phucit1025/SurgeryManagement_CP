@@ -21,6 +21,16 @@ namespace Surgery_1.Services.Implementations
             this._context = _context;
         }
 
+        public void AssignTechnicalStaff(TechnicalStaffAssignment techAssignment)
+        {
+            foreach(var surgeryId in techAssignment.surgeryId)
+            {
+                _context.SurgeryShifts.Find(surgeryId).TechId = techAssignment.technicalStaffId;
+                _context.SaveChanges();
+                
+            }
+        }
+
         public ICollection<SurgeryCatalogNamesViewModel> GetSurgeryName(ICollection<SurgeryCatalogIDsViewModel> ids)
         {
             var result = new List<SurgeryCatalogNamesViewModel>();
@@ -87,7 +97,7 @@ namespace Surgery_1.Services.Implementations
                     Content = "There are " + countNoti + " new medical supplies request need to be confirmed",
                     RoleToken = SUPPLYSTAFF
                 };
-                _context.Notification.Add(notification);
+                _context.Notifications.Add(notification);
                 _context.SaveChanges();
                 return true;
             }

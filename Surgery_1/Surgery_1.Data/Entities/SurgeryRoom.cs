@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Surgery_1.Data.Entities
@@ -14,5 +15,9 @@ namespace Surgery_1.Data.Entities
         public int Capacity { get; set; }
 
         public virtual ICollection<SlotRoom> SlotRooms { get; set; }
+
+        [ForeignKey("SpecialtyGroupId")]
+        public virtual SpecialtyGroup SpecialtyGroup { get; set; }
+
     }
 }

@@ -31,5 +31,11 @@ namespace Surgery_1.Controllers
             _surgeryShiftService.UpdateMedicalSupply(medicalSupply);
             return true;
         }
+
+        [HttpPost]
+        public void AssignTechStaff([FromBody]TechnicalStaffAssignment techAssignment)
+        {
+            _surgeryShiftService.AssignTechnicalStaff(techAssignment);
+        }
     }
 }
