@@ -32,4 +32,10 @@ namespace Surgery_1.Data.ViewModels
         public ICollection<ShiftMedicalSupplyViewModel> ShiftMedicals { get; set; }
         public ICollection<int> DeleteMedicalSupplyIds { get; set; }
     }
+
+    public class TechnicalStaffAssignment
+    {
+        public int technicalStaffId { get; set; }
+        public ICollection<int> surgeryId { get; set; }
+    }
 }
