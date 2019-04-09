@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using static Surgery_1.Data.ViewModels.PostOpSurgeryShiftViewModel;
 
 namespace Surgery_1.Services.Interfaces
@@ -16,5 +17,6 @@ namespace Surgery_1.Services.Interfaces
         ICollection<EkipMemberViewModel> GetEkipMember(int surgeryShiftId);
         void UpdateMedicalSupply(ICollection<ShiftMedicalSupplyViewModel> medicalSupply);
         void AssignTechnicalStaff(TechnicalStaffAssignment techAssignment);
+        Task<ICollection<TechnicalStaffInfo>> GetAllTechnicalStaff(DateTime startTime, DateTime endTime);
     }
 }

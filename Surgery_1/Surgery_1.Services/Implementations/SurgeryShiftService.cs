@@ -1,4 +1,5 @@
-﻿using Surgery_1.Data.Context;
+﻿using Microsoft.AspNetCore.Identity;
+using Surgery_1.Data.Context;
 using Surgery_1.Data.Entities;
 using Surgery_1.Data.ViewModels;
 using Surgery_1.Services.Interfaces;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using static Surgery_1.Data.ViewModels.PostOpSurgeryShiftViewModel;
 
 namespace Surgery_1.Services.Implementations
@@ -13,22 +15,53 @@ namespace Surgery_1.Services.Implementations
     public class SurgeryShiftService : ISurgeryShiftService
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly string SUPPLYSTAFF = "MedicalSupplier";
+        private readonly string TECHNICALSTAFF = "Technical";
         private readonly string PREOPERATIVE = "Preoperative";
 
-        public SurgeryShiftService(AppDbContext _context)
+        public SurgeryShiftService(AppDbContext context, UserManager<IdentityUser> userManager)
         {
-            this._context = _context;
+            _context = context;
+            _userManager = userManager;
+        }
+
+        public async Task<ICollection<TechnicalStaffInfo>> GetAllTechnicalStaff(DateTime startTime, DateTime endTime)//startTime, endTime is the time of surgery shift wanting to assign a technical
+        {
+            //Assign theo tung surgery shift: lay thoi gian bat dau va thoi gian ket thuc cua surgery shift can assign de Get All
+            //Tim tat ca nhung technical staff k phu trach surgery nao trong khoang thoi gian cho truoc
+            //
+            var technicals = _context.UserInfo.Where(a => a.IsDeleted == false).ToList();
+            var result = new List<TechnicalStaffInfo>();
+            foreach (var item in technicals)
+            {
+                var time = _context.SurgeryShifts.Where(a => !a.IsDeleted && a.TechId == item.Id && a.EstimatedStartDateTime <= startTime && endTime <= a.EstimatedEndDateTime).Count();
+                if (time > 0) continue;
+                //Count if the technical is assigned to any other shift in given time.
+                var user = _context.Users.Find(item.GuId);
+                var roleList = await _userManager.GetRolesAsync(user);
+                var userRole = roleList.FirstOrDefault();
+                //TODO: Add role technical to DB
+                if (userRole.Equals("Technical"))
+                {
+                    var technical = new TechnicalStaffInfo()
+                    {
+                        technicalStaffName = item.FullName,
+                        technicalStaffId = item.Id
+                    };
+                    result.Add(technical);
+                }
+            }
+            return result;
         }
 
         public void AssignTechnicalStaff(TechnicalStaffAssignment techAssignment)
         {
-            foreach(var surgeryId in techAssignment.surgeryId)
+            foreach (var surgeryId in techAssignment.surgeryId)
             {
                 _context.SurgeryShifts.Find(surgeryId).TechId = techAssignment.technicalStaffId;
-                _context.SaveChanges();
-                
             }
+            _context.SaveChanges();
         }
 
         public ICollection<SurgeryCatalogNamesViewModel> GetSurgeryName(ICollection<SurgeryCatalogIDsViewModel> ids)

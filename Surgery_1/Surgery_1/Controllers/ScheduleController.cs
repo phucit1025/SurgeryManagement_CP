@@ -25,11 +25,11 @@ namespace Surgery_1.Controllers
             this._surgeryShiftService = _surgeryShiftService;
         }
 
-        [HttpPost]
-        public void AssignTechStaff([FromBody]TechnicalStaffAssignment techAssignment)
-        {
-            _surgeryShiftService.AssignTechnicalStaff(techAssignment);
-        }
+        //[HttpPost]
+        //public void AssignTechStaff([FromBody]TechnicalStaffAssignment techAssignment)
+        //{
+        //    _surgeryShiftService.AssignTechnicalStaff(techAssignment);
+        //}
 
         [HttpPost]
         public void AddUsedMedicalSupply([FromBody]ShiftMedicalSuppliesViewModel medicalSupplyAddList)

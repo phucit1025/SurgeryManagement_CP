@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Castle.Core.Internal;
+using Microsoft.AspNetCore.Mvc;
 using Surgery_1.Data.ViewModels;
 using Surgery_1.Services.Interfaces;
 using System;
@@ -14,7 +15,7 @@ namespace Surgery_1.Controllers
     {
         private readonly ISurgeryShiftService _surgeryShiftService;
         public SurgeryShiftController(ISurgeryShiftService _surgeryShiftService)
-        {            
+        {
             this._surgeryShiftService = _surgeryShiftService;
         }
 
@@ -33,9 +34,21 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public void AssignTechStaff([FromBody]TechnicalStaffAssignment techAssignment)
+        public IActionResult AssignTechStaff([FromBody]TechnicalStaffAssignment techAssignment)
         {
             _surgeryShiftService.AssignTechnicalStaff(techAssignment);
+            return Ok(200);
+        }
+
+        [HttpPost]
+        public IActionResult GetAllAssignableTechnicals(DateTime startTime, DateTime endTime)
+        {
+            var result = _surgeryShiftService.GetAllTechnicalStaff(startTime, endTime).Result;
+            if (!result.IsNullOrEmpty())
+            {
+                return Ok(result);
+            }
+            return NotFound();
         }
     }
 }

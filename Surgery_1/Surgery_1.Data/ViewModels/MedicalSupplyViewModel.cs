@@ -13,7 +13,7 @@ namespace Surgery_1.Data.ViewModels
     }
 
     public class MedicalSupplyInfoViewModel
-    {   
+    {
         public int id { get; set; }
         public int medicalSupplyId { get; set; }
         public String medicalSupplyName { get; set; }
@@ -37,5 +37,11 @@ namespace Surgery_1.Data.ViewModels
     {
         public int technicalStaffId { get; set; }
         public ICollection<int> surgeryId { get; set; }
+    }
+
+    public class TechnicalStaffInfo
+    {
+        public int technicalStaffId { get; set; }
+        public String technicalStaffName { get; set; }
     }
 }
