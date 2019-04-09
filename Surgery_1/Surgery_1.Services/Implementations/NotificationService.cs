@@ -45,7 +45,7 @@ namespace Surgery_1.Services.Implementations
                     content += countNoti + " shift is on " + UtilitiesDate.FormatDateShow(item.First().Date) + ", ";
                 }
             }
-            content = content.Remove(content.Length - 1, 2) + ".";
+            content = content.Remove(content.Length - 1, 1) + ".";
             var notification = new Notification
             {
                 Content = content,
@@ -53,14 +53,6 @@ namespace Surgery_1.Services.Implementations
             };
             _context.Notifications.Add(notification);
             _context.SaveChanges();
-            //var notification = new Notification
-            //{
-            //    Content = "There are " + countNotify + " new medical supplies request need to be confirmed",
-            //};
-            //_context.Notification.Add(notification);
-            //_context.SaveChanges();
-            //_context.Notification.Add(notification);
-            //_context.SaveChanges();
         }
 
         public ICollection<MessageNotificationViewModel> GetNotifications(string roleName)

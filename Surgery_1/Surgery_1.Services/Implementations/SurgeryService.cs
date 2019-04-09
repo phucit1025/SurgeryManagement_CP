@@ -248,9 +248,11 @@ namespace Surgery_1.Services.Implementations
                 MakeScheduleList();
             }
             //notification
+
             if (datetimeShiftList.Count == countNoti)
             {
                 _notificationService.AddNotificationForScheduling(datetimeShiftList);
+                countNoti++;
             }
             return true;
         }
