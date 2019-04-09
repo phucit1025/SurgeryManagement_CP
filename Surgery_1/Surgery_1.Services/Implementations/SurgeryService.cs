@@ -1534,5 +1534,103 @@ namespace Surgery_1.Services.Implementations
             return shifts;
         }
         #endregion
+
+        #region Assign Ekip
+        public List<SurgeryShift> GetScheduledSurgeryShifts(int dateNumber)
+        {
+            return _context.SurgeryShifts
+                .Where(s => (s.EstimatedStartDateTime != null && s.EstimatedEndDateTime != null)
+                && (UtilitiesDate.ConvertDateToNumber(s.EstimatedStartDateTime.Value) == dateNumber)
+                && s.EkipId == null) //mm/dd/YYYY
+                .OrderByDescending(s => s.ExpectedSurgeryDuration).ToList();
+        }
+
+        public List<Ekip> GetEkip()
+        {
+            return _context.Ekips.ToList();
+        }
+
+        public AssignSurgeryEkip FindShortesSumDurationAndAvailableEkipInScheduledDate(List<AssignSurgeryEkip> assignSurgeryEkips
+                                                                            ,DateTime estimateStart, DateTime estimateEnd)
+        {   
+            // lấy những ca có giờ đụng với ca phẫu thuật cần assign ekip
+            var shifts = _context.SurgeryShifts.Where(s =>
+               !s.IsDeleted &&
+               (s.EstimatedStartDateTime.Value < estimateStart && s.EstimatedEndDateTime.Value > estimateStart) ||
+               (s.EstimatedStartDateTime.Value >= estimateStart && s.EstimatedStartDateTime.Value < estimateEnd) ||
+               (s.EstimatedEndDateTime.Value > estimateStart && s.EstimatedEndDateTime.Value <= estimateEnd))
+               .ToList();
+
+            // lấy ra những ekip khả dụng trong thời gian ca phẫu thuật cần assign
+            var availableEkips = new List<AssignSurgeryEkip>();
+            foreach (var e in assignSurgeryEkips)
+            {
+                if (!shifts.Any(s => s.EkipId == e.EkipId))
+                {
+                    availableEkips.Add(e);
+                }
+            }
+
+            //trả về ekip có thời gian làm việc ngắn nhất
+            return availableEkips.Aggregate(
+                    (shortestSurgery, currentSurgery) =>
+                    (currentSurgery.SumDuration <= shortestSurgery.SumDuration) ? currentSurgery : shortestSurgery);
+
+        }
+
+        public void AssignSurgeryToEkip(int ekipId, SurgeryShift shift)
+        {
+            shift.EkipId = ekipId;
+            _context.Update(shift);
+            _context.SaveChanges();
+        }
+
+        public void AssignEkipByDate(int dateNumber)
+        {
+            var shifts = GetScheduledSurgeryShifts(dateNumber);
+
+            var ekips = new List<AssignSurgeryEkip>();
+            AssignSurgeryEkip assignSurgery;
+            foreach (var e in GetEkip())
+            {
+                assignSurgery = new AssignSurgeryEkip()
+                {
+                    EkipId = e.Id,
+                    SumDuration = e.SurgeryShifts.Sum(s => s.ExpectedSurgeryDuration),
+                };
+                ekips.Add(assignSurgery);
+            }
+             ;
+            foreach (var shift in shifts)
+            {
+                // tìm ekip có số lượng thời gian làm việc thấp nhất và khả dụng
+                assignSurgery = FindShortesSumDurationAndAvailableEkipInScheduledDate(ekips
+                    , shift.EstimatedStartDateTime.Value
+                    , shift.EstimatedEndDateTime.Value);
+
+                // assign ca vào ekip
+                AssignSurgeryToEkip(assignSurgery.EkipId, shift);
+
+                // cộng thêm vào thời gian làm việc của ekip
+                assignSurgery.SumDuration = assignSurgery.SumDuration + shift.ExpectedSurgeryDuration;
+            }
+        }
+
+        public void AssignEkip()
+        {
+            var surgeries = _context.SurgeryShifts
+                .Where(s => (s.EstimatedStartDateTime != null && s.EstimatedEndDateTime != null)
+                        && s.EkipId == null);
+            var minDate = UtilitiesDate.ConvertDateToNumber(surgeries.Min(s => s.EstimatedStartDateTime).Value);
+            var maxDate = UtilitiesDate.ConvertDateToNumber(surgeries.Max(s => s.EstimatedStartDateTime).Value);
+
+            for (int i = minDate; i <= maxDate; i++)
+            {
+                AssignEkipByDate(i);
+            }
+        }
+        
+        #endregion
+        
     }
 }

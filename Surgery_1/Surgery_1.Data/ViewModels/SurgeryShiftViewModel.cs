@@ -160,4 +160,10 @@ namespace Surgery_1.Data.ViewModels
         public ICollection<ImportSurgeryShiftViewModel> surgeryShifts;
         public ICollection<ImportMedicalSupplyViewModel> medicalSupply;
     }
+
+    public class AssignSurgeryEkip
+    {
+        public int EkipId { get; set; }
+        public float SumDuration { get; set; }
+    }
 }
