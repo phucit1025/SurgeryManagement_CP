@@ -164,6 +164,16 @@ namespace Surgery_1
             InitIdentities(serviceProvider, "ChiefNurse", "cnurse1", "zxc@123456");
             InitIdentities(serviceProvider, "Nurse", "nurse1", "zxc@123456");
             InitIdentities(serviceProvider, "Nurse", "nurse2", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical1", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical2", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical3", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical4", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical5", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical6", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical7", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical8", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical9", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical10", "zxc@123456");
             #endregion
 
         }
