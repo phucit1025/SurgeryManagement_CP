@@ -4,15 +4,15 @@ using System.Text;
 
 namespace Surgery_1.Data.Entities
 {
-    public class SpecialityGroup : BaseEntity
+    public class SpecialtyGroup : BaseEntity
     {
-        public SpecialityGroup()
+        public SpecialtyGroup()
         {
-            Specialities = new HashSet<Speciality>();
+            Specialties = new HashSet<Specialty>();
             SurgeryRooms = new HashSet<SurgeryRoom>();
         }
         public string Name { get; set; }
-        public virtual ICollection<Speciality> Specialities { get; set; }
+        public virtual ICollection<Specialty> Specialties { get; set; }
         public virtual ICollection<SurgeryRoom> SurgeryRooms { get; set; }
     }
 }

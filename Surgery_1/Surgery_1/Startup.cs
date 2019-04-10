@@ -74,7 +74,7 @@ namespace Surgery_1
             services.AddScoped<IUtilsService, UtilsService>();
             services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<INotificationService, NotificationService>();
-            services.AddScoped<ISpecialityService, SpecialityService>();
+            services.AddScoped<ISpecialtyService, SpecialtyService>();
             #endregion
 
             #region JWT Config
@@ -121,7 +121,7 @@ namespace Surgery_1
                 app.UseDeveloperExceptionPage();
 
                 //dbContext.Database.EnsureDeleted();
-                dbContext.Database.EnsureCreated();
+                //dbContext.Database.EnsureCreated();
 
             }
             else

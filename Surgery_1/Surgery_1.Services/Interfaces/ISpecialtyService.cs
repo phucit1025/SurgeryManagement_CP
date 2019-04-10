@@ -5,25 +5,25 @@ using System.Text;
 
 namespace Surgery_1.Services.Interfaces
 {
-    public interface ISpecialityService
+    public interface ISpecialtyService
     {
-        #region Catalog => Speciality
-        ICollection<SpecialityViewModel> GetSpecialities();
-        ICollection<SpecialityViewModel> GetSpecialities(int groupId);
+        #region Catalog => Specialty
+        ICollection<SpecialtyViewModel> GetSpecialties();
+        ICollection<SpecialtyViewModel> GetSpecialties(int groupId);
         ICollection<SurgeryCatalogViewModel> GetCatalogs();
-        bool SetCatalogToSpeciality(CatalogToSpecialityViewModel model);
-        int CreateSpeciality(string name);
+        bool SetCatalogToSpecialty(CatalogToSpecialtyViewModel model);
+        int CreateSpecialty(string name);
         #endregion
 
-        #region Speciality => Group
-        ICollection<SpecialityGroupViewModel> GetSpecialityGroups();
-        int CreateSpecialityGroup(string specialityGroupName);
-        bool AddSpecialityToGroup(SpecialitySpecialityGroupViewModel group);
+        #region Specialty => Group
+        ICollection<SpecialtyGroupViewModel> GetSpecialtyGroups();
+        int CreateSpecialtyGroup(string SpecialtyGroupName);
+        bool AddSpecialtyToGroup(SpecialtySpecialtyGroupViewModel group);
         #endregion
 
         #region Group => Room
-        ICollection<SurgeryRoomSpecialityViewModel> GetRooms();
-        bool SetSpecialityToRoom(SurgeryRoomSpecialityGroupCreateViewModel groupRoom);
+        ICollection<SurgeryRoomSpecialtyViewModel> GetRooms();
+        bool SetSpecialtyToRoom(SurgeryRoomSpecialtyGroupCreateViewModel groupRoom);
         #endregion
 
 

@@ -21,10 +21,10 @@ namespace Surgery_1.Data.Entities
         public string Procedure { get; set; }
         public int ExpectedSurgeryDuration { get; set; }
         public string AnesthesiaMethod { get; set; }
-        public int SpecialityId { get; set; }
+        public int SpecialtyId { get; set; }
 
-        [ForeignKey("SpecialityId")]
-        public virtual Speciality Speciality { get; set; }
+        [ForeignKey("SpecialtyId")]
+        public virtual Specialty Specialty { get; set; }
         public virtual ICollection<SurgeryShift> SurgeryShifts { get; set; }
     }
 }

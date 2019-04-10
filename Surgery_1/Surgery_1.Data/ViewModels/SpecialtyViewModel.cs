@@ -4,35 +4,35 @@ using System.Text;
 
 namespace Surgery_1.Data.ViewModels
 {
-    public class SpecialityGroupViewModel
+    public class SpecialtyGroupViewModel
     {
-        public int SpecialityGroupId { get; set; }
+        public int SpecialtyGroupId { get; set; }
         public String Name { get; set; }
     }
 
-    public class SpecialitySpecialityGroupViewModel
+    public class SpecialtySpecialtyGroupViewModel
     {
-        public int SpecialityGroupId { get; set; }
-        public ICollection<int> SpecialityId { get; set; }
+        public int SpecialtyGroupId { get; set; }
+        public ICollection<int> SpecialtyId { get; set; }
     }
 
-    public class SurgeryRoomSpecialityGroupCreateViewModel
+    public class SurgeryRoomSpecialtyGroupCreateViewModel
     {
-        public int SpecialityGroupId { get; set; }
+        public int SpecialtyGroupId { get; set; }
         public ICollection<int> SurgeryRoomId { get; set; }
     }
 
-    public class SpecialityGroupCreateViewModel
+    public class SpecialtyGroupCreateViewModel
     {
         public string Name { get; set; }
     }
 
-    public class SpecialityCreateViewModel
+    public class SpecialtyCreateViewModel
     {
         public string Name { get; set; }
     }
 
-    public class SpecialityViewModel
+    public class SpecialtyViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -40,9 +40,9 @@ namespace Surgery_1.Data.ViewModels
         public string GroupName { get; set; }
     }
 
-    public class CatalogToSpecialityViewModel
+    public class CatalogToSpecialtyViewModel
     {
-        public int SpecialityId { get; set; }
+        public int SpecialtyId { get; set; }
         public List<int> CatalogIds { get; set; }
     }
 
@@ -50,11 +50,11 @@ namespace Surgery_1.Data.ViewModels
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int SpecialityId { get; set; }
-        public string SpecialityName { get; set; }
+        public int SpecialtyId { get; set; }
+        public string SpecialtyName { get; set; }
     }
 
-    public class SurgeryRoomSpecialityViewModel
+    public class SurgeryRoomSpecialtyViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }

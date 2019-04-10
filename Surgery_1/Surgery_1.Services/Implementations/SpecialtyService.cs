@@ -9,23 +9,23 @@ using System.Text;
 
 namespace Surgery_1.Services.Implementations
 {
-    public class SpecialityService : ISpecialityService
+    public class SpecialtyService : ISpecialtyService
     {
         private readonly AppDbContext _context;
-        public SpecialityService(AppDbContext _context)
+        public SpecialtyService(AppDbContext _context)
         {
             this._context = _context;
         }
 
-        public bool AddSpecialityToGroup(SpecialitySpecialityGroupViewModel group)
+        public bool AddSpecialtyToGroup(SpecialtySpecialtyGroupViewModel group)
         {
             try
             {
-                foreach (var sId in group.SpecialityId)
+                foreach (var sId in group.SpecialtyId)
                 {
-                    var speciality = _context.Specialities.Find(sId);
-                    speciality.SpecialityGroupId = group.SpecialityGroupId;
-                    _context.Update(speciality);
+                    var Specialty = _context.Specialties.Find(sId);
+                    Specialty.SpecialtyGroupId = group.SpecialtyGroupId;
+                    _context.Update(Specialty);
                 }
                 _context.SaveChanges();
                 return true;
@@ -36,17 +36,17 @@ namespace Surgery_1.Services.Implementations
             }
         }
 
-        public int CreateSpeciality(string name)
+        public int CreateSpecialty(string name)
         {
             try
             {
-                var newSpeciality = new Speciality()
+                var newSpecialty = new Specialty()
                 {
                     Name = name
                 };
-                _context.Specialities.Add(newSpeciality);
+                _context.Specialties.Add(newSpecialty);
                 _context.SaveChanges();
-                return newSpeciality.Id;
+                return newSpecialty.Id;
             }
             catch (Exception)
             {
@@ -54,15 +54,15 @@ namespace Surgery_1.Services.Implementations
             }
         }
 
-        public int CreateSpecialityGroup(string specialityGroupName)
+        public int CreateSpecialtyGroup(string SpecialtyGroupName)
         {
             try
             {
-                var SpecialityGroup = new SpecialityGroup();
-                SpecialityGroup.Name = specialityGroupName;
-                _context.SpecialityGroups.Add(SpecialityGroup);
+                var SpecialtyGroup = new SpecialtyGroup();
+                SpecialtyGroup.Name = SpecialtyGroupName;
+                _context.SpecialtyGroups.Add(SpecialtyGroup);
                 _context.SaveChanges();
-                return SpecialityGroup.Id;
+                return SpecialtyGroup.Id;
             }
             catch (Exception)
             {
@@ -84,91 +84,91 @@ namespace Surgery_1.Services.Implementations
                 {
                     Id = c.Id,
                     Name = c.Name,
-                    SpecialityId = c.SpecialityId,
-                    SpecialityName = c.Speciality.Name,
+                    SpecialtyId = c.SpecialtyId,
+                    SpecialtyName = c.Specialty.Name,
                 }).ToList();
             }
         }
 
-        public ICollection<SurgeryRoomSpecialityViewModel> GetRooms()
+        public ICollection<SurgeryRoomSpecialtyViewModel> GetRooms()
         {
             var rooms = _context.SurgeryRooms.Where(s => !s.IsDeleted);
             if (rooms.Any())
             {
-                return rooms.Select(r => new SurgeryRoomSpecialityViewModel()
+                return rooms.Select(r => new SurgeryRoomSpecialtyViewModel()
                 {
                     Id = r.Id,
                     Name = r.Name,
-                    GroupId = r.SpecialityGroupId.GetValueOrDefault(0),
-                    GroupName = r.SpecialityGroup == null ? "" : r.SpecialityGroup.Name
+                    GroupId = r.SpecialtyGroupId.GetValueOrDefault(0),
+                    GroupName = r.SpecialtyGroup == null ? "" : r.SpecialtyGroup.Name
                 }).ToList();
             }
             else
             {
-                return new List<SurgeryRoomSpecialityViewModel>();
+                return new List<SurgeryRoomSpecialtyViewModel>();
             }
         }
 
-        public ICollection<SpecialityViewModel> GetSpecialities()
+        public ICollection<SpecialtyViewModel> GetSpecialties()
         {
-            var specialities = _context.Specialities.Where(s => !s.IsDeleted);
-            if (specialities.Any())
+            var Specialties = _context.Specialties.Where(s => !s.IsDeleted);
+            if (Specialties.Any())
             {
-                return specialities.Select(c => new SpecialityViewModel()
+                return Specialties.Select(c => new SpecialtyViewModel()
                 {
                     Id = c.Id,
-                    GroupId = c.SpecialityGroupId.GetValueOrDefault(0),
+                    GroupId = c.SpecialtyGroupId.GetValueOrDefault(0),
                     Name = c.Name,
-                    GroupName = c.SpecialityGroup == null ? "" : c.SpecialityGroup.Name
+                    GroupName = c.SpecialtyGroup == null ? "" : c.SpecialtyGroup.Name
                 }).ToList();
             }
             else
             {
-                return new List<SpecialityViewModel>();
+                return new List<SpecialtyViewModel>();
             }
         }
 
-        public ICollection<SpecialityViewModel> GetSpecialities(int groupId)
+        public ICollection<SpecialtyViewModel> GetSpecialties(int groupId)
         {
-            var specialities = _context.Specialities.Where(s => !s.IsDeleted && s.SpecialityGroupId == groupId);
-            if (specialities.Any())
+            var Specialties = _context.Specialties.Where(s => !s.IsDeleted && s.SpecialtyGroupId == groupId);
+            if (Specialties.Any())
             {
-                return specialities.Select(c => new SpecialityViewModel()
+                return Specialties.Select(c => new SpecialtyViewModel()
                 {
                     Id = c.Id,
-                    GroupId = c.SpecialityGroupId.GetValueOrDefault(0),
+                    GroupId = c.SpecialtyGroupId.GetValueOrDefault(0),
                     Name = c.Name,
-                    GroupName = c.SpecialityGroup == null ? "" : c.SpecialityGroup.Name
+                    GroupName = c.SpecialtyGroup == null ? "" : c.SpecialtyGroup.Name
                 }).ToList();
             }
             else
             {
-                return new List<SpecialityViewModel>();
+                return new List<SpecialtyViewModel>();
             }
         }
 
-        public ICollection<SpecialityGroupViewModel> GetSpecialityGroups()
+        public ICollection<SpecialtyGroupViewModel> GetSpecialtyGroups()
         {
-            var SpecialityGroupList = new List<SpecialityGroupViewModel>();
-            var list = _context.SpecialityGroups.Where(a => a.IsDeleted == false).ToArray();
+            var SpecialtyGroupList = new List<SpecialtyGroupViewModel>();
+            var list = _context.SpecialtyGroups.Where(a => a.IsDeleted == false).ToArray();
             foreach (var sg in list)
             {
-                var vm = new SpecialityGroupViewModel();
-                vm.SpecialityGroupId = sg.Id;
+                var vm = new SpecialtyGroupViewModel();
+                vm.SpecialtyGroupId = sg.Id;
                 vm.Name = sg.Name;
-                SpecialityGroupList.Add(vm);
+                SpecialtyGroupList.Add(vm);
             }
-            return SpecialityGroupList;
+            return SpecialtyGroupList;
         }
 
-        public bool SetCatalogToSpeciality(CatalogToSpecialityViewModel model)
+        public bool SetCatalogToSpecialty(CatalogToSpecialtyViewModel model)
         {
             try
             {
                 foreach (var catalogId in model.CatalogIds)
                 {
                     var catalog = _context.SurgeryCatalogs.Find(catalogId);
-                    catalog.SpecialityId = model.SpecialityId;
+                    catalog.SpecialtyId = model.SpecialtyId;
                     _context.Update(catalog);
                 }
                 _context.SaveChanges();
@@ -180,14 +180,14 @@ namespace Surgery_1.Services.Implementations
             }
         }
 
-        public bool SetSpecialityToRoom(SurgeryRoomSpecialityGroupCreateViewModel groupRoom)
+        public bool SetSpecialtyToRoom(SurgeryRoomSpecialtyGroupCreateViewModel groupRoom)
         {
             try
             {
                 foreach (var roomId in groupRoom.SurgeryRoomId)
                 {
                     var room = _context.SurgeryRooms.Find(groupRoom.SurgeryRoomId);
-                    room.SpecialityGroupId = groupRoom.SpecialityGroupId;
+                    room.SpecialtyGroupId = groupRoom.SpecialtyGroupId;
                     _context.Update(room);
                 }
                 _context.SaveChanges();
