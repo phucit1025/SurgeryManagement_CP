@@ -5,17 +5,18 @@ using System.Text;
 
 namespace Surgery_1.Data.Entities
 {
-    public class Specialty : BaseEntity
+    public class Speciality : BaseEntity
     {
-        public Specialty()
+        public Speciality()
         {
             SurgeryCatalogs = new HashSet<SurgeryCatalog>();
         }
 
         public string Name { get; set; }
+        public int? SpecialityGroupId { get; set; }
 
-        [ForeignKey("SpecialtyGroupId")]
-        public virtual SpecialtyGroup SpecialtyGroup { get; set; }
+        [ForeignKey("SpecialityGroupId")]
+        public virtual SpecialityGroup SpecialityGroup { get; set; }
 
         public virtual ICollection<SurgeryCatalog> SurgeryCatalogs { get; set; }
     }

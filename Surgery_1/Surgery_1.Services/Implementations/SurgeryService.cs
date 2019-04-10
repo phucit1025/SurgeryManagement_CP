@@ -136,7 +136,7 @@ namespace Surgery_1.Services.Implementations
                                     DateTime endEstimatedTime = startEstimatedTime + duration;
                                     InsertDateTimeToSurgeryShift(shift.SurgeryShiftId, startEstimatedTime, endEstimatedTime, roomEmptyId);
                                 }
-                                if ((timeConfirm >= endAMWorkingHour && timeConfirm < startPMWorkingHour) 
+                                if ((timeConfirm >= endAMWorkingHour && timeConfirm < startPMWorkingHour)
                                     || (endTmpTime > endAMWorkingHour && endTmpTime <= startPMWorkingHour))
                                 {
                                     DateTime startEstimatedTime = shift.ScheduleDate + startPMWorkingHour;
@@ -765,13 +765,22 @@ namespace Surgery_1.Services.Implementations
             return false;
         }
 
-        public List<int> GetAvailableRoom(DateTime start, DateTime end, bool forcedChange)
+        public List<int> GetAvailableRoom(DateTime start, DateTime end, bool forcedChange, int specialityGroupId = 0)
         {
             if (!IsValidTime(start, end) && !forcedChange)
             {
                 return null;
             }
-            var rooms = _context.SlotRooms.Where(r => !r.IsDeleted);
+
+            var rooms = new List<SlotRoom>();
+            if (specialityGroupId != 0)
+            {
+                rooms = _context.SlotRooms.Where(r => !r.IsDeleted && r.SurgeryRoom.SpecialityGroupId == specialityGroupId).ToList();
+            }
+            else
+            {
+                rooms = _context.SlotRooms.Where(r => !r.IsDeleted && !r.SurgeryRoom.SpecialityGroupId.HasValue).ToList();
+            }
             var roomId = new List<int>();
             foreach (var room in rooms)
             {
@@ -953,7 +962,6 @@ namespace Surgery_1.Services.Implementations
 
         public SwapShiftResultViewModel SwapShift(int shift1Id, int shift2Id)
         {
-            //var transaction = _context.Database.BeginTransaction();
             var result = new SwapShiftResultViewModel();
             var longerShift = _context.SurgeryShifts.Find(shift1Id);
             var shift = _context.SurgeryShifts.Find(shift2Id);
@@ -1001,7 +1009,7 @@ namespace Surgery_1.Services.Implementations
                         {
                             foreach (var affectedShift in affectedShifts)
                             {
-                                var roomIds = GetAvailableRoom(affectedShift.EstimatedStartDateTime.Value, affectedShift.EstimatedEndDateTime.Value, false);
+                                var roomIds = GetAvailableRoom(affectedShift.EstimatedStartDateTime.Value, affectedShift.EstimatedEndDateTime.Value, false, affectedShift.SlotRoom.SurgeryRoom.SpecialityGroupId.GetValueOrDefault(0));
                                 if (roomIds.Any())
                                 {
                                     var resolvedShift = new AffectedShiftResultViewModel()
@@ -1138,7 +1146,7 @@ namespace Surgery_1.Services.Implementations
                             {
                                 foreach (var affectedShift in affectedShifts)
                                 {
-                                    var roomIds = GetAvailableRoom(affectedShift.EstimatedStartDateTime.Value, affectedShift.EstimatedEndDateTime.Value, false);
+                                    var roomIds = GetAvailableRoom(affectedShift.EstimatedStartDateTime.Value, affectedShift.EstimatedEndDateTime.Value, false, affectedShift.SlotRoom.SurgeryRoom.SpecialityGroupId.GetValueOrDefault(0));
                                     if (roomIds.Any())
                                     {
                                         var resolvedShift = new AffectedShiftResultViewModel()

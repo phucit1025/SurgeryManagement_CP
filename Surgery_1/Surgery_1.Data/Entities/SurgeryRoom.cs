@@ -13,11 +13,12 @@ namespace Surgery_1.Data.Entities
         }
         public string Name { get; set; }
         public int Capacity { get; set; }
+        public int? SpecialityGroupId { get; set; }
 
         public virtual ICollection<SlotRoom> SlotRooms { get; set; }
 
-        [ForeignKey("SpecialtyGroupId")]
-        public virtual SpecialtyGroup SpecialtyGroup { get; set; }
+        [ForeignKey("SpecialityGroupId")]
+        public virtual SpecialityGroup SpecialityGroup { get; set; }
 
     }
 }
