@@ -74,7 +74,7 @@ namespace Surgery_1
             services.AddScoped<IUtilsService, UtilsService>();
             services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<INotificationService, NotificationService>();
-            services.AddScoped<ISpecialtyService, SpecialtyService>();
+            services.AddScoped<ISpecialityService, SpecialityService>();
             #endregion
 
             #region JWT Config
@@ -156,7 +156,7 @@ namespace Surgery_1
                 routes.MapHub<NotifyHub>("/notify");
             });
             app.UseMvc();
-            
+
 
             #region Init Users
             InitIdentities(serviceProvider, "MedicalSupplier", "supplier1", "zxc@123456");

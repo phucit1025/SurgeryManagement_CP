@@ -8,39 +8,119 @@ using System.Threading.Tasks;
 
 namespace Surgery_1.Controllers
 {
-    [Route("api/Specialties/[action]")]
+    [Route("api/Specialities/[action]")]
     [ApiController]
-    public class SpecialtyController: ControllerBase
+    public class SpecialityController : ControllerBase
     {
-        private readonly ISpecialtyService _specialtyService;
-        public SpecialtyController(ISpecialtyService specialtyService)
+        private readonly ISpecialityService _specialityService;
+        public SpecialityController(ISpecialityService specialityService)
         {
-            _specialtyService = specialtyService;
-        }
-
-        [HttpGet]
-        public void AddSpecialtyGroup(String specialityGroupName)
-        {
-            _specialtyService.AddSpecialtyGroup(specialityGroupName);
+            _specialityService = specialityService;
         }
 
         [HttpPost]
-        public void SpecialtiesSpecialtyGroup([FromBody]SpecialtySpecialtyGroupViewModel group)
+        public IActionResult SetCatalogToSpeciality([FromBody] CatalogToSpecialityViewModel model)
         {
-            _specialtyService.SpecialtiesSpecialtyGroup(group);
-        }
-
-        [HttpGet]
-        public IActionResult GetSpecialtyGroups()
-        {
-            var result = _specialtyService.GetSpecialtyGroups();
-            return Ok(result);
+            var result = _specialityService.SetCatalogToSpeciality(model);
+            if (result)
+            {
+                return StatusCode(200);
+            }
+            else
+            {
+                return StatusCode(400);
+            }
         }
 
         [HttpPost]
-        public void SurgeryRoomSpecialtyGroup([FromBody]SurgeryRoomSpecialtyGroupViewModel groupRoom)
+        public IActionResult SetSpecialityToGroup([FromBody]SpecialitySpecialityGroupViewModel group)
         {
-            _specialtyService.SurgeryRoomSpecialtyGroup(groupRoom);
+            var result = _specialityService.AddSpecialityToGroup(group);
+            if (result)
+            {
+                return StatusCode(200);
+            }
+            else
+            {
+                return StatusCode(400);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult SetSpecialityGroupToRoom([FromBody]SurgeryRoomSpecialityGroupCreateViewModel groupRoom)
+        {
+            var result = _specialityService.SetSpecialityToRoom(groupRoom);
+            if (result)
+            {
+                return StatusCode(200);
+            }
+            else
+            {
+                return StatusCode(400);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetSpecialityGroups()
+        {
+            var results = _specialityService.GetSpecialityGroups();
+            return StatusCode(200, results);
+        }
+
+        [HttpGet]
+        public IActionResult GetSpecialities()
+        {
+            var results = _specialityService.GetSpecialities();
+            return StatusCode(200, results);
+        }
+
+        [HttpGet]
+        public IActionResult GetSpecialitiesInGroup(int groupId)
+        {
+            var results = _specialityService.GetSpecialities(groupId);
+            return StatusCode(200, results);
+        }
+
+        [HttpGet]
+        public IActionResult GetSurgeryCatalogs()
+        {
+            var results = _specialityService.GetCatalogs().Take(100).ToList();
+            return StatusCode(200, results);
+        }
+
+        [HttpGet]
+        public IActionResult GetRooms()
+        {
+            var results = _specialityService.GetRooms();
+            return StatusCode(200, results);
+        }
+
+        [HttpPost]
+        public IActionResult CreateSpeciality([FromBody] SpecialityCreateViewModel model)
+        {
+            var result = _specialityService.CreateSpeciality(model.Name);
+            if (result != 0)
+            {
+                return StatusCode(200, result);
+            }
+            else
+            {
+                return StatusCode(400);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult CreateSpecialityGroup([FromBody] SpecialityGroupCreateViewModel model)
+        {
+            var result = _specialityService.CreateSpecialityGroup(model.Name);
+            if (result != 0)
+            {
+                return StatusCode(200, result);
+            }
+            else
+            {
+                return StatusCode(400);
+            }
         }
     }
 }
