@@ -41,8 +41,11 @@ namespace Surgery_1.Services.Implementations
                 shift.StatusId = roomType;
                 shift.PostRoomName = roomPost;
                 shift.PostBedName = bedPost;
-                shift.ActualEndDateTime = DateTime.ParseExact(actualEndDateTime, "yyyy-MM-dd HH:mm",
-                                       System.Globalization.CultureInfo.InvariantCulture);
+                if (actualEndDateTime != null)
+                {
+                    shift.ActualEndDateTime = DateTime.ParseExact(actualEndDateTime, "yyyy-MM-dd HH:mm",
+                                      System.Globalization.CultureInfo.InvariantCulture);
+                }
                 _context.Update(shift);
                 _context.SaveChanges();
                 return true;

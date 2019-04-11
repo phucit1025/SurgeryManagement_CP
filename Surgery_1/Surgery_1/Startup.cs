@@ -74,7 +74,7 @@ namespace Surgery_1
             services.AddScoped<IUtilsService, UtilsService>();
             services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<INotificationService, NotificationService>();
-            services.AddScoped<ISpecialityService, SpecialityService>();
+            services.AddScoped<ISpecialtyService, SpecialtyService>();
             #endregion
 
             #region JWT Config
@@ -121,7 +121,7 @@ namespace Surgery_1
                 app.UseDeveloperExceptionPage();
 
                 //dbContext.Database.EnsureDeleted();
-                dbContext.Database.EnsureCreated();
+                //dbContext.Database.EnsureCreated();
 
             }
             else
@@ -164,6 +164,16 @@ namespace Surgery_1
             InitIdentities(serviceProvider, "ChiefNurse", "cnurse1", "zxc@123456");
             InitIdentities(serviceProvider, "Nurse", "nurse1", "zxc@123456");
             InitIdentities(serviceProvider, "Nurse", "nurse2", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical1", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical2", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical3", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical4", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical5", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical6", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical7", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical8", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical9", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical10", "zxc@123456");
             #endregion
 
         }

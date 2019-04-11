@@ -256,5 +256,19 @@ namespace Surgery_1.Controllers
             return StatusCode(200, results);
         }
         #endregion
+
+        [HttpGet]
+        public IActionResult AssignEkipByDate(int dateNumber)
+        {
+            _surgeryService.AssignEkipByDate(dateNumber);
+            return Ok();
+        }
+
+        [HttpGet]
+        public IActionResult AssignEkip()
+        {
+            _surgeryService.AssignEkip();
+            return Ok();
+        }
     }
 }

@@ -11,8 +11,7 @@ namespace Surgery_1.Data.Context
     {
         public AppDbContext() : base((new DbContextOptionsBuilder())
             .UseLazyLoadingProxies()
-            //.UseSqlServer(@"Data Source=livjng4k\SQLEXPRESS;Initial Catalog=Surgery_CP_App;persist security info=True;Integrated Security=False;TrustServerCertificate=False;uid=sa;password=123456789;Trusted_Connection=False;MultipleActiveResultSets=true;")
-            .UseSqlServer(@"Data Source=45.119.212.145;Initial Catalog=Surgery_CP_App;persist security info=True;Integrated Security=False;TrustServerCertificate=False;uid=sa;password=zaq@123;Trusted_Connection=False;MultipleActiveResultSets=true;")
+            .UseSqlServer(@"Data Source=VINHVCSE61854\SQLEXPRESS;Initial Catalog=Surgery_CP_App;persist security info=True;Integrated Security=False;TrustServerCertificate=False;uid=sa;password=13121996;Trusted_Connection=False;MultipleActiveResultSets=true;")
             .Options)
         {
 
@@ -23,7 +22,7 @@ namespace Surgery_1.Data.Context
         public DbSet<TreatmentReport> TreatmentReports { get; set; }
         public DbSet<MedicalSupply> MedicalSupplies { get; set; }
         public DbSet<Patient> Patients { get; set; }
-        public DbSet<Speciality> Specialities { get; set; }
+        public DbSet<Specialty> Specialties { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<SurgeryCatalog> SurgeryCatalogs { get; set; }
@@ -38,7 +37,7 @@ namespace Surgery_1.Data.Context
         public DbSet<TreatmentReportDrug> TreatmentReportDrugs { get; set; }
         public DbSet<UserInfo> UserInfo { get; set; }
         public DbSet<Notification> Notifications { get; set; }
-        public DbSet<SpecialityGroup> SpecialityGroups { get; set; }
+        public DbSet<SpecialtyGroup> SpecialtyGroups { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder builder)

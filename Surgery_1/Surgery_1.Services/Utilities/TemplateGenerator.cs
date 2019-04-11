@@ -30,34 +30,34 @@ namespace Surgery_1.Services.Utilities
                                 <table align='center'>
                                     <tbody>
                                         <tr>
-                                            <td><b>Họ và tên người bệnh:</b></td>
+                                            <td>Họ và tên người bệnh:</td>
                                             <td>{0}</td>
-                                            <td><b>Giới tính:</b></td>
+                                            <td>Giới tính:</td>
                                             <td>{1}</td>
-                                            <td><b>Tuổi:</b></td>
+                                            <td>Tuổi:</td>
                                             <td>{2}</td>
                                         </tr>
                                         <tr>
-                                            <td><b>Phẫu thuật/TT lúc:</b></td>
+                                            <td>Phẫu thuật/TT lúc:</td>
                                             <td>{3}</td>
-                                            <td><b>Phẫu thuật/TT kết thúc lúc:</b></td>
+                                            <td> Phẫu thuật/TT kết thúc lúc:</td>
                                             <td>{4}</td>
                                         </tr>
                                         <tr>
-                                            <td><b>Chuyên khoa:</b></td>
+                                            <td> Chuyên khoa:</td>
                                             <td>{5}</td>
                                         </tr>
                                         <tr>
-                                            <td><b>Tên phẫu thuật:</b></td>
+                                            <td> Tên phẫu thuật:</td>
                                             <td>{10} {6}</td>
                                         <tr>
-                                            <td><b>Thành tiền:</b></td>
+                                            <td> Thành tiền:</td>
                                             <td>{7}</td>
-                                            <td><b>Loại phẫu thuật/TT:</b></td>
+                                            <td> Loại phẫu thuật/TT:</td>
                                             <td>{8}</td>
                                         </tr>
                                         <tr>
-                                            <td><b>Phương pháp vô cảm:</b></td>
+                                            <td> Phương pháp vô cảm:</td>
                                             <td>{9}</td>
                                         </tr>
                                     </tbody>
@@ -66,7 +66,7 @@ namespace Surgery_1.Services.Utilities
                                 <table align='center'>"
             , patient.FullName, patient.Gender > 0 ? "Male" : "Female", DateTime.Now.Year - patient.YearOfBirth
             , surgery.ActualStartDateTime, surgery.ActualEndDateTime
-            , surgeryCatalog.Speciality.Name, surgeryCatalog.Name, surgeryCatalog.Price, surgeryCatalog.Type
+            , surgeryCatalog.Specialty.Name, surgeryCatalog.Name, surgeryCatalog.Price, surgeryCatalog.Type
             , surgeryCatalog.AnesthesiaMethod, surgeryCatalog.Code
             , surgery.Id, path);
             if (ekip != null)
@@ -89,11 +89,11 @@ namespace Surgery_1.Services.Utilities
                 sb.AppendFormat(@"<table align='center'>
                                     <tbody>
                                         <tr>
-                                            <td><b></b></td>
+                                            <td> </td>
                                             <td><pre style='font-family:times;'>{0}</pre></td>
-                                            <td><b></b></td>
+                                            <td> </td>
                                             <td></td>
-                                            <td><b></b></td>
+                                            <td> </td>
                                             <td></td>
                                         </tr>
                                     </tbody>
@@ -120,21 +120,23 @@ namespace Surgery_1.Services.Utilities
                                 <table align='center' style='width: 100%'>
                                     <tbody>
                                         <tr>
-                                            <td><b>Họ và tên người bệnh:</b></td>
+                                            <td> Họ và tên người bệnh:</td>
                                             <td>{0}</td>
-                                            <td><b>Giới tính:</b></td>
+                                            <td> Giới tính:</td>
                                             <td>{1}</td>
-                                            <td><b>Tuổi:</b></td>
+                                            <td> Tuổi:</td>
                                             <td>{2}</td>
                                         </tr>
                                         <tr>
-                                            <td><b>Số giường:</b></td>
+                                            <td> Số giường:</td>
                                             <td>{3}</td>
-                                            <td><b>Buồng:</b></td>
+                                            <td> Buồng:</td>
                                             <td>{4}</td>
-                                            <td><b>Phẫu thuật:</b></td>
-                                            <td>{5}</td>
                                         </tr>
+                                        <tr>
+                                        <td> Phẫu thuật:</td>
+                                            <td>{5}</td>
+                                         </tr>
                                     </tbody>
                                 </table>
                                 <div class='header' align='center'><h3></h3></div>"

@@ -8,20 +8,20 @@ using System.Threading.Tasks;
 
 namespace Surgery_1.Controllers
 {
-    [Route("api/Specialities/[action]")]
+    [Route("api/Specialties/[action]")]
     [ApiController]
-    public class SpecialityController : ControllerBase
+    public class SpecialtyController : ControllerBase
     {
-        private readonly ISpecialityService _specialityService;
-        public SpecialityController(ISpecialityService specialityService)
+        private readonly ISpecialtyService _SpecialtyService;
+        public SpecialtyController(ISpecialtyService SpecialtyService)
         {
-            _specialityService = specialityService;
+            _SpecialtyService = SpecialtyService;
         }
 
         [HttpPost]
-        public IActionResult SetCatalogToSpeciality([FromBody] CatalogToSpecialityViewModel model)
+        public IActionResult SetCatalogToSpecialty([FromBody] CatalogToSpecialtyViewModel model)
         {
-            var result = _specialityService.SetCatalogToSpeciality(model);
+            var result = _SpecialtyService.SetCatalogToSpecialty(model);
             if (result)
             {
                 return StatusCode(200);
@@ -33,9 +33,9 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public IActionResult SetSpecialityToGroup([FromBody]SpecialitySpecialityGroupViewModel group)
+        public IActionResult SetSpecialtyToGroup([FromBody]SpecialtySpecialtyGroupViewModel group)
         {
-            var result = _specialityService.AddSpecialityToGroup(group);
+            var result = _SpecialtyService.AddSpecialtyToGroup(group);
             if (result)
             {
                 return StatusCode(200);
@@ -47,9 +47,9 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public IActionResult SetSpecialityGroupToRoom([FromBody]SurgeryRoomSpecialityGroupCreateViewModel groupRoom)
+        public IActionResult SetSpecialtyGroupToRoom([FromBody]SurgeryRoomSpecialtyGroupCreateViewModel groupRoom)
         {
-            var result = _specialityService.SetSpecialityToRoom(groupRoom);
+            var result = _SpecialtyService.SetSpecialtyToRoom(groupRoom);
             if (result)
             {
                 return StatusCode(200);
@@ -61,44 +61,44 @@ namespace Surgery_1.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetSpecialityGroups()
+        public IActionResult GetSpecialtyGroups()
         {
-            var results = _specialityService.GetSpecialityGroups();
+            var results = _SpecialtyService.GetSpecialtyGroups();
             return StatusCode(200, results);
         }
 
         [HttpGet]
-        public IActionResult GetSpecialities()
+        public IActionResult GetSpecialties()
         {
-            var results = _specialityService.GetSpecialities();
+            var results = _SpecialtyService.GetSpecialties();
             return StatusCode(200, results);
         }
 
         [HttpGet]
-        public IActionResult GetSpecialitiesInGroup(int groupId)
+        public IActionResult GetSpecialtiesInGroup(int groupId)
         {
-            var results = _specialityService.GetSpecialities(groupId);
+            var results = _SpecialtyService.GetSpecialties(groupId);
             return StatusCode(200, results);
         }
 
         [HttpGet]
         public IActionResult GetSurgeryCatalogs()
         {
-            var results = _specialityService.GetCatalogs().Take(100).ToList();
+            var results = _SpecialtyService.GetCatalogs().Take(100).ToList();
             return StatusCode(200, results);
         }
 
         [HttpGet]
         public IActionResult GetRooms()
         {
-            var results = _specialityService.GetRooms();
+            var results = _SpecialtyService.GetRooms();
             return StatusCode(200, results);
         }
 
         [HttpPost]
-        public IActionResult CreateSpeciality([FromBody] SpecialityCreateViewModel model)
+        public IActionResult CreateSpecialty([FromBody] SpecialtyCreateViewModel model)
         {
-            var result = _specialityService.CreateSpeciality(model.Name);
+            var result = _SpecialtyService.CreateSpecialty(model.Name);
             if (result != 0)
             {
                 return StatusCode(200, result);
@@ -110,9 +110,9 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateSpecialityGroup([FromBody] SpecialityGroupCreateViewModel model)
+        public IActionResult CreateSpecialtyGroup([FromBody] SpecialtyGroupCreateViewModel model)
         {
-            var result = _specialityService.CreateSpecialityGroup(model.Name);
+            var result = _SpecialtyService.CreateSpecialtyGroup(model.Name);
             if (result != 0)
             {
                 return StatusCode(200, result);
