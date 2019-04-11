@@ -37,7 +37,7 @@ namespace Surgery_1.Services.Implementations
             var surgeryShift = _context.SurgeryShifts.Find(shiftId);
             var slotRoom = _context.SlotRooms.Find(surgeryShift.SlotRoomId);
             var previousShift = slotRoom.SurgeryShifts
-                .Where(s => s.ScheduleDate.Value == surgeryShift.ScheduleDate.Value)
+                .Where(s => s.EstimatedStartDateTime.Value.Date == surgeryShift.EstimatedStartDateTime.Value.Date)
                 .Where(s => s.EstimatedEndDateTime <= surgeryShift.EstimatedStartDateTime).OrderByDescending(s => s.EstimatedEndDateTime)
                 .FirstOrDefault();
 
@@ -50,7 +50,7 @@ namespace Surgery_1.Services.Implementations
                 }
             }
             else
-            { // Không có thằng nào trước nó, tức nó đừng đầu
+            { // Không có thằng nào trước nó, tức nó đứng đầu
                 return true;
             }
             return false;
@@ -364,11 +364,7 @@ namespace Surgery_1.Services.Implementations
 
         public int GetEmptyRoomForDate(int scheduleDateNumber, int surgeryCatalogId)
         {
-            //var specialtyGroupId = 0;
-            //if (surgeryCatalogId != 0)
-            //{
             var specialtyGroupId = _context.SurgeryCatalogs.Find(surgeryCatalogId).Specialty.SpecialtyGroup.Id;
-            //}
 
             var slotRooms = _context.SlotRooms.Where(s => s.SurgeryRoom.SpecialtyGroup.Id == specialtyGroupId).ToList();
             ICollection<int> roomIds = new List<int>();

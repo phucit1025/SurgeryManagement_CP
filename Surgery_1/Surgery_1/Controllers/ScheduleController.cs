@@ -164,9 +164,6 @@ namespace Surgery_1.Controllers
         }
         #endregion
 
-
-
-
         #region Change Schedules
         [HttpGet]
         public IActionResult GetRoomInfo(int id)
