@@ -9,13 +9,13 @@ namespace Surgery_1.Services.Interfaces
     {
         #region Tung
         //Making schedule
-        List<AvailableRoomViewModel> GetAvailableSlotRoom(int dateNumber);
+        List<AvailableRoomViewModel> GetAvailableSlotRoom(int dateNumber, int surgeryCatalogId);
+        ICollection<SurgeryRoomViewModel> GetSlotRooms();
         ICollection<SurgeryRoomViewModel> GetSurgeryRooms();
         ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int surgeryRoomId, int dateNumber);
-        bool MakeScheduleList();
-        ICollection<SurgeryRoomViewModel> GetSlotRooms();
+
+        bool MakeScheduleList();        
         bool AddEmergencyShift(EmerSurgeryShift emerShift);
-        int GetAvailableRoomForProposedTime(EmerSurgeryShift emerShift);
         bool RefreshSurgeryShift(int shiftId);
         bool CheckStatusPreviousSurgeryShift(int shiftId);
 

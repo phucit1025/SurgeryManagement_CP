@@ -28,8 +28,9 @@ namespace Surgery_1.Controllers
             string messageNotification = string.Empty;
             try
             {
-                var result = _notificationService.GetNotifications(roleName);
-                _hubContext.Clients.All.GetNotifications(roleName, result.ToList());
+                var result = _notificationService.GetNotifications(roleName).ToList();
+                
+                _hubContext.Clients.All.BroadcastMessage(roleName, result);
             }
             catch (Exception e)
             {
@@ -46,16 +47,23 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public IActionResult SetIsReadNotification(string roleName)
+        public IActionResult SetIsReadNotification(int notiId)
         {
-            if (_notificationService.SetIsReadNotification(roleName))
+            if (_notificationService.SetIsReadNotification(notiId))
             {
                 return StatusCode(200);
             }
             
             return StatusCode(400);
         }
-    
+
+        [HttpPost]
+        public IActionResult AddNotificationForScheduling([FromBody] List<DateTime> list)
+        {
+            _notificationService.AddNotificationForScheduling(list);
+            return null;
+        }
+
 
     }
 }

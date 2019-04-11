@@ -22,6 +22,14 @@ namespace Surgery_1.Services.Utilities
             string dateString = yearNum + "-" + monthNum + "-" + dayNum;
             return dateString;
         }
+        public static string FormatDateShow(DateTime day)
+        {
+            string dayNum = day.Day < 10 ? "0" + day.Day.ToString() : day.Day.ToString();
+            string monthNum = day.Month < 10 ? "0" + day.Month.ToString() : day.Month.ToString(); ;
+            string yearNum = day.Year.ToString();
+            string dateString = dayNum + "/" + monthNum + "/" + yearNum;
+            return dateString;
+        }
         public static string GetTimeFromDate(DateTime day)
         {
             string hour = day.Hour < 10 ? "0" + day.Hour.ToString() : day.Hour.ToString();

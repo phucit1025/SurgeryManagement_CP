@@ -8,10 +8,9 @@ namespace Surgery_1.Hubs
 {
     public interface ITypedHubClient
     {
-        Task BroadcastMessage(string type, string payload);
+        Task BroadcastMessage(string roleName, List<MessageNotificationViewModel> messages);
 
-        Task GetNotifications(string roleName, List<MessageNotificationViewModel> messages);
+        Task GetNotifications(List<MessageNotificationViewModel> messages);
 
-        Task ConnectUser(string roleName);
     }
 }

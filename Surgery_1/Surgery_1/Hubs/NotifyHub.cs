@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using Surgery_1.Data.Context;
 using Surgery_1.Data.ViewModels;
+using Surgery_1.Services.Interfaces;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,29 +13,38 @@ namespace Surgery_1.Hubs
 {
     public class NotifyHub : Hub<ITypedHubClient>
     {
-        private static readonly ConcurrentDictionary<string, UserHubModels> Users =
-        new ConcurrentDictionary<string, UserHubModels>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly INotificationService _notificationService;
+        private readonly static ConnectionMapping<string> _connections =
+           new ConnectionMapping<string>();
+
+        //public void PushNotification(string roleName)
+        //{
+
+        //    string name = Context.User.Identity.Name;
+        //    var result = _notificationService.GetNotifications(roleName).ToList();
+        //    foreach (var connectionId in _connections.GetConnections(roleName))
+        //    {
+        //        Clients.Client(connectionId).BroadcastMessage(result);
+        //    }
+        //}
+
         //public override Task OnConnectedAsync()
         //{
-        //    string username = Context.User.Identity.Name;
-        //    string connectionId = Context.ConnectionId;
-
-        //    var user = Users.GetOrAdd(username, _ => new UserHubModels
-        //    {
-        //        roleName = username,
-        //        ConnectionIds = new HashSet<string>()
-        //    });
-
-        //    lock (user.ConnectionIds)
-        //    {
-        //        user.ConnectionIds.Add(connectionId);
-        //        if (user.ConnectionIds.Count == 1)
-        //        {
-        //            Clients.Others.ConnectUser(username);
-        //        }
-        //    }
-
+        //    string roleName = Context.User.Identity.Name;
+        //    _connections.Add(roleName, Context.ConnectionId);
         //    return base.OnConnectedAsync();
         //}
+        
+        //public override Task OnDisconnectedAsync(Exception stopCalled)
+        //{
+        //    string name = Context.User.Identity.Name;
+        //    _connections.Remove(name, Context.ConnectionId);
+
+        //    return base.OnDisconnectedAsync(stopCalled);
+        //}
+
+        
+
     }
+
 }

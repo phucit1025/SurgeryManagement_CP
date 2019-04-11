@@ -48,6 +48,7 @@ namespace Surgery_1.Services.Implementations
                 {
                     Id = r.Id,
                     PatientName = r.Patient.FullName,
+                    SpecialtyName = r.SurgeryCatalog.Specialty.Name,
                     SurgeryName = r.SurgeryCatalog.Name,
                     SurgeryCatalogId = r.SurgeryCatalogId.ToString(),
                     CreatedDate = r.DateCreated.ToString(),
@@ -64,13 +65,14 @@ namespace Surgery_1.Services.Implementations
                 var shift = _context.SurgeryShifts.Find(s.id);
                 shift.IsAvailableMedicalSupplies = true;
                 shift.ConfirmDate = DateTime.Now;
+                shift.EkipId = 1;//Temporary
                 if (shift.ProposedStartDateTime != null && shift.ProposedEndDateTime != null)
                 {
-                    shift.ScheduleDate = new DateTime(shift.ProposedStartDateTime.Value.Year, shift.ProposedStartDateTime.Value.Month, shift.ProposedStartDateTime.Value.Day);
+                    shift.ScheduleDate = shift.ProposedStartDateTime.Value.Date;
                 }
                 else
                 {
-                    shift.ScheduleDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                    shift.ScheduleDate = shift.ConfirmDate.Value.Date;
                 }
             }
             _context.SaveChanges();

@@ -1,5 +1,6 @@
 ﻿using Surgery_1.Data.Context;
 using Surgery_1.Services.Interfaces;
+using Surgery_1.Services.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,6 @@ namespace Surgery_1.Services.Implementations
 {
     public class StatusService : IStatusService
     {
-        private readonly string PRE_STATUS = "Preoperative";
-        private readonly string POST_STATUS = "Postoperative";
-        private readonly string INTRA_STATUS = "Intraoperative";
-        private readonly string RECOVERY_STATUS = "Recovery";
-        private readonly string FINISHED_STATUS = "Finished";
 
         private readonly AppDbContext _context;
 
@@ -35,7 +31,7 @@ namespace Surgery_1.Services.Implementations
         public bool SetPostoperativeStatus(int shiftId, string roomPost, string bedPost, string actualEndDateTime, int roomType)
         {
             var shift = _context.SurgeryShifts.Find(shiftId);
-            var status = _context.Statuses.Where(s => s.Name.Equals(POST_STATUS)).FirstOrDefault();
+            var status = _context.Statuses.Where(s => s.Name.Equals(ConstantVariable.POST_STATUS)).FirstOrDefault();
             if (shift != null)
             {
                 shift.StatusId = roomType;
@@ -55,7 +51,7 @@ namespace Surgery_1.Services.Implementations
         public bool SetIntraoperativeStatus(int shiftId, string actualStartDateTime)
         {
             var shift = _context.SurgeryShifts.Find(shiftId);
-            var status = _context.Statuses.Where(s => s.Name.Equals(INTRA_STATUS)).FirstOrDefault();
+            var status = _context.Statuses.Where(s => s.Name.Equals(ConstantVariable.INTRA_STATUS)).FirstOrDefault();
             if (shift != null)
             {
                 shift.StatusId = status.Id;
@@ -70,7 +66,7 @@ namespace Surgery_1.Services.Implementations
         public bool SetFinishedStatus(int shiftId)
         {
             var shift = _context.SurgeryShifts.Find(shiftId);
-            var status = _context.Statuses.Where(s => s.Name.Equals(FINISHED_STATUS)).FirstOrDefault();
+            var status = _context.Statuses.Where(s => s.Name.Equals(ConstantVariable.FINISHED_STATUS)).FirstOrDefault();
             if (shift != null)
             {
                 shift.StatusId = status.Id;

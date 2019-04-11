@@ -12,5 +12,13 @@ namespace Surgery_1.Services.Utilities
         public const double EndAMWorkingHour = 11;
         public const double StartPMWorkingHour = 13;
         public const double EndPMWorkingHour = 17;
+
+        public const string PRE_STATUS = "Preoperative";
+        public const string POST_STATUS = "Postoperative";
+        public const string INTRA_STATUS = "Intraoperative";
+        public const string RECOVERY_STATUS = "Recovery";
+        public const string FINISHED_STATUS = "Finished";
+
+        public const string EMERGENCY_GROUP = "Emergency";
     }
 }
