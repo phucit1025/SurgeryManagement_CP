@@ -7,9 +7,26 @@ namespace Surgery_1.Services.Interfaces
 {
     public interface ISpecialtyService
     {
-        void SpecialtiesSpecialtyGroup(SpecialtySpecialtyGroupViewModel group);
-        void AddSpecialtyGroup(String specialityGroupName);
+        #region Catalog => Specialty
+        ICollection<SpecialtyViewModel> GetSpecialties();
+        ICollection<SpecialtyViewModel> GetSpecialties(int groupId);
+        ICollection<SurgeryCatalogViewModel> GetCatalogs();
+        bool SetCatalogToSpecialty(CatalogToSpecialtyViewModel model);
+        int CreateSpecialty(string name);
+        #endregion
+
+        #region Specialty => Group
         ICollection<SpecialtyGroupViewModel> GetSpecialtyGroups();
-        void SurgeryRoomSpecialtyGroup(SurgeryRoomSpecialtyGroupViewModel groupRoom);
+        int CreateSpecialtyGroup(string SpecialtyGroupName);
+        bool AddSpecialtyToGroup(SpecialtySpecialtyGroupViewModel group);
+        #endregion
+
+        #region Group => Room
+        ICollection<SurgeryRoomSpecialtyViewModel> GetRooms();
+        bool SetSpecialtyToRoom(SurgeryRoomSpecialtyGroupCreateViewModel groupRoom);
+        #endregion
+
+
+
     }
 }

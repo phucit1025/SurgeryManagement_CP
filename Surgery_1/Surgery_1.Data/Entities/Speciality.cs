@@ -13,6 +13,7 @@ namespace Surgery_1.Data.Entities
         }
 
         public string Name { get; set; }
+        public int? SpecialtyGroupId { get; set; }
 
         [ForeignKey("SpecialtyGroupId")]
         public virtual SpecialtyGroup SpecialtyGroup { get; set; }
