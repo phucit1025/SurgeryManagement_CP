@@ -31,6 +31,13 @@ namespace Surgery_1.Controllers
             return StatusCode(200, result);
         }
 
+        [HttpGet]
+        public IActionResult GetReportByRoom(int roomId, int dayNumber)
+        {
+            var result = _roomService.GetReportByRoom(roomId, dayNumber);
+            return StatusCode(200, result);
+        }
+
         [HttpPost]
         public void AssignTechStaff([FromBody]TechnicalStaffAssignment techAssignment)
         {

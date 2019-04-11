@@ -12,6 +12,14 @@ namespace Surgery_1.Data.ViewModels
         public ICollection<SlotRoomViewModel> SlotRooms { get; set; }
     }
 
+    public class ReportRoomViewModel
+    {
+        public int TotalShift { get; set; }
+        public int TotalPre { get; set; }
+        public int TotalIntra { get; set; }
+        public int TotalPost { get; set; }
+    }
+
     public class SlotRoomViewModel
     {
         public int Id { get; set; }

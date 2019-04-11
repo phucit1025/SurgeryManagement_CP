@@ -2,6 +2,7 @@
 using Surgery_1.Data.Entities;
 using Surgery_1.Data.ViewModels;
 using Surgery_1.Services.Interfaces;
+using Surgery_1.Services.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,6 @@ namespace Surgery_1.Services.Implementations
     {
         private readonly AppDbContext _context;
         private readonly string SUPPLYSTAFF = "MedicalSupplier";
-        private readonly string PREOPERATIVE = "Preoperative";
 
         public SurgeryShiftService(AppDbContext _context)
         {
@@ -51,8 +51,7 @@ namespace Surgery_1.Services.Implementations
                 {
                     var shift = new SurgeryShift();
                     shift.IsAvailableMedicalSupplies = false;
-                    shift.StatusId = _context.Statuses.Where(x => x.Name.Equals(PREOPERATIVE)).FirstOrDefault().Id;
-                    shift.ExpectedSurgeryDuration = s.ExpectedSurgeryDuration;
+                    shift.StatusId = _context.Statuses.Where(x => x.Name.Equals(ConstantVariable.PRE_STATUS)).FirstOrDefault().Id;
                     shift.PriorityNumber = s.Priority;
                     var patient = _context.Patients.Where(p => p.IdentityNumber == s.PatientID).FirstOrDefault();
                     if (patient == null)
@@ -71,6 +70,13 @@ namespace Surgery_1.Services.Implementations
                     shift.SurgeryShiftCode = s.SurgeryShiftCode;
                     shift.ProposedStartDateTime = s.ProposedStartDateTime;
                     shift.ProposedEndDateTime = s.ProposedEndDateTime;
+                    if (shift.ProposedStartDateTime != null && shift.ProposedEndDateTime != null)
+                    {
+                        shift.ExpectedSurgeryDuration = (float)(shift.ProposedEndDateTime.Value - shift.ProposedEndDateTime.Value).TotalHours;
+                    } else
+                    {
+                        shift.ExpectedSurgeryDuration = s.ExpectedSurgeryDuration;
+                    }
                     shift.TreatmentDoctorId = s.DoctorId;
                     if (s.ProposedStartDateTime != null && s.ProposedEndDateTime != null)
                     {

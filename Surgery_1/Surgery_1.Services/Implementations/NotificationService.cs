@@ -45,7 +45,7 @@ namespace Surgery_1.Services.Implementations
                     content += countNoti + " shift is on " + UtilitiesDate.FormatDateShow(item.First().Date) + ", ";
                 }
             }
-            content = content.Remove(content.Length - 1, 1) + ".";
+            content = content.Remove(content.Length - 2, 2) + ".";
             var notification = new Notification
             {
                 Content = content,
