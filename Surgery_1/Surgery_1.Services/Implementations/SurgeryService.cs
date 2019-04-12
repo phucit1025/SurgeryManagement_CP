@@ -695,23 +695,49 @@ namespace Surgery_1.Services.Implementations
                 {
                     UsedProcedure = shift.SurgeryCatalog.Procedure;
                 }
-                var result = new SurgeryShiftDetailViewModel()
+                SurgeryShiftDetailViewModel result = null;
+                if (shift.SurgeryCatalogId == null)
                 {
-                    Id = shift.Id,
-                    PatientName = shift.Patient.FullName,
-                    Gender = shift.Patient.Gender == -1 ? "Nam" : "Nữ",
-                    Age = DateTime.Now.Year - shift.Patient.YearOfBirth,
-                    Specialty = shift.SurgeryCatalog.Specialty.Name,
-                    SurgeryName = shift.SurgeryCatalog.Name,
-                    SurgeryType = shift.SurgeryCatalog.Type,
-                    StartTime = shift.EstimatedStartDateTime,
-                    EndTime = shift.EstimatedEndDateTime,
-                    ActualStartTime = shift.ActualStartDateTime,
-                    ActualEndTime = shift.ActualEndDateTime,
-                    //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
-                    Procedure = UsedProcedure,
-                    StatusName = shift.Status.Name
-                };
+                    result = new SurgeryShiftDetailViewModel()
+                    {
+                        Id = shift.Id,
+                        PatientName = "",
+                        Gender = "",
+                        Age = 0,
+                        Specialty = "",
+                        SurgeryName = "",
+                        SurgeryType = "",
+                        StartTime = shift.EstimatedStartDateTime,
+                        EndTime = shift.EstimatedEndDateTime,
+                        ActualStartTime = shift.ActualStartDateTime,
+                        ActualEndTime = shift.ActualEndDateTime,
+                        //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
+                        Procedure = UsedProcedure,
+                        StatusName = shift.Status.Name
+                    };
+                }
+                else
+                {
+                    result = new SurgeryShiftDetailViewModel()
+                    {
+                        Id = shift.Id,
+                        PatientName = shift.Patient.FullName,
+                        Gender = shift.Patient.Gender == -1 ? "Nam" : "Nữ",
+                        Age = DateTime.Now.Year - shift.Patient.YearOfBirth,
+                        Specialty = shift.SurgeryCatalog.Specialty.Name,
+                        SurgeryName = shift.SurgeryCatalog.Name,
+                        SurgeryType = shift.SurgeryCatalog.Type,
+                        StartTime = shift.EstimatedStartDateTime,
+                        EndTime = shift.EstimatedEndDateTime,
+                        ActualStartTime = shift.ActualStartDateTime,
+                        ActualEndTime = shift.ActualEndDateTime,
+                        //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
+                        Procedure = UsedProcedure,
+                        StatusName = shift.Status.Name
+                    };
+                }
+
+
                 return result;
             }
             return null;
