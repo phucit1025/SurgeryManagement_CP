@@ -249,11 +249,11 @@ namespace Surgery_1.Controllers
         }
        
         [HttpGet]
-        public IActionResult CreateSurgeryPdf(int id)
+        public IActionResult CreateSurgeryPdf(int id, int type)
         {
             string styleSheets = Path.Combine(Directory.GetCurrentDirectory(), "assets", "styles.css");
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "assets", "logo175.jpeg");
-            var result = _postOpService.CreateSurgeryPdf(path, id);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "assets", "ebsmslogo.jpg");
+            var result = _postOpService.CreateSurgeryPdf(path, id, type);
             if (!result.IsNullOrEmpty())
             {
                 return File(result, "application/pdf", "SurgeryReport.pdf");
