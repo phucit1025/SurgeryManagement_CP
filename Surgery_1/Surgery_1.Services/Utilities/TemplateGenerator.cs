@@ -20,14 +20,14 @@ namespace Surgery_1.Services.Utilities
                                     <table align='center' style='width: 100%'>
                                         <tbody>
                                         <tr>
-                                             <td valign='top'>BỘ QUỐC PHÒNG<br>BỆNH VIỆN QUÂN Y 175</td>
-                                            <td><img style='width: 100;' src='{12}'/></td>
+                                             <td valign='top'>BỘ QUỐC PHÒNG<br>BỆNH VIỆN EBSMMS</td>
+                                            <td align='center'><img style='width: 150;' src='{12}'/></td>
                                             <td align='right' valign='top'>SỐ PHIẾU PT/TT: {11}</td>
                                         </tr>
                                     </tbody>
                                     </table>
                                 <div class='header' align='center'><h2>BIÊN BẢN PHẪU THUẬT</h2></div>
-                                <table align='center'>
+                                <table style='width: 100%'>
                                     <tbody>
                                         <tr>
                                             <td>Họ và tên người bệnh:</td>
@@ -39,26 +39,26 @@ namespace Surgery_1.Services.Utilities
                                         </tr>
                                         <tr>
                                             <td>Phẫu thuật/TT lúc:</td>
-                                            <td>{3}</td>
+                                            <td colspan='2'>{3}</td>
                                             <td> Phẫu thuật/TT kết thúc lúc:</td>
-                                            <td>{4}</td>
+                                            <td colspan='2'>{4}</td>
                                         </tr>
                                         <tr>
                                             <td> Chuyên khoa:</td>
-                                            <td>{5}</td>
+                                            <td colspan='5'>{5}</td>
                                         </tr>
                                         <tr>
                                             <td> Tên phẫu thuật:</td>
-                                            <td>{10} {6}</td>
+                                            <td colspan='5'>{10} {6}</td>
                                         <tr>
                                             <td> Thành tiền:</td>
-                                            <td>{7}</td>
+                                            <td colspan='2'>{7}</td>
                                             <td> Loại phẫu thuật/TT:</td>
-                                            <td>{8}</td>
+                                            <td colspan='2'>{8}</td>
                                         </tr>
                                         <tr>
                                             <td> Phương pháp vô cảm:</td>
-                                            <td>{9}</td>
+                                            <td colspan='5'>{9}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -75,8 +75,9 @@ namespace Surgery_1.Services.Utilities
                 {
                     sb.AppendFormat(@"<tr>
                                     <td>{0}</td>
+                                    <td></td>
                                     <td>{1}</td>
-                                  </tr>", emp.Name, emp.WorkJob);
+                                  </tr>", emp.WorkJob, emp.Name);
                 }
             }
 
@@ -86,7 +87,7 @@ namespace Surgery_1.Services.Utilities
                                 <div class='header' align='center'><h3>TRÌNH TỰ PHẪU THUẬT</h3></div>");
             if (surgery.UsedProcedure != null)
             {
-                sb.AppendFormat(@"<table align='center'>
+                sb.AppendFormat(@"<table align='center' style='width: 100%'>
                                     <tbody>
                                         <tr>
                                             <td> </td>
@@ -129,18 +130,18 @@ namespace Surgery_1.Services.Utilities
                                         </tr>
                                         <tr>
                                             <td> Số giường:</td>
-                                            <td>{3}</td>
+                                            <td colspan='2'>{3}</td>
                                             <td> Buồng:</td>
-                                            <td>{4}</td>
+                                            <td colspan='2'>{4}</td>
                                         </tr>
                                         <tr>
                                         <td> Phẫu thuật:</td>
-                                            <td>{5}</td>
+                                            <td colspan='5'>{5}</td>
                                          </tr>
                                     </tbody>
                                 </table>
                                 <div class='header' align='center'><h3></h3></div>"
-            , patient.FullName, patient.Gender > 0 ? "Male" : "Female", DateTime.Now.Year - patient.YearOfBirth
+            , patient.FullName, patient.Gender > 0 ? "Nam" : "Nữ", DateTime.Now.Year - patient.YearOfBirth
             , surgery.PostRoomName, surgery.PostBedName, surgeryCatalog.Name);
             sb.Append(@"<table style='border-collapse: collapse; border: 1px solid black; width:100%' align='center'>
                                    <thead>
