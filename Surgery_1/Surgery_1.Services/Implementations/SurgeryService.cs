@@ -687,26 +687,12 @@ namespace Surgery_1.Services.Implementations
             if (shift != null)
             {
                 var UsedProcedure = "";
-                if (shift.UsedProcedure != null & shift.UsedProcedure != "")
-                {
-                    UsedProcedure = shift.UsedProcedure;
-                }
-                else
-                {
-                    UsedProcedure = shift.SurgeryCatalog.Procedure;
-                }
                 SurgeryShiftDetailViewModel result = null;
                 if (shift.SurgeryCatalogId == null)
                 {
                     result = new SurgeryShiftDetailViewModel()
                     {
                         Id = shift.Id,
-                        PatientName = "",
-                        Gender = "",
-                        Age = 0,
-                        Specialty = "",
-                        SurgeryName = "",
-                        SurgeryType = "",
                         StartTime = shift.EstimatedStartDateTime,
                         EndTime = shift.EstimatedEndDateTime,
                         ActualStartTime = shift.ActualStartDateTime,
@@ -732,7 +718,7 @@ namespace Surgery_1.Services.Implementations
                         ActualStartTime = shift.ActualStartDateTime,
                         ActualEndTime = shift.ActualEndDateTime,
                         //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
-                        Procedure = UsedProcedure,
+                        Procedure = shift.UsedProcedure == null ? shift.SurgeryCatalog.Procedure : shift.UsedProcedure,
                         StatusName = shift.Status.Name
                     };
                 }
