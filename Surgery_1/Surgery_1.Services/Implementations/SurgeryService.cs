@@ -540,10 +540,18 @@ namespace Surgery_1.Services.Implementations
             var results = new List<SurgeryRoomViewModel>();
             foreach (var room in _context.SurgeryRooms)
             {
+
                 results.Add(new SurgeryRoomViewModel()
                 {
                     Id = room.Id,
-                    Name = room.Name
+                    Name = room.Name,
+                    SpecialtyGroupId = room.SpecialtyGroupId.Value,
+                    SpecialtyGroupName = room.SpecialtyGroup.Name,
+                    SlotRooms = room.SlotRooms.Select(sr => new SlotRoomViewModel()
+                    {
+                        Id = sr.Id,
+                        Name = sr.Name
+                    }).ToList()
                 });
             }
             return results;
@@ -807,7 +815,7 @@ namespace Surgery_1.Services.Implementations
             return false;
         }
 
-        public List<int> GetAvailableRoom(DateTime start, DateTime end, bool forcedChange, int SpecialtyGroupId = 0)
+        public List<int> GetAvailableRoom(DateTime start, DateTime end, bool forcedChange, int SpecialtyId = 0)
         {
             if (!IsValidTime(start, end) && !forcedChange)
             {
@@ -815,9 +823,9 @@ namespace Surgery_1.Services.Implementations
             }
 
             var rooms = new List<SlotRoom>();
-            if (SpecialtyGroupId != 0)
+            if (SpecialtyId != 0)
             {
-                rooms = _context.SlotRooms.Where(r => !r.IsDeleted && r.SurgeryRoom.SpecialtyGroupId == SpecialtyGroupId).ToList();
+                rooms = _context.SlotRooms.Where(r => !r.IsDeleted && r.SurgeryRoom.SpecialtyGroupId == SpecialtyId).ToList();
             }
             else
             {
@@ -1051,7 +1059,7 @@ namespace Surgery_1.Services.Implementations
                         {
                             foreach (var affectedShift in affectedShifts)
                             {
-                                var roomIds = GetAvailableRoom(affectedShift.EstimatedStartDateTime.Value, affectedShift.EstimatedEndDateTime.Value, false, affectedShift.SlotRoom.SurgeryRoom.SpecialtyGroupId.GetValueOrDefault(0));
+                                var roomIds = GetAvailableRoom(affectedShift.EstimatedStartDateTime.Value, affectedShift.EstimatedEndDateTime.Value, false, affectedShift.SurgeryCatalog.SpecialtyId);
                                 if (roomIds.Any())
                                 {
                                     var resolvedShift = new AffectedShiftResultViewModel()
@@ -1188,7 +1196,7 @@ namespace Surgery_1.Services.Implementations
                             {
                                 foreach (var affectedShift in affectedShifts)
                                 {
-                                    var roomIds = GetAvailableRoom(affectedShift.EstimatedStartDateTime.Value, affectedShift.EstimatedEndDateTime.Value, false, affectedShift.SlotRoom.SurgeryRoom.SpecialtyGroupId.GetValueOrDefault(0));
+                                    var roomIds = GetAvailableRoom(affectedShift.EstimatedStartDateTime.Value, affectedShift.EstimatedEndDateTime.Value, false, affectedShift.SurgeryCatalog.SpecialtyId);
                                     if (roomIds.Any())
                                     {
                                         var resolvedShift = new AffectedShiftResultViewModel()
@@ -1331,7 +1339,7 @@ namespace Surgery_1.Services.Implementations
                     var affectedShiftIds = affectedShifts.Select(s => s.Id).ToList();
                     foreach (var affectedShift in affectedShifts)
                     {
-                        var roomIds = GetAvailableRoom(affectedShift.EstimatedStartDateTime.Value, affectedShift.EstimatedEndDateTime.Value, false);
+                        var roomIds = GetAvailableRoom(affectedShift.EstimatedStartDateTime.Value, affectedShift.EstimatedEndDateTime.Value, false, affectedShift.SurgeryCatalog.SpecialtyId);
                         if (roomIds.Any())
                         {
                             var resolvedShift = new AffectedShiftResultViewModel()
@@ -1398,7 +1406,7 @@ namespace Surgery_1.Services.Implementations
             }
             else
             {
-                var roomIds = GetAvailableRoom(shift.EstimatedStartDateTime.Value, shift.EstimatedEndDateTime.Value, false);
+                var roomIds = GetAvailableRoom(shift.EstimatedStartDateTime.Value, shift.EstimatedEndDateTime.Value, false, shift.SurgeryCatalog.SpecialtyId);
                 if (roomIds.Any(r => r == roomId))
                 {
                     var changeRoomVM = new ShiftScheduleChangeViewModel()

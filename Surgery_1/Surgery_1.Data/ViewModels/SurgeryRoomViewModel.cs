@@ -8,6 +8,8 @@ namespace Surgery_1.Data.ViewModels
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public int SpecialtyGroupId { get; set; }
+        public string SpecialtyGroupName { get; set; }
 
         public ICollection<SlotRoomViewModel> SlotRooms { get; set; }
     }
