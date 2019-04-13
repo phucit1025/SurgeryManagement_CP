@@ -119,7 +119,7 @@ namespace Surgery_1.Controllers
             }
             else
             {
-                return StatusCode(400);
+                return StatusCode(400, new { message = "This Name Is Being Used !" });
             }
         }
     }

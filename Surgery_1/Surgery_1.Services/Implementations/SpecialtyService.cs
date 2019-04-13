@@ -58,11 +58,19 @@ namespace Surgery_1.Services.Implementations
         {
             try
             {
-                var SpecialtyGroup = new SpecialtyGroup();
-                SpecialtyGroup.Name = SpecialtyGroupName;
-                _context.SpecialtyGroups.Add(SpecialtyGroup);
-                _context.SaveChanges();
-                return SpecialtyGroup.Id;
+                if (_context.SpecialtyGroups.Any(c => c.Name.Equals(SpecialtyGroupName, StringComparison.CurrentCultureIgnoreCase)))
+                {
+                    return 0;
+                }
+                else
+                {
+                    var SpecialtyGroup = new SpecialtyGroup();
+                    SpecialtyGroup.Name = SpecialtyGroupName;
+                    _context.SpecialtyGroups.Add(SpecialtyGroup);
+                    _context.SaveChanges();
+                    return SpecialtyGroup.Id;
+                }
+
             }
             catch (Exception)
             {
