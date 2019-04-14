@@ -634,33 +634,47 @@ namespace Surgery_1.Services.Implementations
             }
         }
 
-        public async Task<bool> AssignNurse(int shiftId, int nurseId)
+        public bool checkNurseCapacity(int nurseId)
         {
-            var shift = _appDbContext.SurgeryShifts.Find(shiftId);
-            shift.NurseId = nurseId;
-            var guid = _appDbContext.UserInfo.Find(nurseId).GuId;
-            var user = await _userManager.FindByIdAsync(guid);
-            var username = user.Email;
-            var firebase = new FirebaseClient(FIREBASE_DB_URL);
-            var deviceTokens = await firebase.Child($"/users/{username}/devices").OnceAsync<Dictionary<string, string>>();
-            try
-            {
-                _appDbContext.SurgeryShifts.Update(shift);
-                int rs =  _appDbContext.SaveChanges();
-                if (rs > 0)
-                {
-                    foreach (var item in deviceTokens)
-                    {
-                        var token = item.Object.FirstOrDefault().Value;
-                        await Send(getAndroidMessage(shiftId, new { id = shiftId }, token));
-                    }
-                }
-                return true;
-            }
-            catch (Exception)
+            var capacity = _appDbContext.SurgeryShifts.Where(a => !a.IsDeleted && a.NurseId == nurseId && !a.Status.Name.Equals(ConstantVariable.FINISHED_STATUS)).Count();
+            if (capacity >= 7)
             {
                 return false;
             }
+            return true;
+        }
+
+        public async Task<bool> AssignNurse(int shiftId, int nurseId)
+        {
+            if (checkNurseCapacity(nurseId))
+            {
+                var shift = _appDbContext.SurgeryShifts.Find(shiftId);
+                shift.NurseId = nurseId;
+                var guid = _appDbContext.UserInfo.Find(nurseId).GuId;
+                var user = await _userManager.FindByIdAsync(guid);
+                var username = user.Email;
+                var firebase = new FirebaseClient(FIREBASE_DB_URL);
+                var deviceTokens = await firebase.Child($"/users/{username}/devices").OnceAsync<Dictionary<string, string>>();
+                try
+                {
+                    _appDbContext.SurgeryShifts.Update(shift);
+                    int rs = _appDbContext.SaveChanges();
+                    if (rs > 0)
+                    {
+                        foreach (var item in deviceTokens)
+                        {
+                            var token = item.Object.FirstOrDefault().Value;
+                            await Send(getAndroidMessage(shiftId, new { id = shiftId }, token));
+                        }
+                    }
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            return false;
         }
 
         public async Task Send(string notification)
