@@ -65,7 +65,6 @@ namespace Surgery_1.Services.Implementations
                 var shift = _context.SurgeryShifts.Find(s.id);
                 shift.IsAvailableMedicalSupplies = true;
                 shift.ConfirmDate = DateTime.Now;
-                shift.EkipId = 1;//Temporary
                 if (shift.ProposedStartDateTime != null && shift.ProposedEndDateTime != null)
                 {
                     shift.ScheduleDate = shift.ProposedStartDateTime.Value.Date;
