@@ -25,7 +25,7 @@ namespace Surgery_1.Services.Implementations
                 r.IsAvailableMedicalSupplies = true;
                 r.ConfirmDate = DateTime.Now;
                 r.ScheduleDate = r.ConfirmDate.Value.Date;
-                if (r.ProposedStartDateTime != null && r.ProposedEndDateTime != null)
+                if (!r.IsNormalSurgeryTime)
                 {
                     if (r.ProposedStartDateTime.Value.Date >= r.ConfirmDate.Value.Date)
                     {

@@ -452,6 +452,7 @@ namespace Surgery_1.Services.Implementations
                     insertedShift.ScheduleDate = emerShift.StartTime.Date;
                     insertedShift.ConfirmDate = DateTime.Now;
                     insertedShift.IsAvailableMedicalSupplies = true;
+                    insertedShift.IsNormalSurgeryTime = false;
                     insertedShift.SlotRoomId = availableRoomId;
                     insertedShift.StatusId = _context.Statuses.Where(s => s.Name == ConstantVariable.PRE_STATUS).FirstOrDefault().Id;
                     _context.SurgeryShifts.Add(insertedShift);
@@ -583,12 +584,17 @@ namespace Surgery_1.Services.Implementations
         {
             var results = new List<SurgeryShiftViewModel>();
             var shiftSlotRooms = _context.SlotRooms.Find(slotRoomId);
+            var isEmergency = false;
             foreach (var shift in shiftSlotRooms.SurgeryShifts
                 .Where(s => (s.EstimatedStartDateTime != null && s.EstimatedEndDateTime != null)
                 && (UtilitiesDate.ConvertDateToNumber(s.EstimatedStartDateTime.Value) == dateNumber)) //mm/dd/YYYY
                 .OrderBy(s => s.EstimatedStartDateTime))
             {
-                if (shift.SurgeryCatalog != null && shift.Patient != null)
+                if (!shift.IsNormalSurgeryTime && shift.ProposedStartDateTime == null)
+                {
+                    isEmergency = true;
+                }
+                if (!isEmergency)
                 {
                     results.Add(new SurgeryShiftViewModel()
                     {
@@ -612,6 +618,7 @@ namespace Surgery_1.Services.Implementations
                     {
                         Id = shift.Id,
                         PriorityNumber = shift.PriorityNumber,
+                        IsEmergency = isEmergency,
                         EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
                         EstimatedEndDateTime = shift.EstimatedEndDateTime.Value,
                         ActualStartDateTime = shift.ActualStartDateTime,
@@ -695,9 +702,15 @@ namespace Surgery_1.Services.Implementations
             if (shift != null)
             {
                 var UsedProcedure = "";
+                bool isEmergency = false;
                 SurgeryShiftDetailViewModel result = null;
-                if (shift.SurgeryCatalogId == null)
+                if (!shift.IsNormalSurgeryTime && shift.ProposedStartDateTime == null)
                 {
+                    isEmergency = true;
+                }
+                if (isEmergency)
+                {
+
                     result = new SurgeryShiftDetailViewModel()
                     {
                         Id = shift.Id,
@@ -706,6 +719,7 @@ namespace Surgery_1.Services.Implementations
                         ActualStartTime = shift.ActualStartDateTime,
                         ActualEndTime = shift.ActualEndDateTime,
                         //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
+                        IsEmergency = isEmergency,
                         Procedure = UsedProcedure,
                         StatusName = shift.Status.Name
                     };

@@ -23,11 +23,11 @@ namespace Surgery_1.Services.Implementations
 
         public void AssignTechnicalStaff(TechnicalStaffAssignment techAssignment)
         {
-            foreach(var surgeryId in techAssignment.surgeryId)
+            foreach (var surgeryId in techAssignment.surgeryId)
             {
                 _context.SurgeryShifts.Find(surgeryId).TechId = techAssignment.technicalStaffId;
                 _context.SaveChanges();
-                
+
             }
         }
 
@@ -73,7 +73,8 @@ namespace Surgery_1.Services.Implementations
                     if (shift.ProposedStartDateTime != null && shift.ProposedEndDateTime != null)
                     {
                         shift.ExpectedSurgeryDuration = (float)(shift.ProposedEndDateTime.Value - shift.ProposedEndDateTime.Value).TotalHours;
-                    } else
+                    }
+                    else
                     {
                         shift.ExpectedSurgeryDuration = s.ExpectedSurgeryDuration;
                     }
@@ -220,41 +221,45 @@ namespace Surgery_1.Services.Implementations
         {
             var patient = _context.Patients.Where(p => p.IdentityNumber == editForm.EditIdentityNumber).FirstOrDefault();
             var surgeryShift = _context.SurgeryShifts.Find(editForm.ShiftId);
-            if (patient == null)
+            if (!surgeryShift.IsNormalSurgeryTime && surgeryShift.ProposedStartDateTime == null)
             {
-                var insertedPatient = new Patient()
+                if (patient == null)
                 {
-                    IdentityNumber = editForm.EditIdentityNumber,
-                    FullName = editForm.EditPatientName,
-                    Gender = editForm.EditGender.Value,
-                    YearOfBirth = editForm.EditYob.Value
-                };
-                _context.Patients.Add(insertedPatient);
+                    var insertedPatient = new Patient()
+                    {
+                        IdentityNumber = editForm.EditIdentityNumber,
+                        FullName = editForm.EditPatientName,
+                        Gender = editForm.EditGender.Value,
+                        YearOfBirth = editForm.EditYob.Value
+                    };
+                    _context.Patients.Add(insertedPatient);
 
-                if(_context.SaveChanges() > 0)
+                    if (_context.SaveChanges() > 0)
+                    {
+                        int patientId = insertedPatient.Id;
+
+
+                        //update surgery shift
+                        surgeryShift.PatientId = patientId;
+                        surgeryShift.SurgeryCatalogId = editForm.EditSurgeryId;
+
+                        _context.Update(surgeryShift);
+                        _context.SaveChanges();
+
+                        return true;
+                    }
+                }
+                else
                 {
-                    int patientId = insertedPatient.Id;
-
-                    
-                    //update surgery shift
-                    surgeryShift.PatientId = patientId;
+                    surgeryShift.PatientId = patient.Id;
                     surgeryShift.SurgeryCatalogId = editForm.EditSurgeryId;
 
-                    _context.Update(surgeryShift);
                     _context.SaveChanges();
 
                     return true;
                 }
             }
-            else
-            {
-                surgeryShift.PatientId = patient.Id;
-                surgeryShift.SurgeryCatalogId = editForm.EditSurgeryId;
 
-                _context.SaveChanges();
-
-                return true;
-            }
             return false;
         }
 
