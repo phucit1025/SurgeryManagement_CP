@@ -36,6 +36,6 @@ namespace Surgery_1.Data.ViewModels
     public class TechnicalStaffAssignment
     {
         public int technicalStaffId { get; set; }
-        public ICollection<int> surgeryId { get; set; }
+        public int surgeryId { get; set; }
     }
 }

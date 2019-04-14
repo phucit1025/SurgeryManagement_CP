@@ -1,4 +1,6 @@
-﻿using Surgery_1.Data.Context;
+﻿using Microsoft.AspNetCore.Identity;
+using MoreLinq;
+using Surgery_1.Data.Context;
 using Surgery_1.Data.Entities;
 using Surgery_1.Data.ViewModels;
 using Surgery_1.Services.Interfaces;
@@ -7,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using static Surgery_1.Data.ViewModels.PostOpSurgeryShiftViewModel;
 
 namespace Surgery_1.Services.Implementations
@@ -14,21 +17,65 @@ namespace Surgery_1.Services.Implementations
     public class SurgeryShiftService : ISurgeryShiftService
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly string SUPPLYSTAFF = "MedicalSupplier";
 
-        public SurgeryShiftService(AppDbContext _context)
+        public SurgeryShiftService(AppDbContext context, UserManager<IdentityUser> userManager)
         {
-            this._context = _context;
+            this._context = context;
+            this._userManager = userManager;
         }
 
-        public void AssignTechnicalStaff(TechnicalStaffAssignment techAssignment)
+        private async Task<ICollection<TechnicalStaffInfoViewModel>> GetAssignableTechnicalStaff(DateTime? startTime, DateTime? endTime)
+        //startTime, endTime is the time of surgery shift wanting to assign a technical
         {
-            foreach(var surgeryId in techAssignment.surgeryId)
+            //Assign theo tung shift: lay thoi gian bat dau va thoi gian ket thuc cua surgery shift can assign
+            //Tim tat ca nhung technical staff k phu trach surgery nao trong khoang thoi gian cho truoc
+
+            /* Get all technical staffs to List */
+            var result = new List<TechnicalStaffInfoViewModel>();
+            var usersInRole = await _userManager.GetUsersInRoleAsync("Technical");
+            var staffs = new List<TechnicalStaffInfoViewModel>();
+            foreach (var userInRole in usersInRole)
             {
-                _context.SurgeryShifts.Find(surgeryId).TechId = techAssignment.technicalStaffId;
-                _context.SaveChanges();
-                
+                var staff = _context.UserInfo.FirstOrDefault(c => c.GuId.Equals(userInRole.Id));
+                if (staff != null)
+                    staffs.Add(new TechnicalStaffInfoViewModel()
+                    { technicalStaffId = staff.Id, technicalStaffName = staff.FullName });
             }
+
+            /* check condition for assignable */
+            foreach (var staff in staffs)
+            {
+                var time = _context.SurgeryShifts.Where(a => !a.IsDeleted &&
+                    a.Status.Name == "Preoperative" && a.TechId == staff.technicalStaffId &&
+                    (a.EstimatedStartDateTime <= startTime && endTime <= a.EstimatedEndDateTime)).Count();
+                if (time > 0) continue;
+                result.Add(new TechnicalStaffInfoViewModel() { technicalStaffId = staff.technicalStaffId });
+            }
+            return result;
+        }
+
+        public bool AssignTechnicalStaff()
+        {
+            try
+            {
+                var preOperative = _context.SurgeryShifts.Where(s => s.Status.Name == "Preoperative" &&
+                    (s.EstimatedStartDateTime != null && s.EstimatedEndDateTime != null) && s.TechId == null).ToList();
+                foreach (var shift in preOperative)
+                {
+                    DateTime? startTime = shift.EstimatedStartDateTime, endTime = shift.EstimatedEndDateTime;
+                    var techStaffs = GetAssignableTechnicalStaff(startTime, endTime).Result;
+                    if (techStaffs.Any())
+                    {
+                        var tId = techStaffs.RandomSubset(1).ToList().FirstOrDefault().technicalStaffId;
+                        shift.TechId = tId;
+                    }
+                }
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception) { return false; }
         }
 
         public ICollection<SurgeryCatalogNamesViewModel> GetSurgeryName(ICollection<SurgeryCatalogIDsViewModel> ids)
@@ -73,7 +120,8 @@ namespace Surgery_1.Services.Implementations
                     if (shift.ProposedStartDateTime != null && shift.ProposedEndDateTime != null)
                     {
                         shift.ExpectedSurgeryDuration = (float)(shift.ProposedEndDateTime.Value - shift.ProposedEndDateTime.Value).TotalHours;
-                    } else
+                    }
+                    else
                     {
                         shift.ExpectedSurgeryDuration = s.ExpectedSurgeryDuration;
                     }
@@ -113,53 +161,63 @@ namespace Surgery_1.Services.Implementations
             }
         }
 
-        public void ImportSurgeryShiftMedicalSupply(ICollection<ImportMedicalSupplyViewModel> medicalSupply)
+        public bool ImportSurgeryShiftMedicalSupply(ICollection<ImportMedicalSupplyViewModel> medicalSupply)
         {
-            foreach (var tmp in medicalSupply)
+            try
             {
-                var shiftSupply = new SurgeryShiftMedicalSupply();
-                var surgeryShift = _context.SurgeryShifts.Where(a => a.SurgeryShiftCode == tmp.SurgeryShiftCode).FirstOrDefault();
-                if (surgeryShift == null)
-                    continue;
-                shiftSupply.SurgeryShiftId = surgeryShift.Id;
-                shiftSupply.MedicalSupplyId = tmp.Code;
-                shiftSupply.Quantity = tmp.Quantity;
-                _context.SurgeryShiftMedicalSupplies.Add(shiftSupply);
-            }
-            _context.SaveChanges();
-        }
-
-        public void AddMedicalSupply(ShiftMedicalSuppliesViewModel medicalSupply)
-        {
-            foreach (var tmp in medicalSupply.ShiftMedicals)
-            {
-                var existed = _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == tmp.SurgeryShiftId)
-                    .Where(a => a.MedicalSupplyId == tmp.MedicalSupplyId).FirstOrDefault();
-                if (existed != null)
-                {
-                    existed.Quantity = tmp.Quantity;
-                    if (existed.IsDeleted)
-                    {
-                        existed.IsDeleted = false;
-                    }
-                }
-                else if (tmp.Quantity > 0)
+                foreach (var tmp in medicalSupply)
                 {
                     var shiftSupply = new SurgeryShiftMedicalSupply();
-
-                    shiftSupply.SurgeryShiftId = tmp.SurgeryShiftId;
-                    shiftSupply.MedicalSupplyId = tmp.MedicalSupplyId;
+                    var surgeryShift = _context.SurgeryShifts.Where(a => a.SurgeryShiftCode == tmp.SurgeryShiftCode).FirstOrDefault();
+                    if (surgeryShift == null)
+                        continue;
+                    shiftSupply.SurgeryShiftId = surgeryShift.Id;
+                    shiftSupply.MedicalSupplyId = tmp.Code;
                     shiftSupply.Quantity = tmp.Quantity;
                     _context.SurgeryShiftMedicalSupplies.Add(shiftSupply);
                 }
+                _context.SaveChanges();
+                return true;
             }
-            foreach (var id in medicalSupply.DeleteMedicalSupplyIds)
+            catch (Exception) { return false; }
+        }
+
+        public bool AddMedicalSupply(ShiftMedicalSuppliesViewModel medicalSupply)
+        {
+            try
             {
-                var rs = _context.SurgeryShiftMedicalSupplies.Find(id);
-                rs.IsDeleted = true;
-                _context.SurgeryShiftMedicalSupplies.Update(rs);
+                foreach (var tmp in medicalSupply.ShiftMedicals)
+                {
+                    var existed = _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == tmp.SurgeryShiftId)
+                        .Where(a => a.MedicalSupplyId == tmp.MedicalSupplyId).FirstOrDefault();
+                    if (existed != null)
+                    {
+                        existed.Quantity = tmp.Quantity;
+                        if (existed.IsDeleted)
+                        {
+                            existed.IsDeleted = false;
+                        }
+                    }
+                    else if (tmp.Quantity > 0)
+                    {
+                        var shiftSupply = new SurgeryShiftMedicalSupply();
+
+                        shiftSupply.SurgeryShiftId = tmp.SurgeryShiftId;
+                        shiftSupply.MedicalSupplyId = tmp.MedicalSupplyId;
+                        shiftSupply.Quantity = tmp.Quantity;
+                        _context.SurgeryShiftMedicalSupplies.Add(shiftSupply);
+                    }
+                }
+                foreach (var id in medicalSupply.DeleteMedicalSupplyIds)
+                {
+                    var rs = _context.SurgeryShiftMedicalSupplies.Find(id);
+                    rs.IsDeleted = true;
+                    _context.SurgeryShiftMedicalSupplies.Update(rs);
+                }
+                _context.SaveChanges();
+                return true;
             }
-            _context.SaveChanges();
+            catch (Exception) { return false; }
         }
 
         public ICollection<MedicalSupplyInfoViewModel> GetSuppliesUsedInSurgery(int surgeryShiftId)
@@ -204,15 +262,20 @@ namespace Surgery_1.Services.Implementations
             return list;
         }
 
-        public void UpdateMedicalSupply(ICollection<ShiftMedicalSupplyViewModel> medicalSupply)
+        public bool UpdateMedicalSupply(ICollection<ShiftMedicalSupplyViewModel> medicalSupply)
         {
-            foreach (var tmp in medicalSupply)
+            try
             {
-                var shiftSupply = _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == tmp.SurgeryShiftId)
-                     .Where(a => a.MedicalSupplyId == tmp.MedicalSupplyId).FirstOrDefault();
-                shiftSupply.Quantity = tmp.Quantity;
+                foreach (var tmp in medicalSupply)
+                {
+                    var shiftSupply = _context.SurgeryShiftMedicalSupplies.Where(a => a.SurgeryShiftId == tmp.SurgeryShiftId)
+                         .Where(a => a.MedicalSupplyId == tmp.MedicalSupplyId).FirstOrDefault();
+                    shiftSupply.Quantity = tmp.Quantity;
+                }
+                _context.SaveChanges();
+                return true;
             }
-            _context.SaveChanges();
+            catch (Exception) { return false; }
         }
     }
 }

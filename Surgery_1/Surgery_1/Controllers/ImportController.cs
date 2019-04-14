@@ -27,16 +27,16 @@ namespace Surgery_1.Controllers
             var result = _surgeryShiftService.ImportSurgeryShift(importViewModel.surgeryShifts);
             if (result)
             {
-                return StatusCode(200,result);
+                return StatusCode(200, result);
             }
             return StatusCode(500);
         }
 
         [HttpPost]
-        public bool ImportSurgeryShiftMedicalSupply([FromBody]List<ImportMedicalSupplyViewModel> surgeryShiftSupply)
+        public IActionResult ImportSurgeryShiftMedicalSupply([FromBody]List<ImportMedicalSupplyViewModel> surgeryShiftSupply)
         {
-            _surgeryShiftService.ImportSurgeryShiftMedicalSupply(surgeryShiftSupply);
-            return true;
+            var result = _surgeryShiftService.ImportSurgeryShiftMedicalSupply(surgeryShiftSupply);
+            return StatusCode(200, result);
         }
 
         [HttpPost]
@@ -44,6 +44,6 @@ namespace Surgery_1.Controllers
         {
             var result = _surgeryShiftService.GetSurgeryName(SurgeryId);
             return Ok(result);
-        }        
+        }
     }
 }

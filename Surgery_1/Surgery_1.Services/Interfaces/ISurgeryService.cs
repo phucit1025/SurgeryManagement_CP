@@ -27,7 +27,7 @@ namespace Surgery_1.Services.Interfaces
 
         SurgeryShiftDetailViewModel GetShiftDetail(int shiftId);
 
-        Boolean SaveSurgeryProcedure(SurgeryProcedureViewModel SurgeryProcedure);
+        bool SaveSurgeryProcedure(SurgeryProcedureViewModel SurgeryProcedure);
 
         #region Change Surgery Business
         bool ChangeFirstPriority(ShiftChangeViewModel newShift);

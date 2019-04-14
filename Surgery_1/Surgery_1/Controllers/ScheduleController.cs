@@ -39,15 +39,10 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public void AssignTechStaff([FromBody]TechnicalStaffAssignment techAssignment)
+        public IActionResult AddUsedMedicalSupply([FromBody]ShiftMedicalSuppliesViewModel medicalSupplyAddList)
         {
-            _surgeryShiftService.AssignTechnicalStaff(techAssignment);
-        }
-
-        [HttpPost]
-        public void AddUsedMedicalSupply([FromBody]ShiftMedicalSuppliesViewModel medicalSupplyAddList)
-        {
-            _surgeryShiftService.AddMedicalSupply(medicalSupplyAddList);
+            var result = _surgeryShiftService.AddMedicalSupply(medicalSupplyAddList);
+            return StatusCode(200, result);
         }
 
         [HttpGet]
@@ -57,10 +52,10 @@ namespace Surgery_1.Controllers
             return StatusCode(200, result);
         }
         [HttpPost]
-        public Boolean SaveSurgeryProcedure([FromBody]SurgeryProcedureViewModel SurgeryProcedure)
+        public IActionResult SaveSurgeryProcedure([FromBody]SurgeryProcedureViewModel SurgeryProcedure)
         {
-            _surgeryService.SaveSurgeryProcedure(SurgeryProcedure);
-            return true;
+            var result = _surgeryService.SaveSurgeryProcedure(SurgeryProcedure);
+            return StatusCode(200, result);
         }
 
         [HttpGet]
@@ -101,11 +96,12 @@ namespace Surgery_1.Controllers
             {
                 result = _surgeryService.MakeScheduleList();
 
-            } catch (Exception)
+            }
+            catch (Exception)
             {
                 result = false;
             }
-            
+
             return StatusCode(200, result);
         }
 
@@ -273,6 +269,7 @@ namespace Surgery_1.Controllers
         }
         #endregion
 
+        #region Assigning
         [HttpGet]
         public IActionResult AssignEkipByDate(int dateNumber)
         {
@@ -286,5 +283,13 @@ namespace Surgery_1.Controllers
             _surgeryService.AssignEkip();
             return Ok();
         }
+
+        [HttpGet]
+        public IActionResult AssignTechnicalStaff()
+        {
+            var result = _surgeryShiftService.AssignTechnicalStaff();
+            return StatusCode(200, result);
+        }
+        #endregion
     }
 }
