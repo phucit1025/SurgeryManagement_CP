@@ -708,7 +708,7 @@ namespace Surgery_1.Services.Implementations
                     {
                         Id = shift.Id,
                         PatientName = shift.Patient.FullName,
-                        Gender = shift.Patient.Gender == -1 ? "Nam" : "Nữ",
+                        Gender = shift.Patient.Gender == 0 ? "Nữ" : "Nam",
                         Age = DateTime.Now.Year - shift.Patient.YearOfBirth,
                         Specialty = shift.SurgeryCatalog.Specialty.Name,
                         SurgeryName = shift.SurgeryCatalog.Name,

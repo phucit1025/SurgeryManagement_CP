@@ -214,5 +214,66 @@ namespace Surgery_1.Services.Implementations
             }
             _context.SaveChanges();
         }
+
+        //Update emergency
+        public bool UpdateSurgeryProfile(EditSurgeryShiftViewModel editForm)
+        {
+            var patient = _context.Patients.Where(p => p.IdentityNumber == editForm.EditIdentityNumber).FirstOrDefault();
+            var surgeryShift = _context.SurgeryShifts.Find(editForm.ShiftId);
+            if (patient == null)
+            {
+                var insertedPatient = new Patient()
+                {
+                    IdentityNumber = editForm.EditIdentityNumber,
+                    FullName = editForm.EditPatientName,
+                    Gender = editForm.EditGender.Value,
+                    YearOfBirth = editForm.EditYob.Value
+                };
+                _context.Patients.Add(insertedPatient);
+
+                if(_context.SaveChanges() > 0)
+                {
+                    int patientId = insertedPatient.Id;
+
+                    
+                    //update surgery shift
+                    surgeryShift.PatientId = patientId;
+                    surgeryShift.SurgeryCatalogId = editForm.EditSurgeryId;
+
+                    _context.Update(surgeryShift);
+                    _context.SaveChanges();
+
+                    return true;
+                }
+            }
+            else
+            {
+                surgeryShift.PatientId = patient.Id;
+                surgeryShift.SurgeryCatalogId = editForm.EditSurgeryId;
+
+                _context.SaveChanges();
+
+                return true;
+            }
+            return false;
+        }
+
+        public EditSurgeryShiftViewModel LoadEditSurgeryProfile(int shiftId)
+        {
+            var result = _context.SurgeryShifts.Find(shiftId);
+
+            EditSurgeryShiftViewModel surgeryShift = new EditSurgeryShiftViewModel
+            {
+                ShiftId = result.Id,
+                EditIdentityNumber = result.Patient.IdentityNumber,
+                EditGender = result.Patient.Gender,
+                EditPatientName = result.Patient.FullName,
+                EditYob = result.Patient.YearOfBirth,
+                EditSurgeryId = result.SurgeryCatalogId
+            };
+
+            return surgeryShift;
+        }
+
     }
 }

@@ -37,5 +37,20 @@ namespace Surgery_1.Controllers
         {
             _surgeryShiftService.AssignTechnicalStaff(techAssignment);
         }
+
+        [HttpPost]
+        public IActionResult UpdateSurgeryProfile([FromBody]EditSurgeryShiftViewModel editForm)
+        {
+            var result = _surgeryShiftService.UpdateSurgeryProfile(editForm);
+            return StatusCode(200, result);
+        }
+        [HttpGet]
+        public IActionResult LoadEditSurgeryProfile(int shiftId)
+        {
+            var result = _surgeryShiftService.LoadEditSurgeryProfile(shiftId);
+            return StatusCode(200, result);
+        }
+
+
     }
 }
