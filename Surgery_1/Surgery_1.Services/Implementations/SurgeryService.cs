@@ -854,6 +854,7 @@ namespace Surgery_1.Services.Implementations
                 rooms = _context.SlotRooms.Where(r => !r.IsDeleted && !r.SurgeryRoom.SpecialtyGroupId.HasValue).ToList();
             }
             var roomId = new List<int>();
+
             foreach (var room in rooms)
             {
                 var shifts = room.SurgeryShifts.Where(s =>
@@ -1529,7 +1530,8 @@ namespace Surgery_1.Services.Implementations
         {
             var tempShift = new SurgeryShift();
             var tempDuration = new TimeSpan();
-            if (longerDuration < duration)
+
+            if (Math.Floor(longerDuration.TotalMinutes) < Math.Floor(duration.TotalMinutes))
             {
                 tempShift = shift;
                 shift = longerShift;
@@ -1540,7 +1542,7 @@ namespace Surgery_1.Services.Implementations
                 longerDuration = tempDuration;
                 return true;
             }
-            else if (longerDuration > duration)
+            else if (Math.Floor(longerDuration.TotalMinutes) > Math.Floor(duration.TotalMinutes))
             {
                 return true;
             }

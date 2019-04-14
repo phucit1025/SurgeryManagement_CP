@@ -21,5 +21,6 @@ namespace Surgery_1.Data.ViewModels
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public bool ForcedChange { get; set; }
+        public int SpecialtyGroupId { get; set; }
     }
 }
