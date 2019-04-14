@@ -15,7 +15,7 @@ namespace Surgery_1.Services.Implementations
         {
             this._context = _context;
         }
-        
+
         public ICollection<MedicalSupplyRequestViewModel> GetAllMedicalSupplyRequest()
         {
             var result = new List<MedicalSupplyRequestViewModel>();
@@ -45,14 +45,17 @@ namespace Surgery_1.Services.Implementations
                 var shift = _context.SurgeryShifts.Find(s.id);
                 shift.IsAvailableMedicalSupplies = true;
                 shift.ConfirmDate = DateTime.Now;
+                shift.ScheduleDate = DateTime.Now.Date;
                 if (!shift.IsNormalSurgeryTime)
                 {
-                    if (shift.ProposedStartDateTime < DateTime.Now)
+                    if (shift.ProposedStartDateTime.Value.Date >= shift.ConfirmDate.Value.Date)
+                    {
+                        shift.ScheduleDate = shift.ProposedStartDateTime.Value.Date;
+                    }
+                    if (shift.ProposedStartDateTime < DateTime.Now || shift.ProposedEndDateTime < DateTime.Now)
                     {
                         shift.IsNormalSurgeryTime = true;
-                        shift.ScheduleDate = DateTime.Now;
                     }
-                    else { shift.ScheduleDate = shift.ProposedStartDateTime; }
                 }
             }
             _context.SaveChanges();

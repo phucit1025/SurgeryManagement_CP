@@ -37,7 +37,7 @@ namespace Surgery_1.Services.Implementations
             var surgeryShift = _context.SurgeryShifts.Find(shiftId);
             var slotRoom = _context.SlotRooms.Find(surgeryShift.SlotRoomId);
             var previousShift = slotRoom.SurgeryShifts
-                .Where(s => s.ScheduleDate.Value == surgeryShift.ScheduleDate.Value)
+                .Where(s => s.EstimatedStartDateTime.Value.Date == surgeryShift.EstimatedStartDateTime.Value.Date)
                 .Where(s => s.EstimatedEndDateTime <= surgeryShift.EstimatedStartDateTime).OrderByDescending(s => s.EstimatedEndDateTime)
                 .FirstOrDefault();
 
@@ -50,7 +50,7 @@ namespace Surgery_1.Services.Implementations
                 }
             }
             else
-            { // Không có thằng nào trước nó, tức nó đừng đầu
+            { // Không có thằng nào trước nó, tức nó đứng đầu
                 return true;
             }
             return false;
@@ -364,11 +364,7 @@ namespace Surgery_1.Services.Implementations
 
         public int GetEmptyRoomForDate(int scheduleDateNumber, int surgeryCatalogId)
         {
-            //var specialtyGroupId = 0;
-            //if (surgeryCatalogId != 0)
-            //{
             var specialtyGroupId = _context.SurgeryCatalogs.Find(surgeryCatalogId).Specialty.SpecialtyGroup.Id;
-            //}
 
             var slotRooms = _context.SlotRooms.Where(s => s.SurgeryRoom.SpecialtyGroup.Id == specialtyGroupId).ToList();
             ICollection<int> roomIds = new List<int>();
@@ -456,6 +452,7 @@ namespace Surgery_1.Services.Implementations
                     insertedShift.ScheduleDate = emerShift.StartTime.Date;
                     insertedShift.ConfirmDate = DateTime.Now;
                     insertedShift.IsAvailableMedicalSupplies = true;
+                    insertedShift.IsNormalSurgeryTime = false;
                     insertedShift.SlotRoomId = availableRoomId;
                     insertedShift.StatusId = _context.Statuses.Where(s => s.Name == ConstantVariable.PRE_STATUS).FirstOrDefault().Id;
                     _context.SurgeryShifts.Add(insertedShift);
@@ -587,12 +584,17 @@ namespace Surgery_1.Services.Implementations
         {
             var results = new List<SurgeryShiftViewModel>();
             var shiftSlotRooms = _context.SlotRooms.Find(slotRoomId);
+            var isEmergency = false;
             foreach (var shift in shiftSlotRooms.SurgeryShifts
                 .Where(s => (s.EstimatedStartDateTime != null && s.EstimatedEndDateTime != null)
                 && (UtilitiesDate.ConvertDateToNumber(s.EstimatedStartDateTime.Value) == dateNumber)) //mm/dd/YYYY
                 .OrderBy(s => s.EstimatedStartDateTime))
             {
-                if (shift.SurgeryCatalog != null && shift.Patient != null)
+                if (!shift.IsNormalSurgeryTime && shift.ProposedStartDateTime == null)
+                {
+                    isEmergency = true;
+                }
+                if (!isEmergency)
                 {
                     results.Add(new SurgeryShiftViewModel()
                     {
@@ -616,6 +618,7 @@ namespace Surgery_1.Services.Implementations
                     {
                         Id = shift.Id,
                         PriorityNumber = shift.PriorityNumber,
+                        IsEmergency = isEmergency,
                         EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
                         EstimatedEndDateTime = shift.EstimatedEndDateTime.Value,
                         ActualStartDateTime = shift.ActualStartDateTime,
@@ -699,31 +702,50 @@ namespace Surgery_1.Services.Implementations
             if (shift != null)
             {
                 var UsedProcedure = "";
-                if (shift.UsedProcedure != null & shift.UsedProcedure != "")
+                bool isEmergency = false;
+                SurgeryShiftDetailViewModel result = null;
+                if (!shift.IsNormalSurgeryTime && shift.ProposedStartDateTime == null)
                 {
-                    UsedProcedure = shift.UsedProcedure;
+                    isEmergency = true;
+                }
+                if (isEmergency)
+                {
+
+                    result = new SurgeryShiftDetailViewModel()
+                    {
+                        Id = shift.Id,
+                        StartTime = shift.EstimatedStartDateTime,
+                        EndTime = shift.EstimatedEndDateTime,
+                        ActualStartTime = shift.ActualStartDateTime,
+                        ActualEndTime = shift.ActualEndDateTime,
+                        //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
+                        IsEmergency = isEmergency,
+                        Procedure = UsedProcedure,
+                        StatusName = shift.Status.Name
+                    };
                 }
                 else
                 {
-                    UsedProcedure = shift.SurgeryCatalog.Procedure;
+                    result = new SurgeryShiftDetailViewModel()
+                    {
+                        Id = shift.Id,
+                        PatientName = shift.Patient.FullName,
+                        Gender = shift.Patient.Gender == 0 ? "Nữ" : "Nam",
+                        Age = DateTime.Now.Year - shift.Patient.YearOfBirth,
+                        Specialty = shift.SurgeryCatalog.Specialty.Name,
+                        SurgeryName = shift.SurgeryCatalog.Name,
+                        SurgeryType = shift.SurgeryCatalog.Type,
+                        StartTime = shift.EstimatedStartDateTime,
+                        EndTime = shift.EstimatedEndDateTime,
+                        ActualStartTime = shift.ActualStartDateTime,
+                        ActualEndTime = shift.ActualEndDateTime,
+                        //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
+                        Procedure = shift.UsedProcedure == null ? shift.SurgeryCatalog.Procedure : shift.UsedProcedure,
+                        StatusName = shift.Status.Name
+                    };
                 }
-                var result = new SurgeryShiftDetailViewModel()
-                {
-                    Id = shift.Id,
-                    PatientName = shift.Patient.FullName,
-                    Gender = shift.Patient.Gender == -1 ? "Nam" : "Nữ",
-                    Age = DateTime.Now.Year - shift.Patient.YearOfBirth,
-                    Specialty = shift.SurgeryCatalog.Specialty.Name,
-                    SurgeryName = shift.SurgeryCatalog.Name,
-                    SurgeryType = shift.SurgeryCatalog.Type,
-                    StartTime = shift.EstimatedStartDateTime,
-                    EndTime = shift.EstimatedEndDateTime,
-                    ActualStartTime = shift.ActualStartDateTime,
-                    ActualEndTime = shift.ActualEndDateTime,
-                    //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
-                    Procedure = UsedProcedure,
-                    StatusName = shift.Status.Name
-                };
+
+
                 return result;
             }
             return null;

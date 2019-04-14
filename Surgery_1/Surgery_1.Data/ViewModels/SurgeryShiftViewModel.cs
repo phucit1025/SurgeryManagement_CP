@@ -19,6 +19,7 @@ namespace Surgery_1.Data.ViewModels
         public DateTime? ActualStartDateTime { get; set; }
         public DateTime? ActualEndDateTime { get; set; }
         public string StatusName { get; set; }
+        public bool IsEmergency { get; set; }
     }
 
 
@@ -35,6 +36,7 @@ namespace Surgery_1.Data.ViewModels
         public DateTime? EndTime { get; set; }
         public DateTime? ActualStartTime { get; set; }
         public DateTime? ActualEndTime { get; set; }
+        public bool IsEmergency { get; set; } = false;
         public string StatusName { get; set; }
 
         //Surgery Info
@@ -167,5 +169,16 @@ namespace Surgery_1.Data.ViewModels
     {
         public int EkipId { get; set; }
         public float SumDuration { get; set; }
+    }
+
+    public class EditSurgeryShiftViewModel
+    {
+        public int ShiftId { get; set; }
+        public string EditIdentityNumber { get; set; }
+        public string EditPatientName { get; set; }
+        public int? EditGender { get; set; }
+        //public List<string> SurgeonNames { get; set; }
+        public int? EditYob { get; set; }
+        public int? EditSurgeryId { get; set; }
     }
 }

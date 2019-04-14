@@ -767,40 +767,58 @@ namespace Surgery_1.Services.Implementations
             }
         }
 
-        public byte[] CreateSurgeryPdf(string styleSheets, int id)
+        public byte[] CreateSurgeryPdf(string styleSheets, int id, int type)
         {
             var rs = _appDbContext.SurgeryShifts.Find(id);
-            var globalSettings = new GlobalSettings
+            var globalSettings = new GlobalSettings();
+            var objectSettings = new ObjectSettings();
+            switch (type)
             {
-                ColorMode = ColorMode.Color,
-                Orientation = Orientation.Portrait,
-                PaperSize = PaperKind.A4,
-                Margins = new MarginSettings { Top = 10 },
-                DocumentTitle = "PDF Report",
-            };
+                case 1:
+                    globalSettings = new GlobalSettings
+                    {
+                        ColorMode = ColorMode.Color,
+                        Orientation = Orientation.Portrait,
+                        PaperSize = PaperKind.A4,
+                        Margins = new MarginSettings { Top = 10 },
+                        DocumentTitle = "Surgical Record",
+                    };
+                    objectSettings = new ObjectSettings
+                    {
+                        PagesCount = true,
+                        HtmlContent = TemplateGenerator.GetHTMLString(rs, styleSheets),
+                        WebSettings = { DefaultEncoding = "utf-8" },
+                        HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Left = "eBSMS System", Line = true },
+                        FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
+                    };
+                    break;
+                case 2:
+                    globalSettings = new GlobalSettings
+                    {
+                        ColorMode = ColorMode.Color,
+                        Orientation = Orientation.Portrait,
+                        PaperSize = PaperKind.A4,
+                        Margins = new MarginSettings { Top = 10 },
+                        DocumentTitle = "Healthcare Report",
+                    };
+                    objectSettings = new ObjectSettings
+                    {
+                        PagesCount = true,
+                        HtmlContent = TemplateGenerator.GetHTMLStringHealthcare(rs),
+                        WebSettings = { DefaultEncoding = "utf-8" },
+                        HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Left = "eBSMS System", Line = true },
+                        FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
+                    };
+                    break;
 
-            var objectSettings = new ObjectSettings
-            {
-                PagesCount = true,
-                HtmlContent = TemplateGenerator.GetHTMLString(rs,styleSheets),
-                WebSettings = { DefaultEncoding = "utf-8"},
-                HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
-                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
-            };
-
-            var objectSettings1 = new ObjectSettings
-            {
-                PagesCount = true,
-                HtmlContent = TemplateGenerator.GetHTMLStringHealthcare(rs),
-                WebSettings = { DefaultEncoding = "utf-8"},
-                HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
-                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
-            };
+                default:
+                    break;
+            }
 
             var pdf = new HtmlToPdfDocument()
             {
                 GlobalSettings = globalSettings,
-                Objects = { objectSettings, objectSettings1 }
+                Objects = { objectSettings }
             };
 
             var file = _converter.Convert(pdf);
