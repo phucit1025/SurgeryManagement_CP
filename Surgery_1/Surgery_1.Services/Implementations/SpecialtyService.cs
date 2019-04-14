@@ -194,7 +194,7 @@ namespace Surgery_1.Services.Implementations
             {
                 foreach (var roomId in groupRoom.SurgeryRoomId)
                 {
-                    var room = _context.SurgeryRooms.Find(groupRoom.SurgeryRoomId);
+                    var room = _context.SurgeryRooms.Find(roomId);
                     room.SpecialtyGroupId = groupRoom.SpecialtyGroupId;
                     _context.Update(room);
                 }

@@ -536,10 +536,18 @@ namespace Surgery_1.Services.Implementations
             var results = new List<SurgeryRoomViewModel>();
             foreach (var room in _context.SurgeryRooms)
             {
+
                 results.Add(new SurgeryRoomViewModel()
                 {
                     Id = room.Id,
-                    Name = room.Name
+                    Name = room.Name,
+                    SpecialtyGroupId = room.SpecialtyGroupId.Value,
+                    SpecialtyGroupName = room.SpecialtyGroup.Name,
+                    SlotRooms = room.SlotRooms.Select(sr => new SlotRoomViewModel()
+                    {
+                        Id = sr.Id,
+                        Name = sr.Name
+                    }).ToList()
                 });
             }
             return results;
