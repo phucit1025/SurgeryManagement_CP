@@ -27,10 +27,10 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public Boolean UpdateMedicalSupply([FromBody]ICollection<ShiftMedicalSupplyViewModel> medicalSupply)
+        public IActionResult UpdateMedicalSupply([FromBody]ICollection<ShiftMedicalSupplyViewModel> medicalSupply)
         {
-            _surgeryShiftService.UpdateMedicalSupply(medicalSupply);
-            return true;
+            var result = _surgeryShiftService.UpdateMedicalSupply(medicalSupply);
+            return StatusCode(200, result);
         }
     }
 }
