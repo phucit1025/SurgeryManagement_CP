@@ -24,14 +24,18 @@ namespace Surgery_1.Services.Implementations
             {                
                 r.IsAvailableMedicalSupplies = true;
                 r.ConfirmDate = DateTime.Now;
-                if (r.ProposedStartDateTime != null && r.ProposedEndDateTime != null)
+                r.ScheduleDate = r.ConfirmDate.Value.Date;
+                if (!r.IsNormalSurgeryTime)
                 {
-                    r.ScheduleDate = new DateTime(r.ProposedStartDateTime.Value.Year, r.ProposedStartDateTime.Value.Month, r.ProposedStartDateTime.Value.Day);
-                } else
-                {
-                    r.ScheduleDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                    if (r.ProposedStartDateTime.Value.Date >= r.ConfirmDate.Value.Date)
+                    {
+                        r.ScheduleDate = r.ProposedStartDateTime.Value.Date;
+                    }
+                    if (r.ProposedStartDateTime < DateTime.Now || r.ProposedEndDateTime < DateTime.Now)
+                    {
+                        r.IsNormalSurgeryTime = true;
+                    }
                 }
-                
             }
             _context.SaveChanges();
         }

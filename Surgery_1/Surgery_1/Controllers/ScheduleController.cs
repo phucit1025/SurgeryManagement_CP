@@ -101,11 +101,12 @@ namespace Surgery_1.Controllers
             {
                 result = _surgeryService.MakeScheduleList();
 
-            } catch (Exception)
+            }
+            catch (Exception)
             {
                 result = false;
             }
-            
+
             return StatusCode(200, result);
         }
 
@@ -164,9 +165,6 @@ namespace Surgery_1.Controllers
         }
         #endregion
 
-
-
-
         #region Change Schedules
         [HttpGet]
         public IActionResult GetRoomInfo(int id)
@@ -178,7 +176,7 @@ namespace Surgery_1.Controllers
         [HttpPost]
         public IActionResult GetAvailableRoom([FromBody]AvailableRoomParamViewModel param)
         {
-            var results = _surgeryService.GetAvailableRoom(param.StartDate, param.EndDate, param.ForcedChange);
+            var results = _surgeryService.GetAvailableRoom(param.StartDate, param.EndDate, param.ForcedChange, param.SpecialtyGroupId);
             if (results != null)
             {
                 return StatusCode(200, results);

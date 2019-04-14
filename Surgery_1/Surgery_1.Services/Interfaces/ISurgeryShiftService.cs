@@ -16,5 +16,9 @@ namespace Surgery_1.Services.Interfaces
         ICollection<EkipMemberViewModel> GetEkipMember(int surgeryShiftId);
         void UpdateMedicalSupply(ICollection<ShiftMedicalSupplyViewModel> medicalSupply);
         void AssignTechnicalStaff(TechnicalStaffAssignment techAssignment);
+
+        //update information emergency
+        bool UpdateSurgeryProfile(EditSurgeryShiftViewModel editForm);
+        EditSurgeryShiftViewModel LoadEditSurgeryProfile(int shitId);
     }
 }
