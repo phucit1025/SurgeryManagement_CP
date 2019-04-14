@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Castle.Core.Internal;
+using Microsoft.AspNetCore.Mvc;
 using Surgery_1.Data.ViewModels;
 using Surgery_1.Services.Interfaces;
 using System;
@@ -14,7 +15,7 @@ namespace Surgery_1.Controllers
     {
         private readonly ISurgeryShiftService _surgeryShiftService;
         public SurgeryShiftController(ISurgeryShiftService _surgeryShiftService)
-        {            
+        {
             this._surgeryShiftService = _surgeryShiftService;
         }
 
