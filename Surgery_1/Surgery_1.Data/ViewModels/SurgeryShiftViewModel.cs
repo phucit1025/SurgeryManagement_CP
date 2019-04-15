@@ -162,7 +162,6 @@ namespace Surgery_1.Data.ViewModels
     public class ImportViewModel
     {
         public ICollection<ImportSurgeryShiftViewModel> surgeryShifts;
-        public ICollection<ImportMedicalSupplyViewModel> medicalSupply;
     }
 
     public class AssignSurgeryEkip
