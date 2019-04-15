@@ -192,7 +192,7 @@ namespace Surgery_1.Controllers
         [HttpGet]
         public IActionResult GetAvailableRoomForDuration(int hour, int minute)
         {
-            var results = _surgeryService.GetAvailableRoom(hour, minute);
+            var results = _surgeryService.GetAvailableRoom(DateTime.Now, 0, hour, minute);
             return StatusCode(200, results);
         }
 
