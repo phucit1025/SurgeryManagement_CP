@@ -594,7 +594,7 @@ namespace Surgery_1.Services.Implementations
                 {
                     isEmergency = true;
                 }
-                if (!isEmergency)
+                if (!isEmergency || shift.Patient != null && shift.SurgeryCatalog != null)
                 {
                     results.Add(new SurgeryShiftViewModel()
                     {
@@ -602,6 +602,7 @@ namespace Surgery_1.Services.Implementations
                         SpecialtyName = shift.SurgeryCatalog.Specialty.Name,
                         //CatalogCode = shift.SurgeryCatalog.Code,
                         CatalogName = shift.SurgeryCatalog.Name,
+                        IsEmergency = isEmergency,
                         PriorityNumber = shift.PriorityNumber,
                         EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
                         EstimatedEndDateTime = shift.EstimatedEndDateTime.Value,
@@ -701,16 +702,19 @@ namespace Surgery_1.Services.Implementations
             var shift = _context.SurgeryShifts.Find(shiftId);
             if (shift != null)
             {
-                var UsedProcedure = "";
+                var usedProcedure = "";
                 bool isEmergency = false;
                 SurgeryShiftDetailViewModel result = null;
                 if (!shift.IsNormalSurgeryTime && shift.ProposedStartDateTime == null)
                 {
                     isEmergency = true;
                 }
-                if (isEmergency)
+                if (shift.Patient == null)
                 {
 
+                }
+                if (isEmergency && shift.SurgeryCatalog == null && shift.Patient == null)
+                {
                     result = new SurgeryShiftDetailViewModel()
                     {
                         Id = shift.Id,
@@ -720,7 +724,7 @@ namespace Surgery_1.Services.Implementations
                         ActualEndTime = shift.ActualEndDateTime,
                         //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
                         IsEmergency = isEmergency,
-                        Procedure = UsedProcedure,
+                        Procedure = usedProcedure,
                         StatusName = shift.Status.Name
                     };
                 }
