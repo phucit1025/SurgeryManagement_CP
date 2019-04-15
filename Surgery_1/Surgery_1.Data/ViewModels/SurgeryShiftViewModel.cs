@@ -180,5 +180,7 @@ namespace Surgery_1.Data.ViewModels
         //public List<string> SurgeonNames { get; set; }
         public int? EditYob { get; set; }
         public int? EditSurgeryId { get; set; }
+        public string SurgeryCode { get; set; }
+        public string SurgeryName { get; set; }
     }
 }

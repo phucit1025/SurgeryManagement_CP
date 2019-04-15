@@ -21,5 +21,6 @@ namespace Surgery_1.Services.Interfaces
         //update information emergency
         bool UpdateSurgeryProfile(EditSurgeryShiftViewModel editForm);
         EditSurgeryShiftViewModel LoadEditSurgeryProfile(int shitId);
+        ICollection<SelectedSurgeryCatalogViewModel> GetSurgeryCatalogOnQuery(string searchName);
     }
 }

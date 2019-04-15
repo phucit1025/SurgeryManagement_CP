@@ -46,6 +46,12 @@ namespace Surgery_1.Controllers
             return StatusCode(200, result);
         }
 
+        [HttpGet]
+        public IActionResult GetSurgeryCatalogOnQuery(string searchName)
+        {
+            var result = _surgeryShiftService.GetSurgeryCatalogOnQuery(searchName);
+            return Ok(result);
+        }
 
     }
 }

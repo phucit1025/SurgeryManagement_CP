@@ -329,18 +329,45 @@ namespace Surgery_1.Services.Implementations
         public EditSurgeryShiftViewModel LoadEditSurgeryProfile(int shiftId)
         {
             var result = _context.SurgeryShifts.Find(shiftId);
-
-            EditSurgeryShiftViewModel surgeryShift = new EditSurgeryShiftViewModel
+            var surgeryShift = new EditSurgeryShiftViewModel();
+            if (result != null)
             {
-                ShiftId = result.Id,
-                EditIdentityNumber = result.Patient.IdentityNumber,
-                EditGender = result.Patient.Gender,
-                EditPatientName = result.Patient.FullName,
-                EditYob = result.Patient.YearOfBirth,
-                EditSurgeryId = result.SurgeryCatalogId
-            };
+                if (result.Patient != null && result.SurgeryCatalog != null)
+                {
+                    surgeryShift = new EditSurgeryShiftViewModel
+                    {
+                        ShiftId = result.Id,
+                        EditIdentityNumber = result.Patient.IdentityNumber,
+                        EditGender = result.Patient.Gender,
+                        EditPatientName = result.Patient.FullName,
+                        EditYob = result.Patient.YearOfBirth,
+                        EditSurgeryId = result.SurgeryCatalogId,
+                        SurgeryCode = result.SurgeryCatalog.Code,
+                        SurgeryName = result.SurgeryCatalog.Name
+                    };
+                }
+                return surgeryShift;
+            }
+            return null;
+        }
 
-            return surgeryShift;
+        public ICollection<SelectedSurgeryCatalogViewModel> GetSurgeryCatalogOnQuery(string searchName)
+        {
+
+            var catalogs = _context.SurgeryCatalogs.Where(s => s.Name.Contains(searchName) || s.Code.Contains(searchName))
+                .Take(10).OrderBy(a => a.Code).ToList();
+            var results = new List<SelectedSurgeryCatalogViewModel>();
+
+            foreach (var catalog in catalogs)
+            {
+                results.Add(new SelectedSurgeryCatalogViewModel()
+                {
+                    Id = catalog.Id,
+                    Code = catalog.Code,
+                    Name = catalog.Name
+                });
+            }
+            return results;
         }
 
     }
