@@ -88,7 +88,7 @@ namespace Surgery_1.Data.ViewModels
         public DateTime EstimatedStartDateTime { get; set; }
         public DateTime EstimatedEndDateTime { get; set; }
         public string ChangeLogDescription { get; set; }
-        public int RoomId { get; set; }
+        public int SlotRoomId { get; set; }
     }
 
     public class ShiftChangeViewModel

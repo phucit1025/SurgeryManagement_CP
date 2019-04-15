@@ -157,25 +157,28 @@ namespace Surgery_1.Services.Implementations
 
         public bool CreateHealthCareReport(HealthCareReportViewModel healthCareReportViewModel)
         {
-            var guid = _httpContextAccessor.HttpContext.User.GetGuid();
-            var nurseId = _appDbContext.UserInfo.Where(a => a.GuId == guid).FirstOrDefault().Id;
-            var tr = _appDbContext.TreatmentReports.LastOrDefault(a => a.SurgeryShiftId == healthCareReportViewModel.SurgeryShiftId);
-            tr.IsUsed = true;
-            var healthCareReport = new HealthCareReport()
-            {
-                CareReason = healthCareReportViewModel.VisitReason,
-                EventContent = healthCareReportViewModel.EventContent,
-                CareContent = healthCareReportViewModel.CareContent,
-                WoundCondition = healthCareReportViewModel.WoundCondition,
-                WoundConditionDescription = healthCareReportViewModel.WoundConditionDescription,
-                IsDeleted = false,
-                SurgeryShiftId = healthCareReportViewModel.SurgeryShiftId,
-                TreatmentReportId = tr.Id,
-                NurseId = nurseId,
-            };
             try
             {
-                _appDbContext.TreatmentReports.Update(tr);
+                var guid = _httpContextAccessor.HttpContext.User.GetGuid();
+                var nurseId = _appDbContext.UserInfo.Where(a => a.GuId == guid).FirstOrDefault().Id;
+                var healthCareReport = new HealthCareReport()
+                {
+                    CareReason = healthCareReportViewModel.VisitReason,
+                    EventContent = healthCareReportViewModel.EventContent,
+                    CareContent = healthCareReportViewModel.CareContent,
+                    WoundCondition = healthCareReportViewModel.WoundCondition,
+                    WoundConditionDescription = healthCareReportViewModel.WoundConditionDescription,
+                    IsDeleted = false,
+                    SurgeryShiftId = healthCareReportViewModel.SurgeryShiftId,
+                    NurseId = nurseId,
+                };
+                var tr = _appDbContext.TreatmentReports.LastOrDefault(a => a.SurgeryShiftId == healthCareReportViewModel.SurgeryShiftId);
+                if (tr != null)
+                {
+                    tr.IsUsed = true;
+                    healthCareReport.TreatmentReportId = tr.Id;
+                    _appDbContext.TreatmentReports.Update(tr);
+                }
                 _appDbContext.Add(healthCareReport);
                 _appDbContext.SaveChanges();
                 return true;
