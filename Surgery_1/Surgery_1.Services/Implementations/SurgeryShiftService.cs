@@ -112,7 +112,7 @@ namespace Surgery_1.Services.Implementations
                     shift.ProposedEndDateTime = s.ProposedEndDateTime;
                     if (shift.ProposedStartDateTime != null && shift.ProposedEndDateTime != null)
                     {
-                        shift.ExpectedSurgeryDuration = (float)(shift.ProposedEndDateTime.Value - shift.ProposedEndDateTime.Value).TotalHours;
+                        shift.ExpectedSurgeryDuration = (float)(shift.ProposedEndDateTime.Value - shift.ProposedStartDateTime.Value).TotalHours;
                     }
                     else
                     {
