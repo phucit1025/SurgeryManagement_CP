@@ -44,7 +44,7 @@ namespace Surgery_1.Services.Implementations
             if (previousShift != null)
             {
                 var statusName = previousShift.Status.Name;
-                if (!statusName.Equals(ConstantVariable.PRE_STATUS))
+                if (!statusName.Equals(ConstantVariable.PRE_STATUS) && !statusName.Equals(ConstantVariable.INTRA_STATUS))
                 {
                     return true;// cho hiện
                 }
@@ -588,7 +588,7 @@ namespace Surgery_1.Services.Implementations
             foreach (var shift in shiftSlotRooms.SurgeryShifts
                 .Where(s => (s.EstimatedStartDateTime != null && s.EstimatedEndDateTime != null)
                 && (UtilitiesDate.ConvertDateToNumber(s.EstimatedStartDateTime.Value) == dateNumber)) //mm/dd/YYYY
-                .OrderBy(s => s.EstimatedStartDateTime))
+                .OrderBy(s => s.ActualStartDateTime).OrderBy(s => s.EstimatedStartDateTime))
             {
                 if (!shift.IsNormalSurgeryTime && shift.ProposedStartDateTime == null)
                 {
