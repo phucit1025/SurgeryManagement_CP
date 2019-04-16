@@ -44,7 +44,7 @@ namespace Surgery_1.Services.Implementations
             if (previousShift != null)
             {
                 var statusName = previousShift.Status.Name;
-                if (!statusName.Equals(ConstantVariable.PRE_STATUS))
+                if (!statusName.Equals(ConstantVariable.PRE_STATUS) && !statusName.Equals(ConstantVariable.INTRA_STATUS))
                 {
                     return true;// cho hiện
                 }
@@ -271,8 +271,8 @@ namespace Surgery_1.Services.Implementations
                 var result = slot.SurgeryShifts
                     .Where(s => UtilitiesDate.ConvertDateToNumber(s.ScheduleDate.Value) == dateNumber
                     && s.IsAvailableMedicalSupplies == true
-                    && s.EstimatedEndDateTime.Value.TimeOfDay >= startAMWorkingHour
-                    && s.EstimatedStartDateTime.Value.TimeOfDay <= endPMWorkingHour)
+                    && s.EstimatedEndDateTime.Value.TimeOfDay > startAMWorkingHour
+                    && s.EstimatedStartDateTime.Value.TimeOfDay < endPMWorkingHour)
                     .OrderBy(s => s.EstimatedStartDateTime).ToList();
                 if (result.Count > 0)
                 {
@@ -446,8 +446,8 @@ namespace Surgery_1.Services.Implementations
                 try
                 {
                     var insertedShift = new SurgeryShift();
-                    insertedShift.EstimatedStartDateTime = emerShift.StartTime;
-                    insertedShift.EstimatedEndDateTime = emerShift.EndTime;
+                    insertedShift.EstimatedStartDateTime = UtilitiesDate.GetDateTimeNoSecond(emerShift.StartTime);
+                    insertedShift.EstimatedEndDateTime = UtilitiesDate.GetDateTimeNoSecond(emerShift.EndTime);
                     insertedShift.ExpectedSurgeryDuration = (float)(emerShift.EndTime - emerShift.StartTime).TotalHours;
                     insertedShift.ScheduleDate = emerShift.StartTime.Date;
                     insertedShift.ConfirmDate = DateTime.Now;
@@ -588,7 +588,7 @@ namespace Surgery_1.Services.Implementations
             foreach (var shift in shiftSlotRooms.SurgeryShifts
                 .Where(s => (s.EstimatedStartDateTime != null && s.EstimatedEndDateTime != null)
                 && (UtilitiesDate.ConvertDateToNumber(s.EstimatedStartDateTime.Value) == dateNumber)) //mm/dd/YYYY
-                .OrderBy(s => s.EstimatedStartDateTime))
+                .OrderBy(s => s.ActualStartDateTime).OrderBy(s => s.EstimatedStartDateTime))
             {
                 if (!shift.IsNormalSurgeryTime && shift.ProposedStartDateTime == null)
                 {
@@ -734,6 +734,7 @@ namespace Surgery_1.Services.Implementations
                     {
                         Id = shift.Id,
                         PatientName = shift.Patient.FullName,
+                        IsEmergency = isEmergency,
                         Gender = shift.Patient.Gender == 0 ? "Nữ" : "Nam",
                         Age = DateTime.Now.Year - shift.Patient.YearOfBirth,
                         Specialty = shift.SurgeryCatalog.Specialty.Name,

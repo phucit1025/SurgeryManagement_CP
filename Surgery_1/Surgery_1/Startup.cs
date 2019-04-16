@@ -159,31 +159,31 @@ namespace Surgery_1
 
 
             #region Init Users
-            //InitIdentities(serviceProvider, "MedicalSupplier", "supplier1", "zxc@123456");
-            //InitIdentities(serviceProvider, "HospitalStaff", "hospital_staff1", "zxc@123456");
-            //InitIdentities(serviceProvider, "ChiefNurse", "cnurse1", "zxc@123456");
-            //InitIdentities(serviceProvider, "Nurse", "nurse1", "zxc@123456");
-            //InitIdentities(serviceProvider, "Nurse", "nurse2", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical1", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical2", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical3", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical4", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical5", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical6", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical7", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical8", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical9", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical10", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical11", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical12", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical13", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical14", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical15", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical16", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical17", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical18", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical19", "zxc@123456");
-            //InitIdentities(serviceProvider, "Technical", "technical20", "zxc@123456");
+            InitIdentities(serviceProvider, "MedicalSupplier", "supplier1", "zxc@123456");
+            InitIdentities(serviceProvider, "HospitalStaff", "hospital_staff1", "zxc@123456");
+            InitIdentities(serviceProvider, "ChiefNurse", "cnurse1", "zxc@123456");
+            InitIdentities(serviceProvider, "Nurse", "nurse1", "zxc@123456");
+            InitIdentities(serviceProvider, "Nurse", "nurse2", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical1", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical2", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical3", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical4", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical5", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical6", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical7", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical8", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical9", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical10", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical11", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical12", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical13", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical14", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical15", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical16", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical17", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical18", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical19", "zxc@123456");
+            InitIdentities(serviceProvider, "Technical", "technical20", "zxc@123456");
             #endregion
 
         }

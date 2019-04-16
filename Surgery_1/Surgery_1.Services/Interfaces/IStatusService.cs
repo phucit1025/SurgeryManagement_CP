@@ -7,7 +7,7 @@ namespace Surgery_1.Services.Interfaces
     public interface IStatusService
     {
         //After make schedule
-        bool SetPostoperativeStatus(int shiftId, string roomPost, string postBed, string actualEndDateTime, int roomType);
+        bool SetPostoperativeStatus(int shiftId, string roomPost, string postBed, string actualEndDateTime, int statusId);
         bool SetIntraoperativeStatus(int shiftId, string actualStartDateTime);
         bool SetFinishedStatus(int shiftId);
         string GetStatusByShiftId(int shiftId);

@@ -27,13 +27,6 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateMedicalSupply([FromBody]ICollection<ShiftMedicalSupplyViewModel> medicalSupply)
-        {
-            var result = _surgeryShiftService.UpdateMedicalSupply(medicalSupply);
-            return StatusCode(200, result);
-        }
-
-        [HttpPost]
         public IActionResult UpdateSurgeryProfile([FromBody]EditSurgeryShiftViewModel editForm)
         {
             var result = _surgeryShiftService.UpdateSurgeryProfile(editForm);
@@ -46,6 +39,12 @@ namespace Surgery_1.Controllers
             return StatusCode(200, result);
         }
 
+        [HttpGet]
+        public IActionResult GetSurgeryCatalogOnQuery(string searchName)
+        {
+            var result = _surgeryShiftService.GetSurgeryCatalogOnQuery(searchName);
+            return Ok(result);
+        }
 
     }
 }
