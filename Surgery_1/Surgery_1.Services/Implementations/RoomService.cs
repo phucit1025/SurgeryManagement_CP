@@ -19,7 +19,7 @@ namespace Surgery_1.Services.Implementations
 
         public RoomViewModel GetRoom(int id)
         {
-            var room = _context.SurgeryRooms.Find(id);
+            var room = _context.SlotRooms.Find(id);
             return new RoomViewModel()
             {
                 Id = id,
@@ -67,7 +67,7 @@ namespace Surgery_1.Services.Implementations
                     totalIntra += tmpSurgeryShifts.Where(s => s.Status.Name == ConstantVariable.INTRA_STATUS).Count();
                     totalPost += tmpSurgeryShifts.Where(s => s.Status.Name != ConstantVariable.PRE_STATUS && s.Status.Name != ConstantVariable.INTRA_STATUS).Count();
                 }
-                
+
             }
             int totalShift = totalPre + totalIntra + totalPost;
             ReportRoomViewModel reportRoom = new ReportRoomViewModel
