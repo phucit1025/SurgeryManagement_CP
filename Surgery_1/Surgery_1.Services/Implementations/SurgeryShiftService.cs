@@ -209,6 +209,12 @@ namespace Surgery_1.Services.Implementations
         public ICollection<EkipMemberViewModel> GetEkipMember(int surgeryShiftId)
         {
             List<EkipMemberViewModel> list = new List<EkipMemberViewModel>();
+            //Load Treatment Doctor
+            var treatmentId = _context.Doctors.Find(_context.SurgeryShifts.Find(surgeryShiftId).TreatmentDoctorId).Id;
+            EkipMemberViewModel doctor = new EkipMemberViewModel();
+            doctor.Name = _context.Doctors.Find(treatmentId).FullName;
+            doctor.WorkJob = "Treatment Doctor";
+            list.Add(doctor);
             //Load Surgeons
             var surgeons = _context.SurgeryShiftSurgeons.Where(a => a.SurgeryShiftId == surgeryShiftId);
             foreach (var surgeon in surgeons)
