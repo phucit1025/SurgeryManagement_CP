@@ -26,6 +26,7 @@ namespace Surgery_1.Services.Implementations
             this._userManager = userManager;
         }
 
+        #region Technical Staffs
         private async Task<ICollection<TechnicalStaffInfoViewModel>> GetAssignableTechnicalStaff(DateTime? startTime, DateTime? endTime)
         //startTime, endTime is the time of surgery shift wanting to assign a technical
         {
@@ -82,6 +83,7 @@ namespace Surgery_1.Services.Implementations
             }
             catch (Exception) { return false; }
         }
+        #endregion
 
         public bool ImportSurgeryShift(ICollection<ImportSurgeryShiftViewModel> surgeryShifts)
         {
@@ -125,8 +127,15 @@ namespace Surgery_1.Services.Implementations
                     }
                     _context.SurgeryShifts.Add(shift);
                     _context.SaveChanges();
-
                     var shiftId = shift.Id;
+
+                    //Add surgeon to Surgeryshift
+                    var surgeon = new SurgeryShiftSurgeon();
+                    surgeon.Id = s.DoctorId;
+                    surgeon.SurgeryShiftId = shiftId;
+                    _context.SurgeryShiftSurgeons.Add(surgeon);
+                    _context.SaveChanges();
+
                     foreach (var tmp in s.DetailMedical)
                     {
                         var shiftSupply = new SurgeryShiftMedicalSupply();
@@ -236,6 +245,72 @@ namespace Surgery_1.Services.Implementations
             }
             return list;
         }
+
+        #region Surgeons
+
+        public ICollection<SurgeonsViewModel> GetAvailableSurgeons(int surgeryShiftId)
+        {
+            var result = new List<SurgeonsViewModel>();
+            DateTime? startTime = _context.SurgeryShifts.Find(surgeryShiftId).EstimatedStartDateTime;
+            DateTime? endTime = _context.SurgeryShifts.Find(surgeryShiftId).EstimatedEndDateTime;
+
+            var sameTimeShifts = _context.SurgeryShifts.Where(a => a.IsDeleted == false && a.Status.Name == "Preoperative" &&
+                (startTime < a.EstimatedStartDateTime || startTime < a.EstimatedEndDateTime
+                || a.EstimatedStartDateTime < endTime || a.EstimatedEndDateTime < endTime)).ToList();// Get all shifts that have the surgery time invole with the current shift.
+
+            var surgeons = _context.Doctors.Where(a => a.IsDeleted == false).ToList();
+            foreach (var surgeon in surgeons)
+            {
+                foreach (var stShift in sameTimeShifts)
+                {
+                    //If a doctor is assigned to a same time - shift, that doctor cannot be the surgeon.
+                    var time = _context.SurgeryShiftSurgeons.Where(a => !a.IsDeleted && a.SurgeonId == surgeon.Id && a.SurgeryShiftId == stShift.Id).Count();
+                    if (time > 0) continue;
+                    var availableSergeon = new SurgeonsViewModel();
+                    availableSergeon.Id = surgeon.Id;
+                    availableSergeon.Name = surgeon.FullName;
+                    result.Add(availableSergeon);
+                }
+            }
+            return result;
+        }
+
+        public bool updateSurgeon(UpdateSurgeonsViewModel updatedSurgeon)
+        {
+            try
+            {  /*
+                 * If updatedSurgeon.oldSurgeonId == 0: add new surgeon to the surgery shift
+                 * If updatedSurgeon.oldSurgeonId != 0: change surgeon from oldSurgeon to updateSurgeon 
+                 * 
+                 * If updatedSurgeon.updatedSurgeonId == 0: delete oldSurgeonId from the surgery shift
+                 * If updatedSurgeon.updatedSurgeonId != 0: Add surgeon to surgery shift
+                */
+                if(updatedSurgeon.oldSurgeonId != 0)
+                {
+                    _context.SurgeryShiftSurgeons.Where(a => a.IsDeleted == true && a.SurgeonId == updatedSurgeon.oldSurgeonId &&
+                        a.SurgeryShiftId == updatedSurgeon.surgeryShiftId).FirstOrDefault().IsDeleted = true;
+                    _context.SaveChanges();
+                }
+                if (updatedSurgeon.updatedSurgeonId != 0)
+                {
+                    //If the surgeon is assigned and removed from the shift.
+                    var existedSurgeon = _context.SurgeryShiftSurgeons.Where(a => a.IsDeleted == true && a.SurgeonId == updatedSurgeon.updatedSurgeonId &&
+                        a.SurgeryShiftId == updatedSurgeon.surgeryShiftId).FirstOrDefault();
+                    if (existedSurgeon == null)
+                    {
+                        var newSurgeon = new SurgeryShiftSurgeon();
+                        newSurgeon.SurgeonId = updatedSurgeon.updatedSurgeonId;
+                        newSurgeon.SurgeryShiftId = updatedSurgeon.surgeryShiftId;
+                        _context.SurgeryShiftSurgeons.Add(newSurgeon);
+                    }
+                    else { existedSurgeon.IsDeleted = false; }
+                    _context.SaveChanges();
+                }
+                return true;
+            }
+            catch (Exception) { return false; }
+        }
+        #endregion
 
         //Update emergency
         public bool UpdateSurgeryProfile(EditSurgeryShiftViewModel editForm)
