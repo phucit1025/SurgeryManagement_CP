@@ -133,13 +133,13 @@ namespace Surgery_1.Services.Implementations
                             {
 
                                 var endTmpTime = timeConfirm + duration;
-                                if (endTmpTime <= endAMWorkingHour || timeConfirm >= startPMWorkingHour)
+                                if (endTmpTime <= endAMWorkingHour || timeConfirm >= startPMWorkingHour) //buổi sáng/ chiều
                                 {
                                     DateTime startEstimatedTime = shift.ScheduleDate + timeConfirm;
                                     DateTime endEstimatedTime = startEstimatedTime + duration;
                                     InsertDateTimeToSurgeryShift(shift.SurgeryShiftId, startEstimatedTime, endEstimatedTime, roomEmptyId);
                                 }
-                                if ((timeConfirm >= endAMWorkingHour && timeConfirm < startPMWorkingHour)
+                                if ((timeConfirm >= endAMWorkingHour && timeConfirm < startPMWorkingHour) //buổi trưa trở đi
                                     || (endTmpTime > endAMWorkingHour && endTmpTime <= startPMWorkingHour))
                                 {
                                     DateTime startEstimatedTime = shift.ScheduleDate + startPMWorkingHour;
@@ -603,6 +603,7 @@ namespace Surgery_1.Services.Implementations
                         //CatalogCode = shift.SurgeryCatalog.Code,
                         CatalogName = shift.SurgeryCatalog.Name,
                         IsEmergency = isEmergency,
+
                         PriorityNumber = shift.PriorityNumber,
                         EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
                         EstimatedEndDateTime = shift.EstimatedEndDateTime.Value,
