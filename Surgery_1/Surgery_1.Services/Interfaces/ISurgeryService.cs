@@ -12,12 +12,13 @@ namespace Surgery_1.Services.Interfaces
         List<AvailableRoomViewModel> GetAvailableSlotRoom(int dateNumber, int surgeryCatalogId);
         ICollection<SurgeryRoomViewModel> GetSlotRooms();
         ICollection<SurgeryRoomViewModel> GetSurgeryRooms();
-        ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int surgeryRoomId, int dateNumber);
+        ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int surgeryRoomId, int dateNumber, int techincalStaffId = 0);
 
         bool MakeScheduleList();
         bool AddEmergencyShift(EmerSurgeryShift emerShift);
         bool RefreshSurgeryShift(int shiftId);
         bool CheckStatusPreviousSurgeryShift(int shiftId);
+        bool CanViewShiftDetail(int shiftId, string techGuid = "");
 
 
         // Lấy những ca mổ cần lên lịch theo ngày

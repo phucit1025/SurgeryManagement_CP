@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Surgery_1.Data.ViewModels;
+using Surgery_1.Services.Extensions;
 using Surgery_1.Services.Interfaces;
 
 namespace Surgery_1.Controllers
@@ -144,6 +145,14 @@ namespace Surgery_1.Controllers
             var result = _surgeryService.GetSurgeryShiftsByRoomAndDate(slotRoomId, dayNumber);
             return StatusCode(200, result);
         }
+
+        [HttpGet]
+        public IActionResult GetSurgeryShiftsByRoomAndDateOfTechnical(int slotRoomId, int dayNumber, int technicalStaffId)
+        {
+            var result = _surgeryService.GetSurgeryShiftsByRoomAndDate(slotRoomId, dayNumber, technicalStaffId);
+            return StatusCode(200, result);
+        }
+
         [HttpGet]
         public IActionResult GetSurgeryRooms()
         {
@@ -157,6 +166,15 @@ namespace Surgery_1.Controllers
             var result = _surgeryService.GetShiftDetail(shiftId);
 
             return StatusCode(200, result);
+        }
+
+        [HttpGet]
+        public IActionResult CanViewShiftDetail(int shiftId)
+        {
+            var techGuid = User.GetGuid();
+            var result = _surgeryService.CanViewShiftDetail(shiftId, techGuid);
+            if (result) return StatusCode(200);
+            return StatusCode(400);
         }
         #endregion
 
