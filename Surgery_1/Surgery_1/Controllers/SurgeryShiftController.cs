@@ -46,5 +46,19 @@ namespace Surgery_1.Controllers
             return Ok(result);
         }
 
+        [HttpGet]
+        public IActionResult GetAvailableSurgeons(int surgeryShiftId)
+        {
+            var result = _surgeryShiftService.GetAvailableSurgeons(surgeryShiftId);
+            return StatusCode(200, result);
+        }
+
+        [HttpPost]
+        public IActionResult updateSurgeon([FromBody]UpdateSurgeonsViewModel updatedSurgeon)
+        {
+            var result = _surgeryShiftService.updateSurgeon(updatedSurgeon);
+            return StatusCode(200, result);
+        }
+
     }
 }
