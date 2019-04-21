@@ -16,7 +16,9 @@ namespace Surgery_1.Services.Interfaces
         bool AssignTechnicalStaff();
 
         ICollection<SurgeonsViewModel> GetAvailableSurgeons(int surgeryShiftId);
-        bool updateSurgeon(UpdateSurgeonsViewModel updatedSurgeon);
+        bool UpdateSurgeon(UpdateSurgeonsViewModel updatedSurgeon);
+        bool AddSurgeon(AddSurgeonToShiftViewModel model);
+        bool RemoveSurgeon(RemoveSurgeonFromShiftViewModel model);
 
         //update information emergency
         bool UpdateSurgeryProfile(EditSurgeryShiftViewModel editForm);
