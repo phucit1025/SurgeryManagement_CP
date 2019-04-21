@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Castle.Core.Internal;
+using Microsoft.EntityFrameworkCore;
 using Surgery_1.Data.Context;
 using Surgery_1.Data.Entities;
 using Surgery_1.Data.ViewModels;
@@ -97,6 +98,21 @@ namespace Surgery_1.Services.Implementations
                 }
             }
             return true;
+        }
+
+        public bool CanViewShiftDetail(int shiftId, string techGuid = "")
+        {
+            if (techGuid.IsNullOrEmpty())
+            {
+                return true;
+            }
+            else
+            {
+                var techId = _context.UserInfo.FirstOrDefault(ui => ui.GuId.Equals(techGuid)).Id;
+                var shift = _context.SurgeryShifts.Find(shiftId);
+                if (shift.TechId == techId) return true;
+                return false;
+            }
         }
 
         #region Make Schedule
@@ -580,15 +596,30 @@ namespace Surgery_1.Services.Implementations
         }
 
         // TODO: Xem lịch theo ngày
-        public ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int slotRoomId, int dateNumber)
+        public ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int slotRoomId, int dateNumber, int techincalStaffId = 0)
         {
             var results = new List<SurgeryShiftViewModel>();
             var shiftSlotRooms = _context.SlotRooms.Find(slotRoomId);
             var isEmergency = false;
-            foreach (var shift in shiftSlotRooms.SurgeryShifts
+            var shifts = new List<SurgeryShift>();
+            if (techincalStaffId == 0)
+            {
+                shifts = shiftSlotRooms.SurgeryShifts
                 .Where(s => (s.EstimatedStartDateTime != null && s.EstimatedEndDateTime != null)
                 && (UtilitiesDate.ConvertDateToNumber(s.EstimatedStartDateTime.Value) == dateNumber)) //mm/dd/YYYY
-                .OrderBy(s => s.ActualStartDateTime).OrderBy(s => s.EstimatedStartDateTime))
+                .OrderBy(s => s.ActualStartDateTime).OrderBy(s => s.EstimatedStartDateTime).ToList();
+            }
+            else
+            {
+                shifts = shiftSlotRooms.SurgeryShifts
+                .Where(s => (s.EstimatedStartDateTime != null && s.EstimatedEndDateTime != null)
+                && (UtilitiesDate.ConvertDateToNumber(s.EstimatedStartDateTime.Value) == dateNumber)
+                && s.TechId.HasValue
+                && s.TechId.Value == techincalStaffId) //mm/dd/YYYY
+                .OrderBy(s => s.ActualStartDateTime).OrderBy(s => s.EstimatedStartDateTime).ToList();
+            }
+
+            foreach (var shift in shifts)
             {
                 if (!shift.IsNormalSurgeryTime && shift.ProposedStartDateTime == null)
                 {
@@ -1764,6 +1795,8 @@ namespace Surgery_1.Services.Implementations
                 AssignEkipByDate(i);
             }
         }
+
+
 
         #endregion
 
