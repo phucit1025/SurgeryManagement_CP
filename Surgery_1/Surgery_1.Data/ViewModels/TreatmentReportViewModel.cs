@@ -9,6 +9,7 @@ namespace Surgery_1.Data.ViewModels
         public int Id { get; set; }
         public string DateCreated { get; set; }
         public string ProgressiveDisease { get; set; }
+        public string TreatmentRequirement { get; set; }
         public int ShiftId { get; set; }
         public bool IsUsed { get; set; }
         public ICollection<TreatmentReportDrugViewModel> TreatmentReportDrugs { get; set; }
@@ -25,12 +26,27 @@ namespace Surgery_1.Data.ViewModels
         public int AfternoonQuantity { get; set; }
         public int EveningQuantity { get; set; }
         public int NightQuantity { get; set; }
+        public string[] TimeString { get; set; }
+        public string[] StatusString { get; set; }
+        public string Route { get; set; }
         public string Unit { get; set; }
+        public bool IsUsed { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
     public class TreatmentMedication
     {
         public int time { get; set; }
         public ICollection<TreatmentReportDrugViewModel> drugs { get; set; }
+    }
+
+    public class TreatmentTimelineViewModel
+    {
+        public string Name { get; set; }
+        public string Unit { get; set; }
+        public string Route { get; set; }
+        public int Quantity { get; set; }
+        public int IsUsed { get; set; }
+        public int TreatmentDrugId { get; set; }
     }
 }
