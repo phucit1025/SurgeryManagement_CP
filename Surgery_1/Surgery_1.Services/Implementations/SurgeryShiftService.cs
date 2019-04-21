@@ -301,22 +301,6 @@ namespace Surgery_1.Services.Implementations
         {
             try
             {
-<<<<<<< HEAD
-                var surgeryShiftId = updatedSurgeon.surgeryShiftId;
-                var all = _context.SurgeryShiftSurgeons.Where(a => a.SurgeryShiftId == surgeryShiftId).ToList();
-                foreach (var tmp in all) { tmp.IsDeleted = true; }
-                foreach (var updatedId in updatedSurgeon.surgeonIds)
-                {
-                    var existed = _context.SurgeryShiftSurgeons.Where(a => a.SurgeryShiftId == surgeryShiftId && a.SurgeonId == updatedId).FirstOrDefault();
-                    if (existed != null) existed.IsDeleted = false;
-                    else
-                    {
-                        var surgeon = new SurgeryShiftSurgeon();
-                        surgeon.SurgeryShiftId = surgeryShiftId;
-                        surgeon.SurgeonId = updatedId;
-                    }
-                }
-=======
                 var surgeonsInShift = _context.SurgeryShiftSurgeons.Where(s => !s.IsDeleted && s.SurgeryShiftId == updatedSurgeon.SurgeryShiftId).ToList();
                 var surgeonMapping = surgeonsInShift.FirstOrDefault(m => m.SurgeonId == updatedSurgeon.OldSurgeonId);
                 surgeonMapping.SurgeonId = updatedSurgeon.UpdatedSurgeonId;
@@ -341,7 +325,6 @@ namespace Surgery_1.Services.Implementations
                     SurgeonId = model.SurgeonId
                 };
                 _context.Add(surgeonMapping);
->>>>>>> deac6e0931876be808b371add2d4645d13aece8e
                 _context.SaveChanges();
                 return true;
             }
