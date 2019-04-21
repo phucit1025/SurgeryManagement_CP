@@ -54,9 +54,9 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public IActionResult updateSurgeon([FromBody]UpdateSurgeonsViewModel updatedSurgeon)
+        public IActionResult UpdateSurgeon([FromBody]UpdateSurgeonsViewModel updatedSurgeon)
         {
-            var result = _surgeryShiftService.updateSurgeon(updatedSurgeon);
+            var result = _surgeryShiftService.UpdateSurgeon(updatedSurgeon);
             return StatusCode(200, result);
         }
 

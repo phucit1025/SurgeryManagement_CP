@@ -228,8 +228,7 @@ namespace Surgery_1.Services.Implementations
             techStaff.WorkJob = "Technical Staff";
             list.Add(techStaff);
             //Load Surgeons
-
-            var surgeons = _context.SurgeryShiftSurgeons.Where(a => a.SurgeryShiftId == surgeryShiftId);
+            var surgeons = _context.SurgeryShiftSurgeons.Where(a => a.IsDeleted == false && a.SurgeryShiftId == surgeryShiftId);
             foreach (var surgeon in surgeons)
             {
                 EkipMemberViewModel member = new EkipMemberViewModel();
@@ -279,37 +278,25 @@ namespace Surgery_1.Services.Implementations
             return result;
         }
 
-        public bool updateSurgeon(UpdateSurgeonsViewModel updatedSurgeon)
+        public bool UpdateSurgeon(UpdateSurgeonsViewModel updatedSurgeon)
         {
             try
-            {  /*
-                 * If updatedSurgeon.oldSurgeonId == 0: add new surgeon to the surgery shift
-                 * If updatedSurgeon.oldSurgeonId != 0: change surgeon from oldSurgeon to updateSurgeon 
-                 * 
-                 * If updatedSurgeon.updatedSurgeonId == 0: delete oldSurgeonId from the surgery shift
-                 * If updatedSurgeon.updatedSurgeonId != 0: Add surgeon to surgery shift
-                */
-                if(updatedSurgeon.oldSurgeonId != 0)
+            {
+                var surgeryShiftId = updatedSurgeon.surgeryShiftId;
+                var all = _context.SurgeryShiftSurgeons.Where(a => a.SurgeryShiftId == surgeryShiftId).ToList();
+                foreach (var tmp in all) { tmp.IsDeleted = true; }
+                foreach (var updatedId in updatedSurgeon.surgeonIds)
                 {
-                    _context.SurgeryShiftSurgeons.Where(a => a.IsDeleted == true && a.SurgeonId == updatedSurgeon.oldSurgeonId &&
-                        a.SurgeryShiftId == updatedSurgeon.surgeryShiftId).FirstOrDefault().IsDeleted = true;
-                    _context.SaveChanges();
-                }
-                if (updatedSurgeon.updatedSurgeonId != 0)
-                {
-                    //If the surgeon is assigned and removed from the shift.
-                    var existedSurgeon = _context.SurgeryShiftSurgeons.Where(a => a.IsDeleted == true && a.SurgeonId == updatedSurgeon.updatedSurgeonId &&
-                        a.SurgeryShiftId == updatedSurgeon.surgeryShiftId).FirstOrDefault();
-                    if (existedSurgeon == null)
+                    var existed = _context.SurgeryShiftSurgeons.Where(a => a.SurgeryShiftId == surgeryShiftId && a.SurgeonId == updatedId).FirstOrDefault();
+                    if (existed != null) existed.IsDeleted = false;
+                    else
                     {
-                        var newSurgeon = new SurgeryShiftSurgeon();
-                        newSurgeon.SurgeonId = updatedSurgeon.updatedSurgeonId;
-                        newSurgeon.SurgeryShiftId = updatedSurgeon.surgeryShiftId;
-                        _context.SurgeryShiftSurgeons.Add(newSurgeon);
+                        var surgeon = new SurgeryShiftSurgeon();
+                        surgeon.SurgeryShiftId = surgeryShiftId;
+                        surgeon.SurgeonId = updatedId;
                     }
-                    else { existedSurgeon.IsDeleted = false; }
-                    _context.SaveChanges();
                 }
+                _context.SaveChanges();
                 return true;
             }
             catch (Exception) { return false; }

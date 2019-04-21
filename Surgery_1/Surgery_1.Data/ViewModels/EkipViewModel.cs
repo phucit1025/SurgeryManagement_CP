@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+
 namespace Surgery_1.Data.ViewModels
 {
     public class EkipMemberViewModel
@@ -16,7 +19,6 @@ namespace Surgery_1.Data.ViewModels
     public class UpdateSurgeonsViewModel
     {
         public int surgeryShiftId { get; set; }
-        public int oldSurgeonId { get; set; }
-        public int updatedSurgeonId { get; set; }
+        public ICollection<int> surgeonIds { get; set; }
     }
 }
