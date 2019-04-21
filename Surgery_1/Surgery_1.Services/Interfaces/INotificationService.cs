@@ -12,5 +12,7 @@ namespace Surgery_1.Services.Interfaces
         bool SetIsReadNotification(int notiId);
 
         void AddNotificationForScheduling(List<DateTime> dateList);
+
+        string HandleSmsForSurgeon(List<SmsShiftViewModel> smsShiftDate);
     }
 }

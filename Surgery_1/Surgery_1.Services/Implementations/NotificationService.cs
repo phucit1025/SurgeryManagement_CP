@@ -77,5 +77,31 @@ namespace Surgery_1.Services.Implementations
             _context.Notifications.Find(notiId).IsRead = true;
             return _context.SaveChanges() > 0 ? true : false;
         }
+
+
+
+        public string HandleSmsForSurgeon(List<SmsShiftViewModel> smsShiftDate)
+        {
+            var sortedShift = smsShiftDate.OrderBy(s => s.EstimatedStartDateTime.Date);
+            var result = sortedShift.GroupBy(s => s.EstimatedStartDateTime.Date).ToList();
+            String content = "eBSMS provides surgery schedule for you: \n";
+
+            foreach (var item in result)
+            {
+                content += $"{UtilitiesDate.FormatDateShow(item.First().EstimatedStartDateTime)}:" + "\n";
+                foreach (var shift in sortedShift)
+                {
+                    if (shift.EstimatedStartDateTime.Date == item.First().EstimatedStartDateTime.Date)
+                    {
+                        var nameSlotRoom = _context.SlotRooms.Find(shift.SlotRoomId).Name;
+                        content += $"- Shift No {shift.Id} start at: {UtilitiesDate.GetTimeFromDate(shift.EstimatedStartDateTime)} - {UtilitiesDate.GetTimeFromDate(shift.EstimatedStartDateTime)} in room {nameSlotRoom} \n";
+                    }
+                }
+            }
+            SpeedSMS speedSMS = new SpeedSMS();
+            String[] phoneList = new String[] { "0326622807"}; //"0764644363"
+            var resultSms = speedSMS.SendSms(phoneList , content);
+            return resultSms;
+        }
     }
 }

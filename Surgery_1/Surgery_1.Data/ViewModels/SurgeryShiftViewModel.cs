@@ -183,4 +183,12 @@ namespace Surgery_1.Data.ViewModels
         public string SurgeryCode { get; set; }
         public string SurgeryName { get; set; }
     }
+
+    public class SmsShiftViewModel
+    {
+        public int Id { get; set; }
+        public DateTime EstimatedStartDateTime { get; set; }
+        public DateTime EstimatedEndDateTime { get; set; }
+        public int SlotRoomId { get; set; }
+    }
 }
