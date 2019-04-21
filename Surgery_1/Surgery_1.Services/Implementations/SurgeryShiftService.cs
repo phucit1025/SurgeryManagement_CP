@@ -268,23 +268,35 @@ namespace Surgery_1.Services.Implementations
                 var affectedSurgeons = new List<Doctor>();
                 foreach (var affectedShift in affectedShifts)
                 {
-                    affectedSurgeons.AddRange(affectedShift.SurgeryShiftSurgeons.Where(s => !s.IsDeleted).Select(s => s.Surgeon).ToList());
+                    var stemp = affectedShift.SurgeryShiftSurgeons.Where(s => !s.IsDeleted).Select(s => s.Surgeon).ToList();
+                    affectedSurgeons.AddRange(stemp);
                 }
                 affectedSurgeons = affectedSurgeons.DistinctBy(s => s.Id).ToList();
-                var availableSurgeons = surgeons.ExceptBy(affectedSurgeons, a => (a.Id, affectedSurgeons.FirstOrDefault().Id)).ToList();
-                if (availableSurgeons.Any())
+                if (affectedSurgeons.Any())
                 {
-                    return availableSurgeons.Select(c => new SurgeonsViewModel()
+                    var availableSurgeons = surgeons.ExceptBy(affectedSurgeons, a => (a.Id, affectedSurgeons.FirstOrDefault().Id)).ToList();
+
+                    if (availableSurgeons.Any())
+                    {
+                        return availableSurgeons.Select(c => new SurgeonsViewModel()
+                        {
+                            Id = c.Id,
+                            Name = c.FullName
+                        }).ToList();
+                    }
+                    else
+                    {
+                        return new List<SurgeonsViewModel>();
+                    }
+                }
+                else
+                {
+                    return surgeons.Select(c => new SurgeonsViewModel()
                     {
                         Id = c.Id,
                         Name = c.FullName
                     }).ToList();
                 }
-                else
-                {
-                    return new List<SurgeonsViewModel>();
-                }
-
             }
             else
             {
