@@ -147,7 +147,7 @@ namespace Surgery_1.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetSurgeryShiftsByRoomAndDateOfTechnical(int slotRoomId, int dayNumber, int technicalStaffId)
+        public IActionResult GetSurgeryShiftsByRoomAndDateOfTechnical(int slotRoomId, int dayNumber, int technicalStaffId = 0)
         {
             var result = _surgeryService.GetSurgeryShiftsByRoomAndDate(slotRoomId, dayNumber, technicalStaffId);
             return StatusCode(200, result);
