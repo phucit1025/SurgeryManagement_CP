@@ -131,7 +131,7 @@ namespace Surgery_1.Services.Implementations
 
                     //Add surgeon to Surgeryshift
                     var surgeon = new SurgeryShiftSurgeon();
-                    surgeon.Id = s.DoctorId;
+                    surgeon.SurgeonId = s.DoctorId;
                     surgeon.SurgeryShiftId = shiftId;
                     _context.SurgeryShiftSurgeons.Add(surgeon);
                     _context.SaveChanges();
