@@ -98,9 +98,9 @@ namespace Surgery_1.Services.Implementations
                     }
                 }
             }
-            SpeedSMS speedSMS = new SpeedSMS();
-            String[] phoneList = new String[] { "0326622807"}; //"0764644363"
-            var resultSms = speedSMS.SendSms(phoneList , content);
+            var smsSender = new SpeedSMS();
+            string[] phoneList = { "0326622807" }; //"0764644363"
+            var resultSms = smsSender.SendSms(phoneList , "Test choi");
             return resultSms;
         }
     }
