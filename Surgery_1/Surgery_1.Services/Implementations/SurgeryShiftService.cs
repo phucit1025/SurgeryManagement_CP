@@ -94,7 +94,7 @@ namespace Surgery_1.Services.Implementations
                     var shift = new SurgeryShift();
                     shift.IsAvailableMedicalSupplies = false;
                     shift.StatusId = _context.Statuses.Where(x => x.Name.Equals(ConstantVariable.PRE_STATUS)).FirstOrDefault().Id;
-                    shift.PriorityNumber = s.Priority;
+                    shift.PriorityNumber = s.PriorityNumber;
                     var patient = _context.Patients.Where(p => p.IdentityNumber == s.PatientID).FirstOrDefault();
                     if (patient == null)
                     {
@@ -118,7 +118,7 @@ namespace Surgery_1.Services.Implementations
                     }
                     else
                     {
-                        shift.ExpectedSurgeryDuration = s.ExpectedSurgeryDuration;
+                        shift.ExpectedSurgeryDuration = s.ExpectedDuration;
                     }
                     shift.TreatmentDoctorId = s.DoctorId;
                     if (s.ProposedStartDateTime != null && s.ProposedEndDateTime != null)
@@ -131,7 +131,7 @@ namespace Surgery_1.Services.Implementations
 
                     //Add surgeon to Surgeryshift
                     var surgeon = new SurgeryShiftSurgeon();
-                    surgeon.Id = s.DoctorId;
+                    surgeon.SurgeonId = s.DoctorId;
                     surgeon.SurgeryShiftId = shiftId;
                     _context.SurgeryShiftSurgeons.Add(surgeon);
                     _context.SaveChanges();
@@ -157,7 +157,10 @@ namespace Surgery_1.Services.Implementations
                 _context.SaveChanges();
                 return true;
             }
-            catch (Exception) { return false; }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public bool AddMedicalSupply(ShiftMedicalSuppliesViewModel medicalSupply)
@@ -219,12 +222,13 @@ namespace Surgery_1.Services.Implementations
         {
             List<EkipMemberViewModel> list = new List<EkipMemberViewModel>();
             //Load Treatment Doctor
-            var treatmentId = _context.Doctors.Find(_context.SurgeryShifts.Find(surgeryShiftId).TreatmentDoctorId).Id;
-            EkipMemberViewModel doctor = new EkipMemberViewModel();
-            doctor.Name = _context.Doctors.Find(treatmentId).FullName;
-            doctor.WorkJob = "Treatment Doctor";
-            list.Add(doctor);
+            var techName = _context.SurgeryShifts.Find(surgeryShiftId).TechnicalStaff.FullName;
+            EkipMemberViewModel techStaff = new EkipMemberViewModel();
+            techStaff.Name = techName;
+            techStaff.WorkJob = "Technical Staff";
+            list.Add(techStaff);
             //Load Surgeons
+
             var surgeons = _context.SurgeryShiftSurgeons.Where(a => a.SurgeryShiftId == surgeryShiftId);
             foreach (var surgeon in surgeons)
             {

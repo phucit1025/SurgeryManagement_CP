@@ -754,7 +754,7 @@ namespace Surgery_1.Services.Implementations
                         EndTime = shift.EstimatedEndDateTime,
                         ActualStartTime = shift.ActualStartDateTime,
                         ActualEndTime = shift.ActualEndDateTime,
-                        //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
+                        treatmentDoctorName = shift.TreatmentDoctor.FullName,
                         IsEmergency = isEmergency,
                         Procedure = usedProcedure,
                         StatusName = shift.Status.Name
