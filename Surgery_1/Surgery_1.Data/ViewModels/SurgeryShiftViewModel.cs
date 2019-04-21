@@ -19,6 +19,7 @@ namespace Surgery_1.Data.ViewModels
         public DateTime? ActualStartDateTime { get; set; }
         public DateTime? ActualEndDateTime { get; set; }
         public string StatusName { get; set; }
+        public bool IsEmergency { get; set; }
     }
 
 
@@ -35,6 +36,8 @@ namespace Surgery_1.Data.ViewModels
         public DateTime? EndTime { get; set; }
         public DateTime? ActualStartTime { get; set; }
         public DateTime? ActualEndTime { get; set; }
+        public string treatmentDoctorName { get; set; }
+        public bool IsEmergency { get; set; } = false;
         public string StatusName { get; set; }
 
         //Surgery Info
@@ -55,8 +58,8 @@ namespace Surgery_1.Data.ViewModels
     //Import surgery profile view models
     public class ImportSurgeryShiftViewModel
     {
-        public float ExpectedSurgeryDuration { get; set; }
-        public int Priority { get; set; }
+        public float ExpectedDuration { get; set; }
+        public int PriorityNumber { get; set; }
 
         //Patient Info
         public string PatientID { get; set; }
@@ -86,7 +89,7 @@ namespace Surgery_1.Data.ViewModels
         public DateTime EstimatedStartDateTime { get; set; }
         public DateTime EstimatedEndDateTime { get; set; }
         public string ChangeLogDescription { get; set; }
-        public int RoomId { get; set; }
+        public int SlotRoomId { get; set; }
     }
 
     public class ShiftChangeViewModel
@@ -160,12 +163,32 @@ namespace Surgery_1.Data.ViewModels
     public class ImportViewModel
     {
         public ICollection<ImportSurgeryShiftViewModel> surgeryShifts;
-        public ICollection<ImportMedicalSupplyViewModel> medicalSupply;
     }
 
     public class AssignSurgeryEkip
     {
         public int EkipId { get; set; }
         public float SumDuration { get; set; }
+    }
+
+    public class EditSurgeryShiftViewModel
+    {
+        public int ShiftId { get; set; }
+        public string EditIdentityNumber { get; set; }
+        public string EditPatientName { get; set; }
+        public int? EditGender { get; set; }
+        //public List<string> SurgeonNames { get; set; }
+        public int? EditYob { get; set; }
+        public int? EditSurgeryId { get; set; }
+        public string SurgeryCode { get; set; }
+        public string SurgeryName { get; set; }
+    }
+
+    public class SmsShiftViewModel
+    {
+        public int Id { get; set; }
+        public DateTime EstimatedStartDateTime { get; set; }
+        public DateTime EstimatedEndDateTime { get; set; }
+        public int SlotRoomId { get; set; }
     }
 }

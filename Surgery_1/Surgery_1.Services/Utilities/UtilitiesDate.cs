@@ -36,5 +36,10 @@ namespace Surgery_1.Services.Utilities
             string minute = day.Minute < 10 ? "0" + day.Minute.ToString() : day.Minute.ToString();
             return hour + ":" + minute;
         }
+        public static DateTime GetDateTimeNoSecond(DateTime date)
+        {
+            return new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, 0);
+        }
+
     }
 }

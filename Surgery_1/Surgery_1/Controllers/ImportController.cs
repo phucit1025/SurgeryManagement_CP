@@ -22,28 +22,14 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public IActionResult ImportSurgeryShift(ImportViewModel importViewModel)
+        public IActionResult ImportSurgeryShift([FromBody]ImportViewModel importViewModel)
         {
             var result = _surgeryShiftService.ImportSurgeryShift(importViewModel.surgeryShifts);
             if (result)
             {
-                return StatusCode(200,result);
+                return StatusCode(200, result);
             }
             return StatusCode(500);
         }
-
-        [HttpPost]
-        public bool ImportSurgeryShiftMedicalSupply([FromBody]List<ImportMedicalSupplyViewModel> surgeryShiftSupply)
-        {
-            _surgeryShiftService.ImportSurgeryShiftMedicalSupply(surgeryShiftSupply);
-            return true;
-        }
-
-        [HttpPost]
-        public IActionResult getSurgeryNameById([FromBody]ICollection<SurgeryCatalogIDsViewModel> SurgeryId)
-        {
-            var result = _surgeryShiftService.GetSurgeryName(SurgeryId);
-            return Ok(result);
-        }        
     }
 }

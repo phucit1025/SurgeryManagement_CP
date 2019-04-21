@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Surgery_1.Data.ViewModels;
+using Surgery_1.Services.Extensions;
 using Surgery_1.Services.Interfaces;
 
 namespace Surgery_1.Controllers
@@ -39,15 +40,10 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public void AssignTechStaff([FromBody]TechnicalStaffAssignment techAssignment)
+        public IActionResult AddUsedMedicalSupply([FromBody]ShiftMedicalSuppliesViewModel medicalSupplyAddList)
         {
-            _surgeryShiftService.AssignTechnicalStaff(techAssignment);
-        }
-
-        [HttpPost]
-        public void AddUsedMedicalSupply([FromBody]ShiftMedicalSuppliesViewModel medicalSupplyAddList)
-        {
-            _surgeryShiftService.AddMedicalSupply(medicalSupplyAddList);
+            var result = _surgeryShiftService.AddMedicalSupply(medicalSupplyAddList);
+            return StatusCode(200, result);
         }
 
         [HttpGet]
@@ -57,10 +53,10 @@ namespace Surgery_1.Controllers
             return StatusCode(200, result);
         }
         [HttpPost]
-        public Boolean SaveSurgeryProcedure([FromBody]SurgeryProcedureViewModel SurgeryProcedure)
+        public IActionResult SaveSurgeryProcedure([FromBody]SurgeryProcedureViewModel SurgeryProcedure)
         {
-            _surgeryService.SaveSurgeryProcedure(SurgeryProcedure);
-            return true;
+            var result = _surgeryService.SaveSurgeryProcedure(SurgeryProcedure);
+            return StatusCode(200, result);
         }
 
         [HttpGet]
@@ -101,11 +97,12 @@ namespace Surgery_1.Controllers
             {
                 result = _surgeryService.MakeScheduleList();
 
-            } catch (Exception)
+            }
+            catch (Exception)
             {
                 result = false;
             }
-            
+
             return StatusCode(200, result);
         }
 
@@ -148,6 +145,14 @@ namespace Surgery_1.Controllers
             var result = _surgeryService.GetSurgeryShiftsByRoomAndDate(slotRoomId, dayNumber);
             return StatusCode(200, result);
         }
+
+        [HttpGet]
+        public IActionResult GetSurgeryShiftsByRoomAndDateOfTechnical(int slotRoomId, int dayNumber, int technicalStaffId = 0)
+        {
+            var result = _surgeryService.GetSurgeryShiftsByRoomAndDate(slotRoomId, dayNumber, technicalStaffId);
+            return StatusCode(200, result);
+        }
+
         [HttpGet]
         public IActionResult GetSurgeryRooms()
         {
@@ -162,10 +167,16 @@ namespace Surgery_1.Controllers
 
             return StatusCode(200, result);
         }
+
+        [HttpGet]
+        public IActionResult CanViewShiftDetail(int shiftId)
+        {
+            var techGuid = User.GetGuid();
+            var result = _surgeryService.CanViewShiftDetail(shiftId, techGuid);
+            if (result) return StatusCode(200);
+            return StatusCode(400);
+        }
         #endregion
-
-
-
 
         #region Change Schedules
         [HttpGet]
@@ -178,7 +189,7 @@ namespace Surgery_1.Controllers
         [HttpPost]
         public IActionResult GetAvailableRoom([FromBody]AvailableRoomParamViewModel param)
         {
-            var results = _surgeryService.GetAvailableRoom(param.StartDate, param.EndDate, param.ForcedChange);
+            var results = _surgeryService.GetAvailableRoom(param.StartDate, param.EndDate, param.ForcedChange, param.SpecialtyGroupId);
             if (results != null)
             {
                 return StatusCode(200, results);
@@ -199,7 +210,7 @@ namespace Surgery_1.Controllers
         [HttpGet]
         public IActionResult GetAvailableRoomForDuration(int hour, int minute)
         {
-            var results = _surgeryService.GetAvailableRoom(hour, minute);
+            var results = _surgeryService.GetAvailableRoom(DateTime.Now, 0, hour, minute);
             return StatusCode(200, results);
         }
 
@@ -273,6 +284,7 @@ namespace Surgery_1.Controllers
         }
         #endregion
 
+        #region Assigning
         [HttpGet]
         public IActionResult AssignEkipByDate(int dateNumber)
         {
@@ -286,5 +298,13 @@ namespace Surgery_1.Controllers
             _surgeryService.AssignEkip();
             return Ok();
         }
+
+        [HttpGet]
+        public IActionResult AssignTechnicalStaff()
+        {
+            var result = _surgeryShiftService.AssignTechnicalStaff();
+            return StatusCode(200, result);
+        }
+        #endregion
     }
 }

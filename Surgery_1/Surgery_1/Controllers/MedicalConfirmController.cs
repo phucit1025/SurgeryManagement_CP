@@ -27,9 +27,10 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public bool ConfirmMedicalRequest([FromBody]ICollection<MedicalSupplyIdConfirmViewModel> surgeryShift)
+        public IActionResult ConfirmMedicalRequest([FromBody]ICollection<MedicalSupplyIdConfirmViewModel> surgeryShift)
         {
-            return _confirmService.ConfirmedSupply(surgeryShift);
+            var result = _confirmService.ConfirmedSupply(surgeryShift);
+            return StatusCode(200, result);
         }
 
         [HttpGet]

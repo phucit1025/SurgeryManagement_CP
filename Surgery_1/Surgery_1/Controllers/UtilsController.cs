@@ -36,5 +36,12 @@ namespace Surgery_1.Controllers
             }
             return Ok(result);
         }
+
+        [HttpGet]
+        public IActionResult CheckExistedPatient(string identityNumber)
+        {
+            var result = _utilsService.CheckExistedPatient(identityNumber);
+            return Ok(result);
+        }
     }
 }

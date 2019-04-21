@@ -9,5 +9,6 @@ namespace Surgery_1.Services.Interfaces
     {
         ICollection<MedicalSupplyInfoViewModel> GetMedicalSupply();
         ICollection<MedicalSupplyInfoViewModel> GetMedicalSupplyOnQuery(string q);
+        PatientViewModel CheckExistedPatient(string identityNumber);
     }
 }

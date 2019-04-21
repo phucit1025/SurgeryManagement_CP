@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CP_SmsSender;
+using Microsoft.AspNetCore.Http;
 using Surgery_1.Data.Context;
 using Surgery_1.Data.Entities;
 using Surgery_1.Data.ViewModels;
@@ -76,6 +77,33 @@ namespace Surgery_1.Services.Implementations
         {
             _context.Notifications.Find(notiId).IsRead = true;
             return _context.SaveChanges() > 0 ? true : false;
+        }
+
+
+
+        public string HandleSmsForSurgeon(List<SmsShiftViewModel> smsShiftDate)
+        {
+            var sortedShift = smsShiftDate.OrderBy(s => s.EstimatedStartDateTime.Date);
+            var result = sortedShift.GroupBy(s => s.EstimatedStartDateTime.Date).ToList();
+            string content = "eBSMS provides surgery schedule for you: \\n";
+
+            foreach (var item in result)
+            {
+                content += $"{UtilitiesDate.FormatDateShow(item.First().EstimatedStartDateTime)}: \\n";
+                foreach (var shift in sortedShift)
+                {
+                    if (shift.EstimatedStartDateTime.Date == item.First().EstimatedStartDateTime.Date)
+                    {
+                        var nameSlotRoom = _context.SlotRooms.Find(shift.SlotRoomId).Name;
+                        content += $"- Shift No {shift.Id} start at: {UtilitiesDate.GetTimeFromDate(shift.EstimatedStartDateTime)} - {UtilitiesDate.GetTimeFromDate(shift.EstimatedStartDateTime)} in room {nameSlotRoom} \\n";
+                    }
+                }
+            }
+
+            var smsSender = new SpeedSMS();
+            string[] phoneList = { "0326622807" }; //"0764644363"
+            var resultSms = smsSender.SendSms(phoneList , content);
+            return resultSms;
         }
     }
 }

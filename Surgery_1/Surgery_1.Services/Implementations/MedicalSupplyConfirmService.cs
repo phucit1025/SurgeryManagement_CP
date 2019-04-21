@@ -16,26 +16,6 @@ namespace Surgery_1.Services.Implementations
             this._context = _context;
         }
 
-
-        public void ConfirmedAllSupplyRequest()
-        {
-            var request = _context.SurgeryShifts.Where(a => a.IsAvailableMedicalSupplies == false).ToList();
-            foreach (var r in request)
-            {                
-                r.IsAvailableMedicalSupplies = true;
-                r.ConfirmDate = DateTime.Now;
-                if (r.ProposedStartDateTime != null && r.ProposedEndDateTime != null)
-                {
-                    r.ScheduleDate = new DateTime(r.ProposedStartDateTime.Value.Year, r.ProposedStartDateTime.Value.Month, r.ProposedStartDateTime.Value.Day);
-                } else
-                {
-                    r.ScheduleDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
-                }
-                
-            }
-            _context.SaveChanges();
-        }
-
         public ICollection<MedicalSupplyRequestViewModel> GetAllMedicalSupplyRequest()
         {
             var result = new List<MedicalSupplyRequestViewModel>();
@@ -65,14 +45,17 @@ namespace Surgery_1.Services.Implementations
                 var shift = _context.SurgeryShifts.Find(s.id);
                 shift.IsAvailableMedicalSupplies = true;
                 shift.ConfirmDate = DateTime.Now;
-                shift.EkipId = 1;//Temporary
-                if (shift.ProposedStartDateTime != null && shift.ProposedEndDateTime != null)
+                shift.ScheduleDate = DateTime.Now.Date;
+                if (!shift.IsNormalSurgeryTime)
                 {
-                    shift.ScheduleDate = shift.ProposedStartDateTime.Value.Date;
-                }
-                else
-                {
-                    shift.ScheduleDate = shift.ConfirmDate.Value.Date;
+                    if (shift.ProposedStartDateTime.Value.Date >= shift.ConfirmDate.Value.Date)
+                    {
+                        shift.ScheduleDate = shift.ProposedStartDateTime.Value.Date;
+                    }
+                    if (shift.ProposedStartDateTime < DateTime.Now || shift.ProposedEndDateTime < DateTime.Now)
+                    {
+                        shift.IsNormalSurgeryTime = true;
+                    }
                 }
             }
             _context.SaveChanges();

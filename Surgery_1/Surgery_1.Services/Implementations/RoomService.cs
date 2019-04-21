@@ -19,7 +19,7 @@ namespace Surgery_1.Services.Implementations
 
         public RoomViewModel GetRoom(int id)
         {
-            var room = _context.SurgeryRooms.Find(id);
+            var room = _context.SlotRooms.Find(id);
             return new RoomViewModel()
             {
                 Id = id,
@@ -62,11 +62,12 @@ namespace Surgery_1.Services.Implementations
             {
                 if (slot.SurgeryShifts.Count > 0)
                 {
-                    totalPre += slot.SurgeryShifts.Where(s => UtilitiesDate.ConvertDateToNumber(s.ScheduleDate.Value) == dayNumber && s.Status.Name == ConstantVariable.PRE_STATUS).Count();
-                    totalIntra += slot.SurgeryShifts.Where(s => UtilitiesDate.ConvertDateToNumber(s.ScheduleDate.Value) == dayNumber && s.Status.Name == ConstantVariable.INTRA_STATUS).Count();
-                    totalPost += slot.SurgeryShifts.Where(s => UtilitiesDate.ConvertDateToNumber(s.ScheduleDate.Value) == dayNumber && s.Status.Name != ConstantVariable.PRE_STATUS && s.Status.Name != ConstantVariable.INTRA_STATUS).Count();
+                    var tmpSurgeryShifts = slot.SurgeryShifts.Where(s => UtilitiesDate.ConvertDateToNumber(s.EstimatedStartDateTime.Value.Date) == dayNumber);
+                    totalPre += tmpSurgeryShifts.Where(s => s.Status.Name == ConstantVariable.PRE_STATUS).Count();
+                    totalIntra += tmpSurgeryShifts.Where(s => s.Status.Name == ConstantVariable.INTRA_STATUS).Count();
+                    totalPost += tmpSurgeryShifts.Where(s => s.Status.Name != ConstantVariable.PRE_STATUS && s.Status.Name != ConstantVariable.INTRA_STATUS).Count();
                 }
-                
+
             }
             int totalShift = totalPre + totalIntra + totalPost;
             ReportRoomViewModel reportRoom = new ReportRoomViewModel

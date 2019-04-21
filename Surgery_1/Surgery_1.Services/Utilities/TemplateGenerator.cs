@@ -147,7 +147,7 @@ namespace Surgery_1.Services.Utilities
                                    <thead>
                                         <tr>
                                             <th style=' border: 1px solid black;'>Ngày giờ</th>
-                                            <th style=' border: 1px solid black;'>Theo dõi diễn biế</th>
+                                            <th style=' border: 1px solid black;'>Theo dõi diễn biến</th>
                                             <th style=' border: 1px solid black;'>Thực hiện y lệnh/chăm sóc</th>
                                             <th style=' border: 1px solid black;'>Y tá</th>
                                         </tr>

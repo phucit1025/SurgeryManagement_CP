@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Castle.Core.Internal;
+using Microsoft.AspNetCore.Mvc;
 using Surgery_1.Data.ViewModels;
 using Surgery_1.Services.Interfaces;
 using System;
@@ -14,7 +15,7 @@ namespace Surgery_1.Controllers
     {
         private readonly ISurgeryShiftService _surgeryShiftService;
         public SurgeryShiftController(ISurgeryShiftService _surgeryShiftService)
-        {            
+        {
             this._surgeryShiftService = _surgeryShiftService;
         }
 
@@ -26,16 +27,72 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public Boolean UpdateMedicalSupply([FromBody]ICollection<ShiftMedicalSupplyViewModel> medicalSupply)
+        public IActionResult UpdateSurgeryProfile([FromBody]EditSurgeryShiftViewModel editForm)
         {
-            _surgeryShiftService.UpdateMedicalSupply(medicalSupply);
-            return true;
+            var result = _surgeryShiftService.UpdateSurgeryProfile(editForm);
+            return StatusCode(200, result);
+        }
+        [HttpGet]
+        public IActionResult LoadEditSurgeryProfile(int shiftId)
+        {
+            var result = _surgeryShiftService.LoadEditSurgeryProfile(shiftId);
+            return StatusCode(200, result);
+        }
+
+        [HttpGet]
+        public IActionResult GetSurgeryCatalogOnQuery(string searchName)
+        {
+            var result = _surgeryShiftService.GetSurgeryCatalogOnQuery(searchName);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public IActionResult GetAvailableSurgeons(int surgeryShiftId)
+        {
+            var result = _surgeryShiftService.GetAvailableSurgeons(surgeryShiftId);
+            return StatusCode(200, result);
         }
 
         [HttpPost]
-        public void AssignTechStaff([FromBody]TechnicalStaffAssignment techAssignment)
+        public IActionResult UpdateSurgeon([FromBody]UpdateSurgeonsViewModel model)
         {
-            _surgeryShiftService.AssignTechnicalStaff(techAssignment);
+            var result = _surgeryShiftService.UpdateSurgeon(model);
+            if (result)
+            {
+                return StatusCode(200, result);
+            }
+            else
+            {
+                return StatusCode(400);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AddSurgeon([FromBody]AddSurgeonToShiftViewModel model)
+        {
+            var result = _surgeryShiftService.AddSurgeon(model);
+            if (result)
+            {
+                return StatusCode(200);
+            }
+            else
+            {
+                return StatusCode(400);
+            }
+        }
+
+        [HttpDelete]
+        public IActionResult RemoveSurgeon([FromBody] RemoveSurgeonFromShiftViewModel model)
+        {
+            var result = _surgeryShiftService.RemoveSurgeon(model);
+            if (result)
+            {
+                return StatusCode(200);
+            }
+            else
+            {
+                return StatusCode(400);
+            }
         }
     }
 }
