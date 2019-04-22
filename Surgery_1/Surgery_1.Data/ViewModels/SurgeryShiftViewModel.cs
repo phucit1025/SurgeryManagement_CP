@@ -36,6 +36,7 @@ namespace Surgery_1.Data.ViewModels
         public DateTime? EndTime { get; set; }
         public DateTime? ActualStartTime { get; set; }
         public DateTime? ActualEndTime { get; set; }
+        public string treatmentDoctorName { get; set; }
         public bool IsEmergency { get; set; } = false;
         public string StatusName { get; set; }
 
@@ -57,8 +58,8 @@ namespace Surgery_1.Data.ViewModels
     //Import surgery profile view models
     public class ImportSurgeryShiftViewModel
     {
-        public float ExpectedSurgeryDuration { get; set; }
-        public int Priority { get; set; }
+        public float ExpectedDuration { get; set; }
+        public int PriorityNumber { get; set; }
 
         //Patient Info
         public string PatientID { get; set; }
@@ -181,5 +182,13 @@ namespace Surgery_1.Data.ViewModels
         public int? EditSurgeryId { get; set; }
         public string SurgeryCode { get; set; }
         public string SurgeryName { get; set; }
+    }
+
+    public class SmsShiftViewModel
+    {
+        public int Id { get; set; }
+        public DateTime EstimatedStartDateTime { get; set; }
+        public DateTime EstimatedEndDateTime { get; set; }
+        public int SlotRoomId { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Surgery_1.Data.ViewModels;
 using Surgery_1.Hubs;
 using Surgery_1.Services.Interfaces;
 
@@ -64,6 +65,12 @@ namespace Surgery_1.Controllers
             return null;
         }
 
+        [HttpPost]
+        public IActionResult HandleSmsForSurgeon([FromBody] List<SmsShiftViewModel> smsShiftDate)
+        {
+            var result = _notificationService.HandleSmsForSurgeon(smsShiftDate);
+            return StatusCode(200, result);
+        }
 
     }
 }

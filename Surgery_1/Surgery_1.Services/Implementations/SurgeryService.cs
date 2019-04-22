@@ -24,6 +24,9 @@ namespace Surgery_1.Services.Implementations
         private List<DateTime> datetimeShiftList = new List<DateTime>();
         private int countNoti = 0;
 
+        private StringBuilder smsContent;
+        private List<SmsShiftViewModel> smsShiftDate;
+
         private readonly AppDbContext _context;
         private readonly INotificationService _notificationService;
 
@@ -541,8 +544,18 @@ namespace Surgery_1.Services.Implementations
             //Notification
             if (_context.SaveChanges() > 0)
             {
+                smsShiftDate.Add(new SmsShiftViewModel
+                {
+                    Id = surgeryId,
+                    EstimatedStartDateTime = startTime,
+                    EstimatedEndDateTime = endTime,
+                    SlotRoomId = slotRoomId
+                });
+
                 datetimeShiftList.Add(startTime);
             }
+
+
         }
         #endregion
 
@@ -754,7 +767,6 @@ namespace Surgery_1.Services.Implementations
                         EndTime = shift.EstimatedEndDateTime,
                         ActualStartTime = shift.ActualStartDateTime,
                         ActualEndTime = shift.ActualEndDateTime,
-                        //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
                         IsEmergency = isEmergency,
                         Procedure = usedProcedure,
                         StatusName = shift.Status.Name
@@ -776,6 +788,7 @@ namespace Surgery_1.Services.Implementations
                         EndTime = shift.EstimatedEndDateTime,
                         ActualStartTime = shift.ActualStartDateTime,
                         ActualEndTime = shift.ActualEndDateTime,
+                        treatmentDoctorName = shift.TreatmentDoctor.FullName,
                         //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
                         Procedure = shift.UsedProcedure == null ? shift.SurgeryCatalog.Procedure : shift.UsedProcedure,
                         StatusName = shift.Status.Name

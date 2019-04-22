@@ -53,12 +53,57 @@ namespace Surgery_1.Controllers
             return StatusCode(200, result);
         }
 
-        [HttpPost]
-        public IActionResult UpdateSurgeon([FromBody]UpdateSurgeonsViewModel updatedSurgeon)
+        [HttpGet]
+        public IActionResult GetShiftSurgeons(int surgeryShiftId)
         {
-            var result = _surgeryShiftService.UpdateSurgeon(updatedSurgeon);
-            return StatusCode(200, result);
+            var results = _surgeryShiftService.GetShiftSurgeons(surgeryShiftId);
+            return StatusCode(200, results);
         }
 
+        [HttpPost]
+        public IActionResult UpdateSurgeon([FromBody]UpdateSurgeonsViewModel model)
+        {
+            var result = _surgeryShiftService.UpdateSurgeon(model);
+            if (result)
+            {
+                return StatusCode(200, result);
+            }
+            else
+            {
+                return StatusCode(400);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AddSurgeon([FromBody]AddSurgeonToShiftViewModel model)
+        {
+            var result = _surgeryShiftService.AddSurgeon(model);
+            if (result)
+            {
+                return StatusCode(200);
+            }
+            else
+            {
+                return StatusCode(400);
+            }
+        }
+
+        [HttpDelete]
+        public IActionResult RemoveSurgeon(int surgeryShiftId, int surgeonId)
+        {
+            var result = _surgeryShiftService.RemoveSurgeon(new RemoveSurgeonFromShiftViewModel()
+            {
+                SurgeonId = surgeonId,
+                SurgeryShiftId = surgeryShiftId
+            });
+            if (result)
+            {
+                return StatusCode(200);
+            }
+            else
+            {
+                return StatusCode(400);
+            }
+        }
     }
 }
