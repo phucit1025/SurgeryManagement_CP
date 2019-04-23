@@ -251,6 +251,23 @@ namespace Surgery_1.Services.Implementations
 
         #region Surgeons
 
+        public ICollection<SurgeonsViewModel> GetShiftSurgeons(int surgeryShiftId)
+        {
+            var surgeons = _context.SurgeryShiftSurgeons.Where(s => !s.IsDeleted && s.SurgeryShiftId == surgeryShiftId).Select(s => s.Surgeon).ToList();
+            if (surgeons.Any())
+            {
+                return surgeons.Select(s => new SurgeonsViewModel()
+                {
+                    Id = s.Id,
+                    Name = s.FullName
+                }).ToList();
+            }
+            else
+            {
+                return new List<SurgeonsViewModel>();
+            }
+        }
+
         public ICollection<SurgeonsViewModel> GetAvailableSurgeons(int surgeryShiftId)
         {
             var surgeons = _context.Doctors.Where(d => !d.IsDeleted).ToList();

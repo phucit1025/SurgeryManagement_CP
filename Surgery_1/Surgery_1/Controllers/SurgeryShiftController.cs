@@ -53,6 +53,13 @@ namespace Surgery_1.Controllers
             return StatusCode(200, result);
         }
 
+        [HttpGet]
+        public IActionResult GetShiftSurgeons(int surgeryShiftId)
+        {
+            var results = _surgeryShiftService.GetShiftSurgeons(surgeryShiftId);
+            return StatusCode(200, results);
+        }
+
         [HttpPost]
         public IActionResult UpdateSurgeon([FromBody]UpdateSurgeonsViewModel model)
         {
@@ -82,9 +89,13 @@ namespace Surgery_1.Controllers
         }
 
         [HttpDelete]
-        public IActionResult RemoveSurgeon([FromBody] RemoveSurgeonFromShiftViewModel model)
+        public IActionResult RemoveSurgeon(int surgeryShiftId, int surgeonId)
         {
-            var result = _surgeryShiftService.RemoveSurgeon(model);
+            var result = _surgeryShiftService.RemoveSurgeon(new RemoveSurgeonFromShiftViewModel()
+            {
+                SurgeonId = surgeonId,
+                SurgeryShiftId = surgeryShiftId
+            });
             if (result)
             {
                 return StatusCode(200);

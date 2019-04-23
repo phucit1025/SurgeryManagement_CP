@@ -19,6 +19,7 @@ namespace Surgery_1.Services.Interfaces
         bool UpdateSurgeon(UpdateSurgeonsViewModel updatedSurgeon);
         bool AddSurgeon(AddSurgeonToShiftViewModel model);
         bool RemoveSurgeon(RemoveSurgeonFromShiftViewModel model);
+        ICollection<SurgeonsViewModel> GetShiftSurgeons(int surgeryShiftId);
 
         //update information emergency
         bool UpdateSurgeryProfile(EditSurgeryShiftViewModel editForm);
