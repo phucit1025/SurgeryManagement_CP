@@ -110,7 +110,7 @@ namespace Surgery_1.Services.Implementations
                     else
                     {
                         var doublicated = _context.SurgeryShifts.Where(a=>a.PatientId == patient.Id && 
-                            a.SurgeryCatalogId == s.SurgeryCatalogID && a.Status.Name == "Preoperative").FirstOrDefault();
+                            a.SurgeryCatalogId == s.SurgeryCatalogID && a.Status.Name != ConstantVariable.FINISHED_STATUS).FirstOrDefault();
                         if (doublicated != null) continue;
                     }
                     shift.PatientId = patient.Id;
