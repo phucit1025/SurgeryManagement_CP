@@ -18,6 +18,8 @@ namespace Surgery_1.Data.ViewModels
         //Thời gian hoàn thành ca mổ dự kiến
         public float ExpectedSurgeryDuration { get; set; }
 
+        public int TreatmentId { get; set; }
+
         public int PriorityNumber { get; set; }
     }
 }

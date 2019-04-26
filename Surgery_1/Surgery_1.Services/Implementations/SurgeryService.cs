@@ -270,12 +270,21 @@ namespace Surgery_1.Services.Implementations
 
             if (datetimeShiftList.Count == countNoti)
             {
+                //_notificationService.HandleSmsForSurgeon(smsShiftDate);
                 _notificationService.AddNotificationForScheduling(datetimeShiftList);
                 countNoti++;
             }
+            _notificationService.HandleSmsForSurgeon(smsShiftDate);
             return true;
         }
         #endregion
+
+        public bool GetTimeSurgeon(int surgeonId, DateTime selectedDay)
+        {
+            var result = _context.Doctors.Find(surgeonId).SurgeryShifts.Where(s => s.EstimatedStartDateTime.Value.Date == selectedDay); //Tmp
+
+            return false;
+        }
 
         #region GetAvailableRoom
         public List<AvailableRoomViewModel> GetAvailableSlotRoom(int dateNumber, int surgeryCatalogId)
@@ -703,7 +712,8 @@ namespace Surgery_1.Services.Implementations
                     ConfirmDate = shift.ConfirmDate.Value,
                     ScheduleDate = shift.ScheduleDate.Value,
                     ExpectedSurgeryDuration = shift.ExpectedSurgeryDuration,
-                    PriorityNumber = shift.PriorityNumber
+                    PriorityNumber = shift.PriorityNumber,
+                    TreatmentId = shift.TreatmentDoctorId.Value
                 });
             }
             var proposedTimeSurgeryShiftList = GetSurgeryShiftNoScheduleByProposedTime();
@@ -724,19 +734,20 @@ namespace Surgery_1.Services.Implementations
                 .OrderBy(s => s.ExpectedSurgeryDuration)
                 .OrderBy(s => s.PriorityNumber)
                 .OrderBy(s => s.ProposedStartDateTime).ToList();
-            foreach (var index in surgeryShifts)
+            foreach (var shift in surgeryShifts)
             {
                 shifts.Add(new ScheduleViewModel()
                 {
-                    SurgeryShiftId = index.Id,
-                    SurgeryCatalogId = index.SurgeryCatalogId.Value,
-                    ProposedStartDateTime = index.ProposedStartDateTime,
-                    ProposedEndDateTime = index.ProposedEndDateTime,
-                    IsNormalSurgeryTime = index.IsNormalSurgeryTime,
-                    ConfirmDate = index.ConfirmDate.Value,
-                    ScheduleDate = index.ScheduleDate.Value.Date,
-                    ExpectedSurgeryDuration = index.ExpectedSurgeryDuration,
-                    PriorityNumber = index.PriorityNumber
+                    SurgeryShiftId = shift.Id,
+                    SurgeryCatalogId = shift.SurgeryCatalogId.Value,
+                    ProposedStartDateTime = shift.ProposedStartDateTime,
+                    ProposedEndDateTime = shift.ProposedEndDateTime,
+                    IsNormalSurgeryTime = shift.IsNormalSurgeryTime,
+                    ConfirmDate = shift.ConfirmDate.Value,
+                    ScheduleDate = shift.ScheduleDate.Value.Date,
+                    ExpectedSurgeryDuration = shift.ExpectedSurgeryDuration,
+                    PriorityNumber = shift.PriorityNumber,
+                    TreatmentId = shift.TreatmentDoctorId.Value
                 });
             }
             return shifts;

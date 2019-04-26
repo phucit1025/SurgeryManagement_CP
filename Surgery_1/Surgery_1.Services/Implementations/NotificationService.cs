@@ -83,26 +83,33 @@ namespace Surgery_1.Services.Implementations
 
         public string HandleSmsForSurgeon(List<SmsShiftViewModel> smsShiftDate)
         {
+
             var sortedShift = smsShiftDate.OrderBy(s => s.EstimatedStartDateTime.Date);
             var result = sortedShift.GroupBy(s => s.EstimatedStartDateTime.Date).ToList();
+            List<string> phoneList = new List<string>();
             string content = "eBSMS provides surgery schedule for you: \\n";
 
             foreach (var item in result)
             {
-                content += $"{UtilitiesDate.FormatDateShow(item.First().EstimatedStartDateTime)}: \\n";
+                content += $"=={UtilitiesDate.FormatDateShow(item.First().EstimatedStartDateTime)}== \\n";
                 foreach (var shift in sortedShift)
                 {
                     if (shift.EstimatedStartDateTime.Date == item.First().EstimatedStartDateTime.Date)
                     {
                         var nameSlotRoom = _context.SlotRooms.Find(shift.SlotRoomId).Name;
-                        content += $"- Shift No {shift.Id} start at: {UtilitiesDate.GetTimeFromDate(shift.EstimatedStartDateTime)} - {UtilitiesDate.GetTimeFromDate(shift.EstimatedStartDateTime)} in room {nameSlotRoom} \\n";
+                        content += $"*Shift {shift.Id} start at {UtilitiesDate.GetTimeFromDate(shift.EstimatedStartDateTime)} - {UtilitiesDate.GetTimeFromDate(shift.EstimatedEndDateTime)} at {nameSlotRoom} \\n";
+                        //string phoneNumber = _context.SurgeryShifts.Find(shift.Id).TreatmentDoctor.PhoneNumber;
+                        //if (!phoneList.Contains(phoneNumber))
+                        //{
+                        //    phoneList.Add(phoneNumber);
+                        //}
                     }
                 }
             }
 
             var smsSender = new SpeedSMS();
-            string[] phoneList = { "0326622807" }; //"0764644363"
-            var resultSms = smsSender.SendSms(phoneList , content);
+            string[] phoneListTmp = { "0326622807" }; //"0764644363"
+            var resultSms = smsSender.SendSms(phoneListTmp, content);
             return resultSms;
         }
     }
