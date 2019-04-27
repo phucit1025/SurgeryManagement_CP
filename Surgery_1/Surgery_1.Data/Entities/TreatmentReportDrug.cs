@@ -9,10 +9,6 @@ namespace Surgery_1.Data.Entities
     {
         public int TreatmentReportId { get; set; }
         public int DrugId { get; set; }
-        //public int MorningQuantity { get; set; } 
-        //public int AfternoonQuantity { get; set; } 
-        //public int EveningQuantity { get; set; } 
-        //public int NightQuantity { get; set; }
         public string TimeString { get; set; }
         public string Route { get; set; }
         public bool IsUsed { get; set; }

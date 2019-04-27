@@ -78,6 +78,7 @@ namespace Surgery_1.Services.Implementations
             var nurse = _appDbContext.UserInfo.Where(a => a.GuId == guid).FirstOrDefault();
             var surgeryShifts = _appDbContext.SurgeryShifts
                 .Where(a => a.StatusId == statusId && a.IsDeleted == false && a.NurseId == nurse.Id)
+                .OrderByDescending(a => a.ActualEndDateTime)
                 .ToList();
             var results = new List<PostOpSurgeryShiftViewModel>();
             foreach (var shift in surgeryShifts)
@@ -317,8 +318,8 @@ namespace Surgery_1.Services.Implementations
         public bool CreateTreatmenReport(TreatmentReportViewModel treatmentReportViewModel)
         {
             var transaction = _appDbContext.Database.BeginTransaction();
-            //try
-            //{
+            try
+            {
                 if (treatmentReportViewModel.TreatmentReportDrugs.Count > 0)
                 {
                     var treatmentReportDrugs = new List<TreatmentReportDrug>();
@@ -346,12 +347,12 @@ namespace Surgery_1.Services.Implementations
                     transaction.Commit();
                     return true;
                 }
-            //}
-            //catch (Exception)
-            //{
-            //    transaction.Rollback();
-            //    return false;
-            //}
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                return false;
+            }
             return false;
         }
 
