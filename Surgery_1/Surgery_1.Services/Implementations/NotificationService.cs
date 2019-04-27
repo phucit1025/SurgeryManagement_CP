@@ -83,33 +83,27 @@ namespace Surgery_1.Services.Implementations
 
         public string HandleSmsForSurgeon(List<SmsShiftViewModel> smsShiftDate)
         {
-
-            var sortedShift = smsShiftDate.OrderBy(s => s.EstimatedStartDateTime.Date);
-            var result = sortedShift.GroupBy(s => s.EstimatedStartDateTime.Date).ToList();
-            List<string> phoneList = new List<string>();
-            string content = "eBSMS provides surgery schedule for you: \\n";
-
-            foreach (var item in result)
+            var listByPhone = smsShiftDate.GroupBy(s => s.SurgeonPhone).ToList();
+            
+            string resultSms = "";
+            foreach (var item in listByPhone)
             {
-                content += $"=={UtilitiesDate.FormatDateShow(item.First().EstimatedStartDateTime)}== \\n";
-                foreach (var shift in sortedShift)
+                List<string> phoneList = new List<string>();
+                string content = "eBSMS provides surgery schedule: \\n";
+                if (item.First().SurgeonPhone == null) { break; }
+                else { phoneList.Add(item.First().SurgeonPhone); }
+                foreach (var index in item.GroupBy(s => s.EstimatedStartDateTime.Date).ToList())
                 {
-                    if (shift.EstimatedStartDateTime.Date == item.First().EstimatedStartDateTime.Date)
+                    content += $"=={UtilitiesDate.FormatDateShow(index.First().EstimatedStartDateTime)}== \\n";
+                    foreach (var shift in index.OrderBy(s => s.EstimatedStartDateTime).ToList())
                     {
                         var nameSlotRoom = _context.SlotRooms.Find(shift.SlotRoomId).Name;
                         content += $"*Shift {shift.Id} start at {UtilitiesDate.GetTimeFromDate(shift.EstimatedStartDateTime)} - {UtilitiesDate.GetTimeFromDate(shift.EstimatedEndDateTime)} at {nameSlotRoom} \\n";
-                        //string phoneNumber = _context.SurgeryShifts.Find(shift.Id).TreatmentDoctor.PhoneNumber;
-                        //if (!phoneList.Contains(phoneNumber))
-                        //{
-                        //    phoneList.Add(phoneNumber);
-                        //}
                     }
                 }
+                var smsSender = new SpeedSMS();
+                //resultSms = smsSender.SendSms(phoneList.ToArray(), content);
             }
-
-            var smsSender = new SpeedSMS();
-            string[] phoneListTmp = { "0326622807" }; //"0764644363"
-            var resultSms = smsSender.SendSms(phoneListTmp, content);
             return resultSms;
         }
     }

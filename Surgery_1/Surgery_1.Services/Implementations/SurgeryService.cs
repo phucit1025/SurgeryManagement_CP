@@ -25,7 +25,7 @@ namespace Surgery_1.Services.Implementations
         private int countNoti = 0;
 
         private StringBuilder smsContent;
-        private List<SmsShiftViewModel> smsShiftDate;
+        private List<SmsShiftViewModel> smsShiftDate = new List<SmsShiftViewModel>();
 
         private readonly AppDbContext _context;
         private readonly INotificationService _notificationService;
@@ -270,7 +270,7 @@ namespace Surgery_1.Services.Implementations
 
             if (datetimeShiftList.Count == countNoti)
             {
-                //_notificationService.HandleSmsForSurgeon(smsShiftDate);
+                _notificationService.HandleSmsForSurgeon(smsShiftDate);
                 _notificationService.AddNotificationForScheduling(datetimeShiftList);
                 countNoti++;
             }
@@ -558,7 +558,8 @@ namespace Surgery_1.Services.Implementations
                     Id = surgeryId,
                     EstimatedStartDateTime = startTime,
                     EstimatedEndDateTime = endTime,
-                    SlotRoomId = slotRoomId
+                    SlotRoomId = slotRoomId,
+                    SurgeonPhone = surgeryShift.TreatmentDoctor.PhoneNumber
                 });
 
                 datetimeShiftList.Add(startTime);
@@ -761,13 +762,9 @@ namespace Surgery_1.Services.Implementations
                 var usedProcedure = "";
                 bool isEmergency = false;
                 SurgeryShiftDetailViewModel result = null;
-                if (!shift.IsNormalSurgeryTime && shift.ProposedStartDateTime == null)
+                if (!shift.IsNormalSurgeryTime && shift.ProposedStartDateTime == null && shift.ProposedEndDateTime == null)
                 {
                     isEmergency = true;
-                }
-                if (shift.Patient == null)
-                {
-
                 }
                 if (isEmergency && shift.SurgeryCatalog == null && shift.Patient == null)
                 {
@@ -783,8 +780,13 @@ namespace Surgery_1.Services.Implementations
                         StatusName = shift.Status.Name
                     };
                 }
-                else
+                else //Không phải ca cấp cứu
                 {
+                    var treatmentDoctorName = "";
+                    if (shift.TreatmentDoctor != null)
+                    {
+                        treatmentDoctorName = shift.TreatmentDoctor.FullName;
+                    }
                     result = new SurgeryShiftDetailViewModel()
                     {
                         Id = shift.Id,
@@ -799,7 +801,7 @@ namespace Surgery_1.Services.Implementations
                         EndTime = shift.EstimatedEndDateTime,
                         ActualStartTime = shift.ActualStartDateTime,
                         ActualEndTime = shift.ActualEndDateTime,
-                        treatmentDoctorName = shift.TreatmentDoctor.FullName,
+                        treatmentDoctorName = treatmentDoctorName,
                         //EkipMembers = shift.Ekip.Members.Select(m => new EkipMemberViewModel() { Name = m.Name, WorkJob = m.WorkJob }).ToList(),
                         Procedure = shift.UsedProcedure == null ? shift.SurgeryCatalog.Procedure : shift.UsedProcedure,
                         StatusName = shift.Status.Name
