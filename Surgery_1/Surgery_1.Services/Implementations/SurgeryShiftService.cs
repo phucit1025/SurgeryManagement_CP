@@ -107,9 +107,14 @@ namespace Surgery_1.Services.Implementations
                         _context.SaveChanges();
                         patient = _context.Patients.Where(p => p.IdentityNumber == s.PatientID).Single();
                     }
+                    else
+                    {
+                        var doublicated = _context.SurgeryShifts.Where(a=>a.PatientId == patient.Id && 
+                            a.SurgeryCatalogId == s.SurgeryCatalogID && a.Status.Name != ConstantVariable.FINISHED_STATUS).FirstOrDefault();
+                        if (doublicated != null) continue;
+                    }
                     shift.PatientId = patient.Id;
                     shift.SurgeryCatalogId = s.SurgeryCatalogID;
-                    //shift.SurgeryShiftCode = s.SurgeryShiftCode; /*TODO: Remove line and remove attribute from db*/
                     shift.ProposedStartDateTime = s.ProposedStartDateTime;
                     shift.ProposedEndDateTime = s.ProposedEndDateTime;
                     if (shift.ProposedStartDateTime != null && shift.ProposedEndDateTime != null)
