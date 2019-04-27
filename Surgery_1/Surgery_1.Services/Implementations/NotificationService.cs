@@ -90,7 +90,7 @@ namespace Surgery_1.Services.Implementations
             {
                 List<string> phoneList = new List<string>();
                 string content = "eBSMS provides surgery schedule: \\n";
-                if (item.First().SurgeonPhone == null) { break; }
+                if (item.First().SurgeonPhone == null) { continue; }
                 else { phoneList.Add(item.First().SurgeonPhone); }
                 foreach (var index in item.GroupBy(s => s.EstimatedStartDateTime.Date).ToList())
                 {

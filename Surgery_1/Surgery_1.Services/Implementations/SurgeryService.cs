@@ -619,7 +619,7 @@ namespace Surgery_1.Services.Implementations
         }
 
         // TODO: Xem lịch theo ngày
-        public ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int slotRoomId, int dateNumber, int techincalStaffId = 0)
+        public ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int slotRoomId, int dateNumber, int techincalStaffId)
         {
             var results = new List<SurgeryShiftViewModel>();
             var shiftSlotRooms = _context.SlotRooms.Find(slotRoomId);

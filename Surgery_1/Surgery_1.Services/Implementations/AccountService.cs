@@ -53,6 +53,7 @@ namespace Surgery_1.Services.Implementations
                     claims.Add(new Claim(ClaimTypes.Role, userRole));
                     claims.Add(new Claim(new ClaimsIdentityOptions().SecurityStampClaimType, await _userManager.GetSecurityStampAsync(user)));
                     claims.Add(new Claim("IsEmailConfirmed", user.EmailConfirmed.ToString()));
+                    claims.Add(new Claim("UserInfoId", _context.UserInfo.Where(s => s.GuId == user.Id).FirstOrDefault().Id.ToString()));
                     #endregion
 
                     return BuildJwtToken(claims);
