@@ -21,7 +21,6 @@ namespace Surgery_1.Services.Implementations
         TimeSpan startPMWorkingHour = TimeSpan.FromHours(ConstantVariable.StartPMWorkingHour);
         TimeSpan endPMWorkingHour = TimeSpan.FromHours(ConstantVariable.EndPMWorkingHour);
 
-        private List<DateTime> datetimeShiftList = new List<DateTime>();
         private int countNoti = 0;
 
         private StringBuilder smsContent;
@@ -268,10 +267,10 @@ namespace Surgery_1.Services.Implementations
             }
             //notification
 
-            if (datetimeShiftList.Count == countNoti)
+            if (smsShiftDate.Count == countNoti)
             {
                 _notificationService.HandleSmsForSurgeon(smsShiftDate);
-                _notificationService.AddNotificationForScheduling(datetimeShiftList);
+                _notificationService.AddNotificationForScheduling(smsShiftDate);
                 countNoti++;
             }
             _notificationService.HandleSmsForSurgeon(smsShiftDate);
@@ -562,7 +561,7 @@ namespace Surgery_1.Services.Implementations
                     SurgeonPhone = surgeryShift.TreatmentDoctor.PhoneNumber
                 });
 
-                datetimeShiftList.Add(startTime);
+                //datetimeShiftList.Add(startTime);
             }
 
 
@@ -619,13 +618,13 @@ namespace Surgery_1.Services.Implementations
         }
 
         // TODO: Xem lịch theo ngày
-        public ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int slotRoomId, int dateNumber, int techincalStaffId)
+        public ICollection<SurgeryShiftViewModel> GetSurgeryShiftsByRoomAndDate(int slotRoomId, int dateNumber, int technicalStaffId)
         {
             var results = new List<SurgeryShiftViewModel>();
             var shiftSlotRooms = _context.SlotRooms.Find(slotRoomId);
             var isEmergency = false;
             var shifts = new List<SurgeryShift>();
-            if (techincalStaffId == 0)
+            if (technicalStaffId == 0)
             {
                 shifts = shiftSlotRooms.SurgeryShifts
                 .Where(s => (s.EstimatedStartDateTime != null && s.EstimatedEndDateTime != null)
@@ -638,7 +637,7 @@ namespace Surgery_1.Services.Implementations
                 .Where(s => (s.EstimatedStartDateTime != null && s.EstimatedEndDateTime != null)
                 && (UtilitiesDate.ConvertDateToNumber(s.EstimatedStartDateTime.Value) == dateNumber)
                 && s.TechId.HasValue
-                && s.TechId.Value == techincalStaffId) //mm/dd/YYYY
+                && s.TechId.Value == technicalStaffId) //mm/dd/YYYY
                 .OrderBy(s => s.ActualStartDateTime).OrderBy(s => s.EstimatedStartDateTime).ToList();
             }
 
@@ -681,7 +680,6 @@ namespace Surgery_1.Services.Implementations
                         ActualEndDateTime = shift.ActualEndDateTime,
                         StatusName = _context.Statuses.Find(shift.StatusId).Name,
                         SurgeonNames = shift.SurgeryShiftSurgeons.Select(s => s.Surgeon.FullName).ToList()
-
                     });
                 }
             }

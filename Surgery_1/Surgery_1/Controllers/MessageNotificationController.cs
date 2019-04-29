@@ -24,12 +24,12 @@ namespace Surgery_1.Controllers
         }
 
         [HttpGet]
-        public string GetAllNotification(string roleName)
+        public string GetAllNotification(string roleName, int technicalId = 0)
         {
             string messageNotification = string.Empty;
             try
             {
-                var result = _notificationService.GetNotifications(roleName).ToList();
+                var result = _notificationService.GetNotifications(roleName, technicalId).ToList();
                 
                 _hubContext.Clients.All.BroadcastMessage(roleName, result);
             }
@@ -41,9 +41,9 @@ namespace Surgery_1.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetNotifications(string roleName)
+        public IActionResult GetNotifications(string roleName, int technicalId = 0)
         {
-            var result = _notificationService.GetNotifications(roleName).ToList();
+            var result = _notificationService.GetNotifications(roleName, technicalId).ToList();
             return StatusCode(200, result);
         }
 
@@ -59,7 +59,7 @@ namespace Surgery_1.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddNotificationForScheduling([FromBody] List<DateTime> list)
+        public IActionResult AddNotificationForScheduling([FromBody] List<SmsShiftViewModel> list)
         {
             _notificationService.AddNotificationForScheduling(list);
             return null;

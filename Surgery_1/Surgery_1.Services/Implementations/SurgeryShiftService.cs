@@ -18,12 +18,14 @@ namespace Surgery_1.Services.Implementations
     {
         private readonly AppDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly string SUPPLYSTAFF = "MedicalSupplier";
+        private readonly INotificationService _notificationService;
 
-        public SurgeryShiftService(AppDbContext context, UserManager<IdentityUser> userManager)
+
+        public SurgeryShiftService(AppDbContext context, UserManager<IdentityUser> userManager, INotificationService _notificationService)
         {
             this._context = context;
             this._userManager = userManager;
+            this._notificationService = _notificationService;
         }
 
         #region Technical Staffs
@@ -64,9 +66,10 @@ namespace Surgery_1.Services.Implementations
 
         public bool AssignTechnicalStaff()
         {
+            List<SmsShiftViewModel> notiShift = new List<SmsShiftViewModel>();
             try
             {
-                var preOperative = _context.SurgeryShifts.Where(s => s.Status.Name == "Preoperative" &&
+                var preOperative = _context.SurgeryShifts.Where(s => s.Status.Name == ConstantVariable.PRE_STATUS &&
                     (s.EstimatedStartDateTime != null && s.EstimatedEndDateTime != null) && s.TechId == null).ToList();
                 foreach (var shift in preOperative)
                 {
@@ -76,9 +79,18 @@ namespace Surgery_1.Services.Implementations
                     {
                         var tId = techStaffs.RandomSubset(1).ToList().FirstOrDefault().technicalStaffId;
                         shift.TechId = tId;
+                        //notify
+                        notiShift.Add(new SmsShiftViewModel
+                        {
+                            Id = shift.Id,
+                            EstimatedStartDateTime = shift.EstimatedStartDateTime.Value,
+                            TechnicalId = tId
+                        });
                     }
+
                 }
                 _context.SaveChanges();
+                _notificationService.AddNotificationForTechnicalStaff(notiShift);
                 return true;
             }
             catch (Exception) { return false; }
@@ -87,6 +99,7 @@ namespace Surgery_1.Services.Implementations
 
         public bool ImportSurgeryShift(ICollection<ImportSurgeryShiftViewModel> surgeryShifts)
         {
+            var countDuplicated = 0;
             try
             {
                 foreach (var s in surgeryShifts)
@@ -109,9 +122,13 @@ namespace Surgery_1.Services.Implementations
                     }
                     else
                     {
-                        var doublicated = _context.SurgeryShifts.Where(a=>a.PatientId == patient.Id && 
+                        var doublicated = _context.SurgeryShifts.Where(a => a.PatientId == patient.Id &&
                             a.SurgeryCatalogId == s.SurgeryCatalogID && a.Status.Name != ConstantVariable.FINISHED_STATUS).FirstOrDefault();
-                        if (doublicated != null) continue;
+                        if (doublicated != null)
+                        {
+                            countDuplicated++;
+                            continue;
+                        }
                     }
                     shift.PatientId = patient.Id;
                     shift.SurgeryCatalogId = s.SurgeryCatalogID;
@@ -153,13 +170,16 @@ namespace Surgery_1.Services.Implementations
                 }
                 // Xử lý notification
                 int countNoti = surgeryShifts.Count;
-                var notification = new Notification
+                if (countDuplicated != countNoti)
                 {
-                    Content = "There are " + countNoti + " new medical supplies request need to be confirmed",
-                    RoleToken = SUPPLYSTAFF
-                };
-                _context.Notifications.Add(notification);
-                _context.SaveChanges();
+                    var notification = new Notification
+                    {
+                        Content = "There are " + (countNoti - countDuplicated) + " new medical supplies request need to be confirmed",
+                        RoleToken = ConstantVariable.SUPPLYSTAFF
+                    };
+                    _context.Notifications.Add(notification);
+                    _context.SaveChanges();
+                }
                 return true;
             }
             catch (Exception)

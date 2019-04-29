@@ -191,5 +191,6 @@ namespace Surgery_1.Data.ViewModels
         public DateTime EstimatedEndDateTime { get; set; }
         public int SlotRoomId { get; set; }
         public string SurgeonPhone { get; set; }
+        public int TechnicalId { get; set; }
     }
 }
