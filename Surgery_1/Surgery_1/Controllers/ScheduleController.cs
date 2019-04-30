@@ -197,30 +197,7 @@ namespace Surgery_1.Controllers
                 }
                 else
                 {
-                    var affectedShifts = _surgeryService.GetAffectedShifts(param.StartDate, param.EndDate, param.SpecialtyGroupId);
-                    if (param.ForcedChange)
-                    {
-                        if (affectedShifts.Any())
-                        {
-                            return StatusCode(200, affectedShifts);
-                        }
-                        else
-                        {
-
-                            return StatusCode(400, "There was an error during getting room.");
-                        }
-                    }
-                    else
-                    {
-                        if (affectedShifts.Any())
-                        {
-                            return StatusCode(200, affectedShifts);
-                        }
-                        else
-                        {
-                            return StatusCode(400, "There was an error during getting room.");
-                        }
-                    }
+                    return StatusCode(400, "No Room Available !");
                 }
             }
             catch (Exception e)

@@ -1760,7 +1760,7 @@ namespace Surgery_1.Services.Implementations
             if (start.Day == end.Day)
             {
                 var maximumStart = GetMidnight(start) + new TimeSpan(19, 0, 0);
-                if (start <= maximumStart && start >= DateTime.Now)
+                if (start >= maximumStart && start >= DateTime.Now)
                 {
                     return true;
                 }
@@ -1948,8 +1948,6 @@ namespace Surgery_1.Services.Implementations
             }
             return rs;
         }
-
-
 
         #endregion
 
