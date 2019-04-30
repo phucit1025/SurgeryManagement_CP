@@ -158,5 +158,19 @@ namespace Surgery_1.Services.Implementations
             return resultSms;
         }
 
+        public string AddNotificationForUrgent(SmsShiftViewModel shiftViewModel)
+        {
+            var nameRoom = _context.SlotRooms.Find(shiftViewModel.SlotRoomId).SurgeryRoom.Name;
+            string content = $"[Urgent] Shift No {shiftViewModel.Id} at {nameRoom} on { UtilitiesDate.FormatDateShow(shiftViewModel.EstimatedStartDateTime.Date)} need to changed!";
+            var notification = new Notification
+            {
+                Content = content,
+                RoleToken = ConstantVariable.CHIEFNURSE,
+            };
+            _context.Notifications.Add(notification);
+            _context.SaveChanges();
+            return content;
+        }
+
     }
 }

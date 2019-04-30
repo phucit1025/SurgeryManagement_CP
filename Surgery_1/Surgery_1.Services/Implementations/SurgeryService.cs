@@ -246,24 +246,45 @@ namespace Surgery_1.Services.Implementations
             {
                 foreach (var shift in shifts)
                 {
-                    var item = _context.SurgeryShifts.Find(shift.SurgeryShiftId);
-                    if (!shift.IsNormalSurgeryTime) //chỉ định chuyển qua bình thường
+                    //Handle priority
+                    if (shift.PriorityNumber == 1)
                     {
-                        item.IsNormalSurgeryTime = true;
+                        var result = GetAvailableSlotRoomAfterWorking(UtilitiesDate.ConvertDateToNumber(shift.ScheduleDate), shift.SurgeryCatalogId)
+                            .OrderBy(s => s.StartDateTime).FirstOrDefault();
+                        InsertDateTimeToSurgeryShift(shift.SurgeryShiftId, result.StartDateTime,
+                            result.StartDateTime + TimeSpan.FromHours(shift.ExpectedSurgeryDuration), result.RoomId);
+
+                        _notificationService.AddNotificationForUrgent(new SmsShiftViewModel
+                        {
+                            Id = shift.SurgeryShiftId,
+                            EstimatedStartDateTime = result.StartDateTime,
+                            EstimatedEndDateTime = result.StartDateTime + TimeSpan.FromHours(shift.ExpectedSurgeryDuration),
+                            SlotRoomId = result.RoomId
+                        });
                     }
                     else
                     {
-                        if (shift.ScheduleDate.AddDays(1).DayOfWeek.Equals(ConstantVariable.DAYOFF))
+                        var item = _context.SurgeryShifts.Find(shift.SurgeryShiftId);
+                        item.PriorityNumber = item.PriorityNumber - 1;
+                        if (!shift.IsNormalSurgeryTime) //chỉ định chuyển qua bình thường
                         {
-                            item.ScheduleDate = shift.ScheduleDate.AddDays(2);
+                            item.IsNormalSurgeryTime = true;
                         }
                         else
                         {
-                            item.ScheduleDate = shift.ScheduleDate.AddDays(1);
+                            if (shift.ScheduleDate.AddDays(1).DayOfWeek.Equals(ConstantVariable.DAYOFF))
+                            {
+                                item.ScheduleDate = shift.ScheduleDate.AddDays(2);
+                            }
+                            else
+                            {
+                                item.ScheduleDate = shift.ScheduleDate.AddDays(1);
+                            }
                         }
+                        _context.Update(item);
+                        _context.SaveChanges();
                     }
-                    _context.Update(item);
-                    _context.SaveChanges();
+
                 }
                 MakeScheduleList();
             }
@@ -285,6 +306,29 @@ namespace Surgery_1.Services.Implementations
             var result = _context.Doctors.Find(surgeonId).SurgeryShifts.Where(s => s.EstimatedStartDateTime.Value.Date == selectedDay); //Tmp
 
             return false;
+        }
+
+
+        public List<AvailableRoomViewModel> GetAvailableSlotRoomAfterWorking(int dateNumber, int surgeryCatalogId)
+        {
+
+            var specialtyGroupId = _context.SurgeryCatalogs.Find(surgeryCatalogId).Specialty.SpecialtyGroup.Id;
+            var slotRooms = _context.SlotRooms.Where(s => s.SurgeryRoom.SpecialtyGroup.Id == specialtyGroupId).ToList();
+            var availableRooms = new List<AvailableRoomViewModel>();
+            foreach (var slot in slotRooms)
+            {
+                var result = slot.SurgeryShifts
+                    .Where(s => UtilitiesDate.ConvertDateToNumber(s.EstimatedStartDateTime.Value.Date) == dateNumber
+                    && s.IsAvailableMedicalSupplies == true)
+                    .OrderByDescending(s => s.EstimatedEndDateTime).FirstOrDefault();
+                availableRooms.Add(new AvailableRoomViewModel
+                {
+                    StartDateTime = result.EstimatedEndDateTime.Value,
+                    RoomId = slot.Id
+                });
+            }
+
+            return availableRooms;
         }
 
         #region GetAvailableRoom
@@ -562,11 +606,7 @@ namespace Surgery_1.Services.Implementations
                     SlotRoomId = slotRoomId,
                     SurgeonPhone = surgeryShift.TreatmentDoctor.PhoneNumber
                 });
-
-                //datetimeShiftList.Add(startTime);
             }
-
-
         }
         #endregion
 
