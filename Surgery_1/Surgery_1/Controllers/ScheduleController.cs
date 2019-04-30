@@ -185,42 +185,56 @@ namespace Surgery_1.Controllers
             return StatusCode(200, _roomService.GetRoom(id));
         }
 
-
         [HttpPost]
         public IActionResult GetAvailableRoom([FromBody]AvailableRoomParamViewModel param)
         {
-            var results = _surgeryService.GetAvailableRoom(param.StartDate, param.EndDate, param.ForcedChange, param.SpecialtyGroupId);
-            if (results != null)
+            try
             {
-                return StatusCode(200, results);
-            }
-            else
-            {
-                var affectedShifts = _surgeryService.GetAffectedShifts(param.StartDate, param.EndDate, param.SpecialtyGroupId);
-                if (param.ForcedChange)
+                var results = _surgeryService.GetAvailableRoom(param.StartDate, param.EndDate, param.ForcedChange, param.SpecialtyGroupId);
+                if (results != null && results.Any())
                 {
-                    if (affectedShifts.Any())
-                    {
-                        return StatusCode(200, affectedShifts);
-                    }
-                    else
-                    {
-
-                        return StatusCode(400, "There was an error during getting room.");
-                    }
+                    return StatusCode(200, results);
                 }
                 else
                 {
-                    if (affectedShifts.Any())
+                    var affectedShifts = _surgeryService.GetAffectedShifts(param.StartDate, param.EndDate, param.SpecialtyGroupId);
+                    if (param.ForcedChange)
                     {
-                        return StatusCode(200, affectedShifts);
+                        if (affectedShifts.Any())
+                        {
+                            return StatusCode(200, affectedShifts);
+                        }
+                        else
+                        {
+
+                            return StatusCode(400, "There was an error during getting room.");
+                        }
                     }
                     else
                     {
-                        return StatusCode(400, "Start Time cannot beyond 17:00.");
+                        if (affectedShifts.Any())
+                        {
+                            return StatusCode(200, affectedShifts);
+                        }
+                        else
+                        {
+                            return StatusCode(400, "There was an error during getting room.");
+                        }
                     }
                 }
             }
+            catch (Exception e)
+            {
+                if (e.Message.Equals("Time"))
+                {
+                    return StatusCode(400, "Tine is not valid : \n - Start Time cannot beyond 17:00. \n - Start Time cannot be in the past.");
+                }
+                else
+                {
+                    return StatusCode(400, "There was an error during getting room.");
+                }
+            }
+
         }
 
         [HttpGet]
