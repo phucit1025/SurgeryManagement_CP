@@ -395,6 +395,8 @@ namespace Surgery_1.Services.Implementations
                 var treatmentReportDrugs = new List<TreatmentReportDrugViewModel>();
                 foreach (var treatmentReportDrug in treatmentReport.TreatmentReportDrugs.ToList())
                 {
+                    var status = treatmentReportDrug.StatusString.Replace("/0", " Not Used").Replace("/1/", " Used By ");
+
                     treatmentReportDrugs.Add(new TreatmentReportDrugViewModel()
                     {
                         Id = treatmentReportDrug.Id,
@@ -406,6 +408,7 @@ namespace Surgery_1.Services.Implementations
                         Unit = treatmentReportDrug.Drug.Unit,
                         IsUsed = treatmentReportDrug.IsUsed,
                         IsDeleted = treatmentReportDrug.IsDeleted,
+                        StatusUsedBy = status,
                     });
                 }
                 result.Add(new TreatmentReportViewModel()
@@ -911,9 +914,9 @@ namespace Surgery_1.Services.Implementations
         public bool ConfirmTakeMedicine(int treatmentReportDrugId, string time)
         {
             var guid = _httpContextAccessor.HttpContext.User.GetGuid();
-            var nurseId = _appDbContext.UserInfo.Where(a => a.GuId == guid).FirstOrDefault().Id;
+            var nurse = _appDbContext.UserInfo.Where(a => a.GuId == guid).FirstOrDefault();
             var drug = _appDbContext.TreatmentReportDrugs.Find(treatmentReportDrugId);
-            drug.StatusString = drug.StatusString.Replace(time + "/0", time + "/1/" + nurseId);
+            drug.StatusString = drug.StatusString.Replace(time + "/0", time + "/1/" + nurse.FullName);
             _appDbContext.Update(drug);
             _appDbContext.SaveChanges();
             return true;
@@ -931,11 +934,14 @@ namespace Surgery_1.Services.Implementations
                 shift.SurgeryName = surgeryShift.SurgeryCatalog.Name;
                 shift.PatientName = surgeryShift.Patient.FullName;
                 var lastHealthcareReport = surgeryShift.HealthCareReports.LastOrDefault();
-                shift.WoundCondition = lastHealthcareReport.WoundCondition;
-                shift.WoundConditionDescription = lastHealthcareReport.WoundConditionDescription;
-                shift.DrugAllergy = lastHealthcareReport.DrugAllergy;
-                shift.DrugAllergyDescription = lastHealthcareReport.DrugAllergyDescription;
-                shift.ClosestDate = lastHealthcareReport.DateCreated.Value;
+                if (lastHealthcareReport != null)
+                {
+                    shift.WoundCondition = lastHealthcareReport.WoundCondition;
+                    shift.WoundConditionDescription = lastHealthcareReport.WoundConditionDescription;
+                    shift.DrugAllergy = lastHealthcareReport.DrugAllergy;
+                    shift.DrugAllergyDescription = lastHealthcareReport.DrugAllergyDescription;
+                    shift.ClosestDate = lastHealthcareReport.DateCreated.Value;
+                }
                 rs.Add(shift);
             }
             return rs;

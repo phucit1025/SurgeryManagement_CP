@@ -32,6 +32,7 @@ namespace Surgery_1.Data.ViewModels
         public string Unit { get; set; }
         public bool IsUsed { get; set; }
         public bool IsDeleted { get; set; }
+        public string StatusUsedBy { get; set; }
     }
 
     public class TreatmentMedication
