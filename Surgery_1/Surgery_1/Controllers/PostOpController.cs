@@ -293,5 +293,16 @@ namespace Surgery_1.Controllers
             }
             return NotFound();
         }
+
+        [HttpGet]
+        public IActionResult GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId)
+        {
+            var result = _postOpService.GetPostOpSurgeryShift(actualEnd, speacialtyId, surgeryId, doctorId);
+            if (!result.IsNullOrEmpty())
+            {
+                return Ok(result);
+            }
+            return NotFound();
+        }
     }
 }

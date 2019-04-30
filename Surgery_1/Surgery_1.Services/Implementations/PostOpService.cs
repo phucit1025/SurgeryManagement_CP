@@ -929,5 +929,93 @@ namespace Surgery_1.Services.Implementations
             }
             return rs;
         }
+
+        public List<PostOpViewModel> GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId)
+        {
+            var surgeryShitfs = _appDbContext.SurgeryShifts.Where(s => s.StatusId == ConstantVariable.POST_STATUS_NUM
+                                                                  || s.StatusId == ConstantVariable.RECOVERY_STATUS_NUM).ToList();
+            var rs = new List<PostOpViewModel>();
+            if (actualEnd == DateTime.MinValue && speacialtyId == 0 && surgeryId == 0 && doctorId == 0)
+            {
+                    rs.AddRange(surgeryShitfs.Select(s => new PostOpViewModel()
+                    {
+                        Id = s.Id,
+                        Gender = s.Patient.Gender,
+                        PatientName = s.Patient.FullName,
+                        Yob = s.Patient.YearOfBirth,
+                        SurgeryName = s.SurgeryCatalog.Name,
+                        StatusName = s.Status.Name,
+                    }));
+                return rs;
+            }
+
+
+            if (actualEnd != DateTime.MinValue)
+            {
+                var surgeryShiftsRs = surgeryShitfs.Where(s => s.ActualEndDateTime.Value.Date == actualEnd.Date).ToList();
+                if (surgeryShiftsRs.Any())
+                {
+                    rs.AddRange(surgeryShiftsRs.Select(s => new PostOpViewModel()
+                    {
+                        Id = s.Id,
+                        Gender = s.Patient.Gender,
+                        PatientName = s.Patient.FullName,
+                        Yob = s.Patient.YearOfBirth,
+                        SurgeryName = s.SurgeryCatalog.Name,
+                        StatusName = s.Status.Name,
+                    }));
+                }
+            }
+            if (speacialtyId != 0)
+            {
+                var surgeryShiftsRs = surgeryShitfs.Where(s => s.SurgeryCatalog.SpecialtyId == speacialtyId).ToList();
+                if (surgeryShiftsRs.Any())
+                {
+                    rs.AddRange(surgeryShiftsRs.Select(s => new PostOpViewModel()
+                    {
+                        Id = s.Id,
+                        Gender = s.Patient.Gender,
+                        PatientName = s.Patient.FullName,
+                        Yob = s.Patient.YearOfBirth,
+                        SurgeryName = s.SurgeryCatalog.Name,
+                        StatusName = s.Status.Name,
+                    }));
+                }
+            }
+            if (surgeryId != 0)
+            {
+                var surgeryShiftsRs = surgeryShitfs.Where(s => s.SurgeryCatalog.Id == surgeryId).ToList();
+                if (surgeryShiftsRs.Any())
+                {
+                    rs.AddRange(surgeryShiftsRs.Select(s => new PostOpViewModel()
+                    {
+                        Id = s.Id,
+                        Gender = s.Patient.Gender,
+                        PatientName = s.Patient.FullName,
+                        Yob = s.Patient.YearOfBirth,
+                        SurgeryName = s.SurgeryCatalog.Name,
+                        StatusName = s.Status.Name,
+                    }));
+                }
+            }
+            if (doctorId != 0)
+            {
+                var surgeryShiftsRs = surgeryShitfs.Where(s => s.SurgeryShiftSurgeons.Any(x => x.Surgeon.Id == doctorId)).ToList();
+                if (surgeryShiftsRs.Any())
+                {
+                    rs.AddRange(surgeryShiftsRs.Select(s => new PostOpViewModel()
+                    {
+                        Id = s.Id,
+                        Gender = s.Patient.Gender,
+                        PatientName = s.Patient.FullName,
+                        Yob = s.Patient.YearOfBirth,
+                        SurgeryName = s.SurgeryCatalog.Name,
+                        StatusName = s.Status.Name,
+                    }));
+                }
+            }
+            rs = rs.DistinctBy(x => x.Id).ToList();
+            return rs;
+        }
     }
 }

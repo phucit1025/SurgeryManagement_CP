@@ -19,6 +19,7 @@ namespace Surgery_1.Services.Utilities
         public const string RECOVERY_STATUS = "Recovery";
         public const string FINISHED_STATUS = "Finished";
         public const int RECOVERY_STATUS_NUM = 4;
+        public const int POST_STATUS_NUM = 3;
 
         public const string EMERGENCY_GROUP = "Emergency";
 
