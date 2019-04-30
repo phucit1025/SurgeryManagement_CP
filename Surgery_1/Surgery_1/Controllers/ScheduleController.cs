@@ -185,26 +185,33 @@ namespace Surgery_1.Controllers
             return StatusCode(200, _roomService.GetRoom(id));
         }
 
-
         [HttpPost]
         public IActionResult GetAvailableRoom([FromBody]AvailableRoomParamViewModel param)
         {
-            var results = _surgeryService.GetAvailableRoom(param.StartDate, param.EndDate, param.ForcedChange, param.SpecialtyGroupId);
-            if (results != null)
+            try
             {
-                return StatusCode(200, results);
-            }
-            else
-            {
-                if (param.ForcedChange)
+                var results = _surgeryService.GetAvailableRoom(param.StartDate, param.EndDate, param.ForcedChange, param.SpecialtyGroupId);
+                if (results != null && results.Any())
                 {
-                    return StatusCode(400, "There was an error during getting room.");
+                    return StatusCode(200, results);
                 }
                 else
                 {
-                    return StatusCode(400, "Start Time cannot beyond 17:00.");
+                    return StatusCode(400, "No Room Available !");
                 }
             }
+            catch (Exception e)
+            {
+                if (e.Message.Equals("Time"))
+                {
+                    return StatusCode(400, "Tine is not valid : \n - Start Time cannot beyond 17:00. \n - Start Time cannot be in the past.");
+                }
+                else
+                {
+                    return StatusCode(400, "There was an error during getting room.");
+                }
+            }
+
         }
 
         [HttpGet]

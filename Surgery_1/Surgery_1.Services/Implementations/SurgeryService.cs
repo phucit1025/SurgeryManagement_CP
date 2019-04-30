@@ -23,7 +23,7 @@ namespace Surgery_1.Services.Implementations
 
         private int countNoti = 0;
 
-        
+
         private List<SmsShiftViewModel> smsShiftDate = new List<SmsShiftViewModel>();
 
         private readonly AppDbContext _context;
@@ -902,10 +902,12 @@ namespace Surgery_1.Services.Implementations
         {
             if (!IsValidTime(start, end) && !forcedChange)
             {
-                return null;
+                throw new Exception("Time");
             }
 
-            var rooms = new List<SlotRoom>();
+            var affectedShiftResults = new List<AffectedShiftViewModel>();
+
+            var rooms = new List<SlotRoom>(); //n1
             if (SpecialtyGroupId != 0)
             {
                 rooms = _context.SlotRooms.Where(r => !r.IsDeleted && r.SurgeryRoom.SpecialtyGroupId == SpecialtyGroupId).ToList();
@@ -919,7 +921,7 @@ namespace Surgery_1.Services.Implementations
             foreach (var room in rooms)
             {
                 var shifts = new List<SurgeryShift>();
-                if (start.DayOfYear > DateTime.Now.DayOfYear)
+                if (start.DayOfYear > DateTime.Now.DayOfYear)//n2
                 {
                     var gapDays = (start - DateTime.Now).Days;
                     shifts = room.SurgeryShifts.Where(s =>
@@ -933,21 +935,33 @@ namespace Surgery_1.Services.Implementations
                 {
                     shifts = room.SurgeryShifts.Where(s =>
                                                 !s.IsDeleted &&
-                                                s.EstimatedStartDateTime.Value > DateTime.Now &&
+                                                (s.EstimatedStartDateTime.Value > DateTime.Now
+                                                || s.EstimatedStartDateTime.Value <= DateTime.Now && s.EstimatedEndDateTime.Value > DateTime.Now)
+                                                &&
                                                 s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase))
                                                 .ToList();
                 }
 
 
-                if (shifts.Any())
+                if (shifts.Any()) // n3
                 {
                     var affectedShifts = shifts.Where(s =>
                         (s.EstimatedStartDateTime.Value >= start && s.EstimatedStartDateTime.Value < end)
-                        || (s.EstimatedEndDateTime.Value > start && s.EstimatedEndDateTime.Value <= end))
+                        || (s.EstimatedEndDateTime.Value > start && s.EstimatedEndDateTime.Value <= end)
+                        || (s.EstimatedStartDateTime.Value <= start && s.EstimatedEndDateTime.Value > end))
                         .ToList();
                     if (!affectedShifts.Any())
                     {
                         roomId.Add(room.Id);
+                    }
+                    else
+                    {
+                        affectedShiftResults.AddRange(affectedShifts.Select(s => new AffectedShiftViewModel()
+                        {
+                            EstimatedEnd = s.EstimatedEndDateTime.Value,
+                            EstimatedStart = s.EstimatedStartDateTime.Value,
+                            ShiftId = s.Id
+                        }).ToList());
                     }
                 }
                 else
@@ -956,7 +970,7 @@ namespace Surgery_1.Services.Implementations
                 }
 
             }
-            return roomId.OrderBy(c => c).ToList();
+            return roomId.OrderBy(c => c).ToList(); // n1 * ( max(n2,n3))
         }
 
         public List<AvailableRoomViewModel> GetAvailableRoom(DateTime? date, int specialtyGroupId, int hour, int minute, int? longerShiftId = null, List<int> shiftIds = null)
@@ -1135,7 +1149,7 @@ namespace Surgery_1.Services.Implementations
                 var swapParamResult = SwapParamName(ref longerShift, ref shift, ref longerDuration, ref duration);
                 if (swapParamResult)
                 {
-                    if (shift.SlotRoomId != longerShift.SlotRoomId)
+                    if (shift.SlotRoomId != longerShift.SlotRoomId)//n * n1 * ( max(n2,n3))
                     {
                         var longerShiftRoomId = longerShift.SlotRoomId.Value;
                         var shiftRoomId = shift.SlotRoomId.Value;
@@ -1164,7 +1178,7 @@ namespace Surgery_1.Services.Implementations
                         _context.SaveChanges();
                         #endregion
 
-                        var affectedShifts = GetAffectedShifts(longerShift, shift);
+                        var affectedShifts = GetAffectedShifts(longerShift, shift); //n
                         var affectedShiftIds = affectedShifts.Select(s => s.Id).ToList();
 
                         #region Resolve Affected Shifts
@@ -1172,6 +1186,7 @@ namespace Surgery_1.Services.Implementations
                         {
                             foreach (var affectedShift in affectedShifts)
                             {
+                                //n1 * (max(n2, n3))
                                 var slotRoomIds = GetAvailableRoom(affectedShift.EstimatedStartDateTime.Value, affectedShift.EstimatedEndDateTime.Value, false, affectedShift.SlotRoom.SurgeryRoom.SpecialtyGroupId.Value);
                                 if (slotRoomIds.Any())
                                 {
@@ -1245,7 +1260,7 @@ namespace Surgery_1.Services.Implementations
                     }
                     else
                     {
-                        if (IsNextTo(shift, longerShift))
+                        if (IsNextTo(shift, longerShift)) //n4
                         {
                             var longerShiftRoomId = longerShift.SlotRoomId.Value;
                             var shiftRoomId = shift.SlotRoomId.Value;
@@ -1272,7 +1287,7 @@ namespace Surgery_1.Services.Implementations
                             result.Succeed = swapResult;
                             return result;
                         }
-                        else
+                        else //n * (n1 * (max(n2, n3)))^2
                         {
                             var longerShiftRoomId = longerShift.SlotRoomId.Value;
                             var shiftRoomId = shift.SlotRoomId.Value;
@@ -1309,6 +1324,7 @@ namespace Surgery_1.Services.Implementations
                             {
                                 foreach (var affectedShift in affectedShifts)
                                 {
+                                    //n1 * (max(n2, n3))
                                     var roomIds = GetAvailableRoom(affectedShift.EstimatedStartDateTime.Value, affectedShift.EstimatedEndDateTime.Value, false, affectedShift.SurgeryCatalog.SpecialtyId);
                                     if (roomIds.Any())
                                     {
@@ -1571,6 +1587,61 @@ namespace Surgery_1.Services.Implementations
             return results.OrderBy(r => r).ToList();
         }
 
+        public List<AffectedShiftViewModel> GetAffectedShifts(DateTime start, DateTime end, int specialtyGroupId)
+        {
+            var affectedShiftResults = new List<AffectedShiftViewModel>();
+
+            var rooms = new List<SlotRoom>();
+            rooms = _context.SlotRooms.Where(r => !r.IsDeleted && r.SurgeryRoom.SpecialtyGroupId == specialtyGroupId).ToList();
+            var roomId = new List<int>();
+
+            foreach (var room in rooms)
+            {
+                var shifts = new List<SurgeryShift>();
+                if (start.DayOfYear > DateTime.Now.DayOfYear)//n2
+                {
+                    var gapDays = (start - DateTime.Now).Days;
+                    shifts = room.SurgeryShifts.Where(s =>
+                                            !s.IsDeleted &&
+                                            s.EstimatedStartDateTime.Value > GetMidnight(DateTime.Now.AddDays(gapDays)) &&
+                                            s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase))
+                                            .ToList();
+
+                }
+                else
+                {
+                    shifts = room.SurgeryShifts.Where(s =>
+                                                !s.IsDeleted &&
+                                                (s.EstimatedStartDateTime.Value > DateTime.Now
+                                                || s.EstimatedStartDateTime.Value <= DateTime.Now && s.EstimatedEndDateTime.Value > DateTime.Now)
+                                                &&
+                                                s.Status.Name.Equals("Preoperative", StringComparison.CurrentCultureIgnoreCase))
+                                                .ToList();
+                }
+
+
+                if (shifts.Any())
+                {
+                    var affectedShifts = shifts.Where(s =>
+                        (s.EstimatedStartDateTime.Value >= start && s.EstimatedStartDateTime.Value < end)
+                        || (s.EstimatedEndDateTime.Value > start && s.EstimatedEndDateTime.Value <= end)
+                        || (s.EstimatedStartDateTime.Value <= start && s.EstimatedEndDateTime.Value > end))
+                        .ToList();
+
+                    if (affectedShifts.Any())
+                    {
+                        affectedShiftResults.AddRange(affectedShifts.Select(s => new AffectedShiftViewModel()
+                        {
+                            EstimatedEnd = s.EstimatedEndDateTime.Value,
+                            EstimatedStart = s.EstimatedStartDateTime.Value,
+                            ShiftId = s.Id
+                        }).ToList());
+                    }
+                }
+            }
+            return affectedShiftResults;
+        }
+
         #endregion
 
         #region Processing
@@ -1689,7 +1760,7 @@ namespace Surgery_1.Services.Implementations
             if (start.Day == end.Day)
             {
                 var maximumStart = GetMidnight(start) + new TimeSpan(19, 0, 0);
-                if (start <= maximumStart)
+                if (start >= maximumStart && start >= DateTime.Now)
                 {
                     return true;
                 }
@@ -1822,6 +1893,8 @@ namespace Surgery_1.Services.Implementations
 
 
 
+
+
         #endregion
 
         #region Statistic
@@ -1836,9 +1909,9 @@ namespace Surgery_1.Services.Implementations
                 var catalogs = _context.SurgeryCatalogs.Where(s => s.SpecialtyId == spec.Id).ToList();
                 var numbShift = 0;
                 foreach (var catalog in catalogs)
-                {   
-                       var surgeryShifts = _context.SurgeryShifts.Where(s => s.SurgeryCatalogId == catalog.Id
-                                        && s.ActualStartDateTime.Value.Date >= start.Date && s.ActualEndDateTime.Value.Date <= end.Date).ToList();
+                {
+                    var surgeryShifts = _context.SurgeryShifts.Where(s => s.SurgeryCatalogId == catalog.Id
+                                     && s.ActualStartDateTime.Value.Date >= start.Date && s.ActualEndDateTime.Value.Date <= end.Date).ToList();
                     numbShift = numbShift + surgeryShifts.Count;
                 }
                 statistic.number = numbShift;
@@ -1866,7 +1939,7 @@ namespace Surgery_1.Services.Implementations
                     foreach (var shift in surgeryShifts)
                     {
                         System.TimeSpan time = shift.ActualEndDateTime.Value - shift.ActualStartDateTime.Value;
-                        slotTime = slotTime + time.TotalHours;    
+                        slotTime = slotTime + time.TotalHours;
                     }
                     roomTime = roomTime + slotTime;
                 }
@@ -1875,8 +1948,6 @@ namespace Surgery_1.Services.Implementations
             }
             return rs;
         }
-
-
 
         #endregion
 

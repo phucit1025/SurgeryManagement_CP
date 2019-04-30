@@ -120,6 +120,13 @@ namespace Surgery_1.Data.ViewModels
         public List<AffectedShiftResultViewModel> AffectedShifts { get; set; } = new List<AffectedShiftResultViewModel>();
     }
 
+    public class AffectedShiftViewModel
+    {
+        public int ShiftId { get; set; }
+        public DateTime EstimatedStart { get; set; }
+        public DateTime EstimatedEnd { get; set; }
+    }
+
     public class AffectedShiftResultViewModel
     {
         public int ShiftId { get; set; }
