@@ -23,7 +23,7 @@ namespace Surgery_1.Services.Implementations
 
         private int countNoti = 0;
 
-        private StringBuilder smsContent;
+        
         private List<SmsShiftViewModel> smsShiftDate = new List<SmsShiftViewModel>();
 
         private readonly AppDbContext _context;

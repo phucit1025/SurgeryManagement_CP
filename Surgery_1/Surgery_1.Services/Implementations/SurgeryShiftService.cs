@@ -120,16 +120,16 @@ namespace Surgery_1.Services.Implementations
                         _context.SaveChanges();
                         patient = _context.Patients.Where(p => p.IdentityNumber == s.PatientID).Single();
                     }
-                    else
-                    {
-                        var doublicated = _context.SurgeryShifts.Where(a => a.PatientId == patient.Id &&
-                            a.SurgeryCatalogId == s.SurgeryCatalogID && a.Status.Name != ConstantVariable.FINISHED_STATUS).FirstOrDefault();
-                        if (doublicated != null)
-                        {
-                            countDuplicated++;
-                            continue;
-                        }
-                    }
+                    //else
+                    //{
+                    //    var doublicated = _context.SurgeryShifts.Where(a => a.PatientId == patient.Id &&
+                    //        a.SurgeryCatalogId == s.SurgeryCatalogID && a.Status.Name != ConstantVariable.FINISHED_STATUS).FirstOrDefault();
+                    //    if (doublicated != null)
+                    //    {
+                    //        countDuplicated++;
+                    //        continue;
+                    //    }
+                    //}
                     shift.PatientId = patient.Id;
                     shift.SurgeryCatalogId = s.SurgeryCatalogID;
                     shift.ProposedStartDateTime = s.ProposedStartDateTime;
