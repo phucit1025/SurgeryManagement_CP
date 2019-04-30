@@ -1231,7 +1231,7 @@ namespace Surgery_1.Services.Implementations
                                     });
                                     if (result.Succeed)
                                     {
-                                        resolvedShift.NewRoomName = _context.SurgeryRooms.Find(slotRoomIds.FirstOrDefault()).Name;
+                                        resolvedShift.NewRoomName = _context.SlotRooms.Find(slotRoomIds.FirstOrDefault()).Name;
                                         result.AffectedShifts.Add(resolvedShift);
                                     }
                                 }
@@ -1265,7 +1265,7 @@ namespace Surgery_1.Services.Implementations
 
                                         if (result.Succeed)
                                         {
-                                            resolvedShift.NewRoomName = _context.SurgeryRooms.Find(rooms.FirstOrDefault().RoomId).Name;
+                                            resolvedShift.NewRoomName = _context.SlotRooms.Find(rooms.FirstOrDefault().RoomId).Name;
                                             resolvedShift.NewStart = rooms.FirstOrDefault().StartDateTime;
                                             resolvedShift.NewEnd = rooms.FirstOrDefault().EndDateTime;
                                             result.AffectedShifts.Add(resolvedShift);
@@ -1379,7 +1379,7 @@ namespace Surgery_1.Services.Implementations
                                         });
                                         if (result.Succeed)
                                         {
-                                            resolvedShift.NewRoomName = _context.SurgeryRooms.Find(roomIds.FirstOrDefault()).Name;
+                                            resolvedShift.NewRoomName = _context.SlotRooms.Find(roomIds.FirstOrDefault()).Name;
                                             result.AffectedShifts.Add(resolvedShift);
                                         }
                                     }
@@ -1413,7 +1413,7 @@ namespace Surgery_1.Services.Implementations
 
                                             if (result.Succeed)
                                             {
-                                                resolvedShift.NewRoomName = _context.SurgeryRooms.Find(rooms.FirstOrDefault().RoomId).Name;
+                                                resolvedShift.NewRoomName = _context.SlotRooms.Find(rooms.FirstOrDefault().RoomId).Name;
                                                 resolvedShift.NewStart = rooms.FirstOrDefault().StartDateTime;
                                                 resolvedShift.NewEnd = rooms.FirstOrDefault().EndDateTime;
                                                 result.AffectedShifts.Add(resolvedShift);
@@ -1533,7 +1533,7 @@ namespace Surgery_1.Services.Implementations
                             });
                             if (result.Succeed)
                             {
-                                resolvedShift.NewRoomName = _context.SurgeryRooms.Find(roomIds.FirstOrDefault()).Name;
+                                resolvedShift.NewRoomName = _context.SlotRooms.Find(roomIds.FirstOrDefault()).Name;
                                 result.AffectedShifts.Add(resolvedShift);
                             }
                         }
@@ -1567,7 +1567,7 @@ namespace Surgery_1.Services.Implementations
 
                                 if (result.Succeed)
                                 {
-                                    resolvedShift.NewRoomName = _context.SurgeryRooms.Find(rooms.FirstOrDefault().RoomId).Name;
+                                    resolvedShift.NewRoomName = _context.SlotRooms.Find(rooms.FirstOrDefault().RoomId).Name;
                                     resolvedShift.NewStart = rooms.FirstOrDefault().StartDateTime;
                                     resolvedShift.NewEnd = rooms.FirstOrDefault().EndDateTime;
                                     result.AffectedShifts.Add(resolvedShift);
@@ -2055,7 +2055,6 @@ namespace Surgery_1.Services.Implementations
             }
             return rs;
         }
-
         #endregion
 
     }
