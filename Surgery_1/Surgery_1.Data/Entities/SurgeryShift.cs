@@ -39,7 +39,6 @@ namespace Surgery_1.Data.Entities
         public string UsedAnesthesiaMethod { get; set; }
 
         public bool IsAvailableMedicalSupplies { get; set; }
-        public string SurgeryProcedureContent { get; set; }
         public int PriorityNumber { get; set; }
         public int? PriorityNumberAlt { get; set; }
 
@@ -51,9 +50,6 @@ namespace Surgery_1.Data.Entities
         public int? TreatmentDoctorId { get; set; }
         public int? NurseId { get; set; }
         public int? TechId { get; set; }
-
-
-        public string EkipIndex { get; set; }
 
         [ForeignKey("PatientId")]
         public virtual Patient Patient { get; set; }

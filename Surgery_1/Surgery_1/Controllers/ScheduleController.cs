@@ -196,13 +196,29 @@ namespace Surgery_1.Controllers
             }
             else
             {
+                var affectedShifts = _surgeryService.GetAffectedShifts(param.StartDate, param.EndDate, param.SpecialtyGroupId);
                 if (param.ForcedChange)
                 {
-                    return StatusCode(400, "There was an error during getting room.");
+                    if (affectedShifts.Any())
+                    {
+                        return StatusCode(200, affectedShifts);
+                    }
+                    else
+                    {
+
+                        return StatusCode(400, "There was an error during getting room.");
+                    }
                 }
                 else
                 {
-                    return StatusCode(400, "Start Time cannot beyond 17:00.");
+                    if (affectedShifts.Any())
+                    {
+                        return StatusCode(200, affectedShifts);
+                    }
+                    else
+                    {
+                        return StatusCode(400, "Start Time cannot beyond 17:00.");
+                    }
                 }
             }
         }

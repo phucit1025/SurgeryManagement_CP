@@ -39,6 +39,7 @@ namespace Surgery_1.Services.Interfaces
         SwapShiftResultViewModel SwapShift(int shift1Id, int shift2Id);
         List<int> GetSwapableShiftIds();
         SwapShiftResultViewModel SwapShiftToRoom(int shiftId, int roomId, bool forcedSwap);
+        List<AffectedShiftViewModel> GetAffectedShifts(DateTime start, DateTime end, int specialtyGroupId);
         #endregion
 
         void AssignEkipByDate(int dateNumber);
