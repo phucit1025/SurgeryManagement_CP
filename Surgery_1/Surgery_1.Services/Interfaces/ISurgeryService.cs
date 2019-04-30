@@ -44,5 +44,8 @@ namespace Surgery_1.Services.Interfaces
 
         void AssignEkipByDate(int dateNumber);
         void AssignEkip();
+
+        List<StatisticViewModel> numShiftBySpec(DateTime start, DateTime end);
+        List<RoomStatisticViewModel> getEfficientcyRoom(DateTime start, DateTime end);
     }
 }

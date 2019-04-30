@@ -260,5 +260,27 @@ namespace Surgery_1.Controllers
             }
             return NotFound();
         }
+
+        [HttpGet]
+        public IActionResult GetDrugTimelineByShiftID(int surgeryShiftId)
+        {
+            var result = _postOpService.GetDrugTimelineByShiftIdAndDate(surgeryShiftId);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public IActionResult ConfirmTakeMedicine(int treatmentReportDrugId, string time)
+        {
+            var result = _postOpService.ConfirmTakeMedicine(treatmentReportDrugId, time);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
+        }
     }
 }

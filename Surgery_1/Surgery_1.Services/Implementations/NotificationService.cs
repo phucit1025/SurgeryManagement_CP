@@ -16,49 +16,100 @@ namespace Surgery_1.Services.Implementations
     {
         private readonly AppDbContext _context;
 
-        private const string CHIEFNURSE = "ChiefNurse";
         public NotificationService(AppDbContext _context)
         {
             this._context = _context;
         }
 
-        public void AddNotificationForScheduling(List<DateTime> dateList)
+        public void AddNotificationForScheduling(List<SmsShiftViewModel> notiList)
         {
-            var result = dateList.OrderBy(s => s.Date).GroupBy(s => s.Date).ToList();
+            //var resultTechnical = notiList.GroupBy(s => s.Id)
+            var result = notiList.OrderBy(s => s.EstimatedStartDateTime.Date).GroupBy(s => s.EstimatedStartDateTime.Date).ToList();
             string content = "";
-            if (dateList.Count > 1)
+            if (notiList.Count > 1)
             {
-                content = "There are " + dateList.Count + " surgery shifts have just been created: ";
+                content = "There are " + notiList.Count + " surgery shifts have just been created: ";
             }
             else
             {
-                content = "There is " + dateList.Count + " surgery shift has just been created: ";
+                content = "There is " + notiList.Count + " surgery shift has just been created: ";
             }
             foreach (var item in result)
             {
                 int countNoti = item.Count();
                 if (countNoti > 1)
                 {
-                    content += countNoti + " shifts are on " + UtilitiesDate.FormatDateShow(item.First().Date) + ", ";
+                    content += countNoti + " shifts are on " + UtilitiesDate.FormatDateShow(item.First().EstimatedStartDateTime.Date) + ", ";
                 }
                 else
                 {
-                    content += countNoti + " shift is on " + UtilitiesDate.FormatDateShow(item.First().Date) + ", ";
+                    content += countNoti + " shift is on " + UtilitiesDate.FormatDateShow(item.First().EstimatedStartDateTime.Date) + ", ";
                 }
             }
             content = content.Remove(content.Length - 2, 2) + ".";
             var notification = new Notification
             {
                 Content = content,
-                RoleToken = CHIEFNURSE
+                RoleToken = ConstantVariable.CHIEFNURSE
             };
             _context.Notifications.Add(notification);
             _context.SaveChanges();
         }
 
-        public ICollection<MessageNotificationViewModel> GetNotifications(string roleName)
+        public void AddNotificationForTechnicalStaff(List<SmsShiftViewModel> notiList)
         {
-            var result = _context.Notifications.Where(s => s.RoleToken.Equals(roleName)).OrderByDescending(s => s.DateCreated);
+            var result = notiList.GroupBy(s => s.TechnicalId).ToList();
+            foreach (var noti in result)
+            {
+                var count = noti.ToList().Count;
+                string content = "";
+                if (count > 1)
+                {
+                    content = "There are " + count + " surgery shifts have just been created: ";
+                }
+                else
+                {
+                    content = "There is " + count + " surgery shift has just been created: ";
+                }
+                foreach (var item in noti.GroupBy(s => s.EstimatedStartDateTime.Date).ToList())
+                {
+
+                    int countNoti = item.Count();
+                    if (countNoti > 1)
+                    {
+                        content += countNoti + " shifts are on " + UtilitiesDate.FormatDateShow(item.First().EstimatedStartDateTime.Date) + ", ";
+                    }
+                    else
+                    {
+                        content += countNoti + " shift is on " + UtilitiesDate.FormatDateShow(item.First().EstimatedStartDateTime.Date) + ", ";
+                    }
+                }
+                content = content.Remove(content.Length - 2, 2) + ".";
+                var notification = new Notification
+                {
+                    Content = content,
+                    RoleToken = ConstantVariable.TECHNICAL,
+                    StaffGuid = noti.First().TechnicalId.ToString()
+
+                };
+                _context.Notifications.Add(notification);
+                _context.SaveChanges();
+            }
+
+        }
+
+
+        public ICollection<MessageNotificationViewModel> GetNotifications(string roleName, int technicalId)
+        {
+            var result = _context.Notifications.OrderByDescending(s => s.DateCreated).ToList();
+            if (technicalId == 0)
+            {
+                result = result.Where(s => s.RoleToken.Equals(roleName)).ToList();
+            }
+            else
+            {
+                result = result.Where(s => s.RoleToken.Equals(roleName) && s.StaffGuid == technicalId.ToString()).ToList();
+            }
             ICollection<MessageNotificationViewModel> messages = new List<MessageNotificationViewModel>();
             foreach (var message in result)
             {
@@ -83,27 +134,29 @@ namespace Surgery_1.Services.Implementations
 
         public string HandleSmsForSurgeon(List<SmsShiftViewModel> smsShiftDate)
         {
-            var sortedShift = smsShiftDate.OrderBy(s => s.EstimatedStartDateTime.Date);
-            var result = sortedShift.GroupBy(s => s.EstimatedStartDateTime.Date).ToList();
-            string content = "eBSMS provides surgery schedule for you: \\n";
+            var listByPhone = smsShiftDate.GroupBy(s => s.SurgeonPhone).ToList();
 
-            foreach (var item in result)
+            string resultSms = "";
+            foreach (var item in listByPhone)
             {
-                content += $"{UtilitiesDate.FormatDateShow(item.First().EstimatedStartDateTime)}: \\n";
-                foreach (var shift in sortedShift)
+                List<string> phoneList = new List<string>();
+                string content = "eBSMS provides surgery schedule: \\n";
+                if (item.First().SurgeonPhone == null) { continue; }
+                else { phoneList.Add(item.First().SurgeonPhone); }
+                foreach (var index in item.GroupBy(s => s.EstimatedStartDateTime.Date).ToList())
                 {
-                    if (shift.EstimatedStartDateTime.Date == item.First().EstimatedStartDateTime.Date)
+                    content += $"=={UtilitiesDate.FormatDateShow(index.First().EstimatedStartDateTime)}== \\n";
+                    foreach (var shift in index.OrderBy(s => s.EstimatedStartDateTime).ToList())
                     {
                         var nameSlotRoom = _context.SlotRooms.Find(shift.SlotRoomId).Name;
-                        content += $"- Shift No {shift.Id} start at: {UtilitiesDate.GetTimeFromDate(shift.EstimatedStartDateTime)} - {UtilitiesDate.GetTimeFromDate(shift.EstimatedStartDateTime)} in room {nameSlotRoom} \\n";
+                        content += $"*Shift {shift.Id} start at {UtilitiesDate.GetTimeFromDate(shift.EstimatedStartDateTime)} - {UtilitiesDate.GetTimeFromDate(shift.EstimatedEndDateTime)} at {nameSlotRoom} \\n";
                     }
                 }
+                var smsSender = new SpeedSMS();
+                //resultSms = smsSender.SendSms(phoneList.ToArray(), content);
             }
-
-            var smsSender = new SpeedSMS();
-            string[] phoneList = { "0326622807" }; //"0764644363"
-            var resultSms = smsSender.SendSms(phoneList , content);
             return resultSms;
         }
+
     }
 }
