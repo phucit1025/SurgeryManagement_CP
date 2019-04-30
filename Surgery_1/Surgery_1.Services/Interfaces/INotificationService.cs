@@ -8,11 +8,12 @@ namespace Surgery_1.Services.Interfaces
 {
     public interface INotificationService
     {
-        ICollection<MessageNotificationViewModel> GetNotifications(string tokenRole);
+        ICollection<MessageNotificationViewModel> GetNotifications(string tokenRole, int technicalId);
         bool SetIsReadNotification(int notiId);
 
-        void AddNotificationForScheduling(List<DateTime> dateList);
+        void AddNotificationForScheduling(List<SmsShiftViewModel> notiShift);
 
         string HandleSmsForSurgeon(List<SmsShiftViewModel> smsShiftDate);
+        void AddNotificationForTechnicalStaff(List<SmsShiftViewModel> notiList);
     }
 }

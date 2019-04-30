@@ -20,5 +20,10 @@ namespace Surgery_1.Services.Utilities
         public const string FINISHED_STATUS = "Finished";
 
         public const string EMERGENCY_GROUP = "Emergency";
+
+
+        public const string CHIEFNURSE = "ChiefNurse";
+        public const string TECHNICAL = "Technical";
+        public const string SUPPLYSTAFF = "MedicalSupplier";
     }
 }
