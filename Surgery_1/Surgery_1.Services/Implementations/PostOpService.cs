@@ -65,6 +65,8 @@ namespace Surgery_1.Services.Implementations
                     CareContent = healthCareRerport.CareContent,
                     WoundConditionDescription = healthCareRerport.WoundConditionDescription,
                     WoundCondition = healthCareRerport.WoundCondition,
+                    DrugAllergy = healthCareRerport.DrugAllergy,
+                    DrugAllergyDescription = healthCareRerport.DrugAllergyDescription,
                     SurgeryShiftId = healthCareRerport.SurgeryShiftId,
                     NurseName = _appDbContext.UserInfo.Find(healthCareRerport.NurseId).FullName,
                 });
@@ -139,6 +141,8 @@ namespace Surgery_1.Services.Implementations
                         CareContent = healthCareRerport.CareContent,
                         WoundConditionDescription = healthCareRerport.WoundConditionDescription,
                         WoundCondition = healthCareRerport.WoundCondition,
+                        DrugAllergy = healthCareRerport.DrugAllergy,
+                        DrugAllergyDescription = healthCareRerport.DrugAllergyDescription,
                         SurgeryShiftId = healthCareRerport.SurgeryShiftId
                     });
                 }
@@ -171,6 +175,8 @@ namespace Surgery_1.Services.Implementations
                     CareContent = healthCareReportViewModel.CareContent,
                     WoundCondition = healthCareReportViewModel.WoundCondition,
                     WoundConditionDescription = healthCareReportViewModel.WoundConditionDescription,
+                    DrugAllergy = healthCareReportViewModel.DrugAllergy,
+                    DrugAllergyDescription = healthCareReportViewModel.DrugAllergyDescription,
                     IsDeleted = false,
                     SurgeryShiftId = healthCareReportViewModel.SurgeryShiftId,
                     NurseId = nurseId,
@@ -217,6 +223,8 @@ namespace Surgery_1.Services.Implementations
                 healthCareReport.CareContent = healthCareReportViewModel.CareContent;
                 healthCareReport.WoundCondition = healthCareReportViewModel.WoundCondition;
                 healthCareReport.WoundConditionDescription = healthCareReportViewModel.WoundConditionDescription;
+                healthCareReport.DrugAllergy = healthCareReportViewModel.DrugAllergy;
+                healthCareReport.DrugAllergyDescription = healthCareReportViewModel.DrugAllergyDescription;
                 DateTime date = new DateTime();
                 healthCareReport.DateUpdated = date;
                 try
@@ -899,6 +907,27 @@ namespace Surgery_1.Services.Implementations
             _appDbContext.Update(drug);
             _appDbContext.SaveChanges();
             return true;
+        }
+
+        public List<HealthcareSurgeryShiftViewModel> GetHealthcareSurgeryShift()
+        {
+            var surgeryShifts = _appDbContext.SurgeryShifts.Where(s => s.StatusId == ConstantVariable.RECOVERY_STATUS_NUM
+                                                     && s.HealthCareReports.Count > 0).ToList();
+            var rs = new List<HealthcareSurgeryShiftViewModel>();
+            foreach (var surgeryShift in surgeryShifts)
+            {
+                var shift = new HealthcareSurgeryShiftViewModel();
+                shift.ShiftId = surgeryShift.Id;
+                shift.SurgeryName = surgeryShift.SurgeryCatalog.Name;
+                shift.PatientName = surgeryShift.Patient.FullName;
+                var lastHealthcareReport = surgeryShift.HealthCareReports.LastOrDefault();
+                shift.WoundCondition = lastHealthcareReport.WoundCondition;
+                shift.WoundConditionDescription = lastHealthcareReport.WoundConditionDescription;
+                shift.DrugAllergy = lastHealthcareReport.DrugAllergy;
+                shift.DrugAllergyDescription = lastHealthcareReport.DrugAllergyDescription;
+                rs.Add(shift);
+            }
+            return rs;
         }
     }
 }

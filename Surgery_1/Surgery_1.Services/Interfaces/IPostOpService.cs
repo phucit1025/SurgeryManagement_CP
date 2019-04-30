@@ -32,5 +32,6 @@ namespace Surgery_1.Services.Interfaces
         byte[] CreateSurgeryPdf(string styleSheets, int id, int type);
         Dictionary<string, List<TreatmentTimelineViewModel>> GetDrugTimelineByShiftIdAndDate(int shiftId);
         bool ConfirmTakeMedicine(int treatmentReportDrugId, string time);
+        List<HealthcareSurgeryShiftViewModel> GetHealthcareSurgeryShift();
     }
 }

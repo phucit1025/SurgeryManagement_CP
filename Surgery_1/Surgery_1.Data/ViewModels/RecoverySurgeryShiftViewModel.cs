@@ -25,6 +25,8 @@ namespace Surgery_1.Data.ViewModels
         public string CareContent { get; set; }
         public int WoundCondition { get; set; }
         public string WoundConditionDescription { get; set; }
+        public int DrugAllergy { get; set; }
+        public string DrugAllergyDescription { get; set; }
         public int SurgeryShiftId { get; set; }
         public string NurseName { get; set; }
     }

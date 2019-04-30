@@ -282,5 +282,16 @@ namespace Surgery_1.Controllers
             }
             return BadRequest();
         }
+
+        [HttpGet]
+        public IActionResult GetHealthcareSurgeryShift()
+        {
+            var result = _postOpService.GetHealthcareSurgeryShift();
+            if (!result.IsNullOrEmpty())
+            {
+                return Ok(result);
+            }
+            return NotFound();
+        }
     }
 }

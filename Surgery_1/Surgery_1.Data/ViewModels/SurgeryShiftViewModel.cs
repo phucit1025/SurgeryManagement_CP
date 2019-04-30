@@ -193,4 +193,15 @@ namespace Surgery_1.Data.ViewModels
         public string SurgeonPhone { get; set; }
         public int TechnicalId { get; set; }
     }
+
+    public class HealthcareSurgeryShiftViewModel
+    {   
+        public int ShiftId { get; set; }
+        public string PatientName { get; set; }
+        public string SurgeryName { get; set; }
+        public int WoundCondition { get; set; }
+        public string WoundConditionDescription { get; set; }
+        public int DrugAllergy { get; set; }
+        public string DrugAllergyDescription { get; set; }
+    }
 }
