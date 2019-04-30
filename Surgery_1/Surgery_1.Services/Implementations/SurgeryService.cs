@@ -1824,5 +1824,61 @@ namespace Surgery_1.Services.Implementations
 
         #endregion
 
+        #region Statistic
+        public List<StatisticViewModel> numShiftBySpec(DateTime start, DateTime end)
+        {
+            var specs = _context.Specialties.ToList();
+            var rs = new List<StatisticViewModel>();
+            foreach (var spec in specs)
+            {
+                var statistic = new StatisticViewModel();
+                statistic.specialtyName = spec.Name;
+                var catalogs = _context.SurgeryCatalogs.Where(s => s.SpecialtyId == spec.Id).ToList();
+                var numbShift = 0;
+                foreach (var catalog in catalogs)
+                {   
+                       var surgeryShifts = _context.SurgeryShifts.Where(s => s.SurgeryCatalogId == catalog.Id
+                                        && s.ActualStartDateTime.Value.Date >= start.Date && s.ActualEndDateTime.Value.Date <= end.Date).ToList();
+                    numbShift = numbShift + surgeryShifts.Count;
+                }
+                statistic.number = numbShift;
+                rs.Add(statistic);
+            }
+            return rs;
+        }
+
+        public List<RoomStatisticViewModel> getEfficientcyRoom(DateTime start, DateTime end)
+        {
+            double days = (end - start).TotalDays == 0 ? 1 : (end - start).TotalDays;
+            var rooms = _context.SurgeryRooms.ToList();
+            var rs = new List<RoomStatisticViewModel>();
+            foreach (var room in rooms)
+            {
+                var statistic = new RoomStatisticViewModel();
+                statistic.roomName = room.Name;
+                var slots = _context.SlotRooms.Where(s => s.SurgeryRoomId == room.Id).ToList();
+                double roomTime = 0;
+                foreach (var slot in slots)
+                {
+                    double slotTime = 0;
+                    var surgeryShifts = _context.SurgeryShifts.Where(s => s.SlotRoomId == slot.Id
+                                         && s.ActualStartDateTime.Value.Date >= start.Date && s.ActualEndDateTime.Value.Date <= end.Date).ToList();
+                    foreach (var shift in surgeryShifts)
+                    {
+                        System.TimeSpan time = shift.ActualEndDateTime.Value - shift.ActualStartDateTime.Value;
+                        slotTime = slotTime + time.TotalHours;    
+                    }
+                    roomTime = roomTime + slotTime;
+                }
+                statistic.number = roomTime / (7 * 2 * 8 * days);
+                rs.Add(statistic);
+            }
+            return rs;
+        }
+
+
+
+        #endregion
+
     }
 }

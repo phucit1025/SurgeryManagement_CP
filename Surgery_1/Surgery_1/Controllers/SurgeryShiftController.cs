@@ -14,9 +14,11 @@ namespace Surgery_1.Controllers
     public class SurgeryShiftController : ControllerBase
     {
         private readonly ISurgeryShiftService _surgeryShiftService;
-        public SurgeryShiftController(ISurgeryShiftService _surgeryShiftService)
+        private readonly ISurgeryService _surgeryService;
+        public SurgeryShiftController(ISurgeryShiftService _surgeryShiftService, ISurgeryService surgeryService)
         {
             this._surgeryShiftService = _surgeryShiftService;
+            this._surgeryService = surgeryService;
         }
 
         [HttpGet]
@@ -104,6 +106,28 @@ namespace Surgery_1.Controllers
             {
                 return StatusCode(400);
             }
+        }
+
+        [HttpGet]
+        public IActionResult NumShiftBySpec(DateTime start, DateTime end)
+        {
+            var result = _surgeryService.numShiftBySpec(start, end);
+            if (result.IsNullOrEmpty())
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public IActionResult GetEfficientcyRoom(DateTime start, DateTime end)
+        {
+            var result = _surgeryService.getEfficientcyRoom(start, end);
+            if (result.IsNullOrEmpty())
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
     }
 }
