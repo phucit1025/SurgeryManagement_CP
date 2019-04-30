@@ -910,8 +910,10 @@ namespace Surgery_1.Services.Implementations
 
         public bool ConfirmTakeMedicine(int treatmentReportDrugId, string time)
         {
+            var guid = _httpContextAccessor.HttpContext.User.GetGuid();
+            var nurseId = _appDbContext.UserInfo.Where(a => a.GuId == guid).FirstOrDefault().Id;
             var drug = _appDbContext.TreatmentReportDrugs.Find(treatmentReportDrugId);
-            drug.StatusString = drug.StatusString.Replace(time + "/0", time + "/1");
+            drug.StatusString = drug.StatusString.Replace(time + "/0", time + "/1/" + nurseId);
             _appDbContext.Update(drug);
             _appDbContext.SaveChanges();
             return true;
