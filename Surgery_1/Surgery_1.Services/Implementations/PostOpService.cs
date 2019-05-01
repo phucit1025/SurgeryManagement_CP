@@ -925,6 +925,7 @@ namespace Surgery_1.Services.Implementations
                 shift.WoundConditionDescription = lastHealthcareReport.WoundConditionDescription;
                 shift.DrugAllergy = lastHealthcareReport.DrugAllergy;
                 shift.DrugAllergyDescription = lastHealthcareReport.DrugAllergyDescription;
+                shift.ClosestDate = lastHealthcareReport.DateCreated.Value;
                 rs.Add(shift);
             }
             return rs;

@@ -210,6 +210,7 @@ namespace Surgery_1.Data.ViewModels
         public string WoundConditionDescription { get; set; }
         public int DrugAllergy { get; set; }
         public string DrugAllergyDescription { get; set; }
+        public DateTime ClosestDate { get; set; }
     }
 
     public class PostOpViewModel
