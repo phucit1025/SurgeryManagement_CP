@@ -25,6 +25,7 @@ using DinkToPdf;
 using System.IO;
 using System.Collections;
 using MoreLinq;
+using Castle.Core.Internal;
 
 namespace Surgery_1.Services.Implementations
 {
@@ -272,7 +273,8 @@ namespace Surgery_1.Services.Implementations
                         });
                     }
                     return results;
-                } else
+                }
+                else
                 {
                     var surgeryShifts = _appDbContext.SurgeryShifts
                      .Where(a => (a.StatusId == postStatus || a.StatusId == recoveryStatus) && a.IsDeleted == false
@@ -415,12 +417,12 @@ namespace Surgery_1.Services.Implementations
             }
             return result;
         }
-        
+
         public ICollection<TreatmentReportViewModel> GetTodayTreatmentReportByShiftId(int shiftId)
         {
             int today = UtilitiesDate.ConvertDateToNumber(DateTime.Now);
             var treatmentReports = _appDbContext.TreatmentReports
-                .Where(a => a.SurgeryShiftId == shiftId 
+                .Where(a => a.SurgeryShiftId == shiftId
                         && a.IsDeleted == false
                         && UtilitiesDate.ConvertDateToNumber(a.DateCreated.Value) == today)
                 .OrderByDescending(a => a.DateCreated)
@@ -442,7 +444,8 @@ namespace Surgery_1.Services.Implementations
         public bool CreateTreatmentReportDrugs(ICollection<TreatmentReportDrugViewModel> treatmentReportDrugViewModels)
         {
             int id = treatmentReportDrugViewModels.First().TreatmentReportId;
-            try {
+            try
+            {
                 foreach (var tmp in treatmentReportDrugViewModels)
                 {
                     var rs = new TreatmentReportDrug()
@@ -454,7 +457,8 @@ namespace Surgery_1.Services.Implementations
                 }
                 _appDbContext.SaveChanges();
                 return true;
-            } catch (Exception)
+            }
+            catch (Exception)
             {
                 var treatmentReport = _appDbContext.TreatmentReports.Find(id);
                 _appDbContext.TreatmentReports.Remove(treatmentReport);
@@ -554,7 +558,7 @@ namespace Surgery_1.Services.Implementations
                 //        break;
                 //}
             }
-            
+
             var result = new TreatmentMedication()
             {
                 drugs = drugs,
@@ -570,7 +574,7 @@ namespace Surgery_1.Services.Implementations
             foreach (var treatmentReportDrug in treatmentReport.TreatmentReportDrugs.ToList())
             {
                 treatmentReportDrugs.Add(new TreatmentReportDrugViewModel()
-                {   
+                {
                     Id = treatmentReportDrug.Id,
                     Name = treatmentReportDrug.Drug.DrugName,
                     Unit = treatmentReportDrug.Drug.Unit,
@@ -590,55 +594,55 @@ namespace Surgery_1.Services.Implementations
             var treatmentReport = _appDbContext.TreatmentReports.Find(treatmentReportViewModel.Id);
             treatmentReport.ProgressiveDisease = treatmentReportViewModel.ProgressiveDisease;
             var treatmentReportDrugs = new List<TreatmentReportDrug>();
-                if (treatmentReportViewModel.TreatmentReportDrugs != null)
+            if (treatmentReportViewModel.TreatmentReportDrugs != null)
+            {
+                foreach (var treatmentReportDrugViewModel in treatmentReportViewModel.TreatmentReportDrugs)
                 {
-                    foreach (var treatmentReportDrugViewModel in treatmentReportViewModel.TreatmentReportDrugs)
-                    {
 
-                        TreatmentReportDrug treatmentReportDrug = _appDbContext.TreatmentReportDrugs.Find(treatmentReportDrugViewModel.Id);
-                        if (treatmentReportDrug != null)
-                        {
-                            treatmentReportDrug.DrugId = treatmentReportDrugViewModel.DrugId;
-                            treatmentReportDrug.TimeString = string.Join(",", treatmentReportDrugViewModel.TimeString);
-                            treatmentReportDrug.StatusString = string.Join(",", treatmentReportDrugViewModel.TimeString);
-                            treatmentReportDrug.Route = treatmentReportDrugViewModel.Route;
-                            treatmentReportDrugs.Add(treatmentReportDrug);
-                            _appDbContext.TreatmentReportDrugs.Update(treatmentReportDrug);
-                        }
-                        else
-                        {
-                            treatmentReportDrug = new TreatmentReportDrug()
-                            {
-                                DrugId = treatmentReportDrugViewModel.DrugId,
-                                TimeString = string.Join(",", treatmentReportDrugViewModel.TimeString),
-                                StatusString = string.Join(",", treatmentReportDrugViewModel.TimeString),
-                                Route = treatmentReportDrugViewModel.Route,
-                                TreatmentReportId = treatmentReportDrugViewModel.TreatmentReportId,
-                            };
-                            treatmentReportDrugs.Add(treatmentReportDrug);
-                        }
-                    }
-                }
-                treatmentReport.TreatmentReportDrugs = treatmentReportDrugs;
-                if (treatmentReportViewModel.DeleteTreatmentReportId != null)
-                {
-                    foreach (var item in treatmentReportViewModel.DeleteTreatmentReportId)
+                    TreatmentReportDrug treatmentReportDrug = _appDbContext.TreatmentReportDrugs.Find(treatmentReportDrugViewModel.Id);
+                    if (treatmentReportDrug != null)
                     {
-                        TreatmentReportDrug treatmentReportDrug = _appDbContext.TreatmentReportDrugs.Find(item);
-                        treatmentReportDrug.IsDeleted = true;
+                        treatmentReportDrug.DrugId = treatmentReportDrugViewModel.DrugId;
+                        treatmentReportDrug.TimeString = string.Join(",", treatmentReportDrugViewModel.TimeString);
+                        treatmentReportDrug.StatusString = string.Join(",", treatmentReportDrugViewModel.TimeString);
+                        treatmentReportDrug.Route = treatmentReportDrugViewModel.Route;
+                        treatmentReportDrugs.Add(treatmentReportDrug);
                         _appDbContext.TreatmentReportDrugs.Update(treatmentReportDrug);
                     }
+                    else
+                    {
+                        treatmentReportDrug = new TreatmentReportDrug()
+                        {
+                            DrugId = treatmentReportDrugViewModel.DrugId,
+                            TimeString = string.Join(",", treatmentReportDrugViewModel.TimeString),
+                            StatusString = string.Join(",", treatmentReportDrugViewModel.TimeString),
+                            Route = treatmentReportDrugViewModel.Route,
+                            TreatmentReportId = treatmentReportDrugViewModel.TreatmentReportId,
+                        };
+                        treatmentReportDrugs.Add(treatmentReportDrug);
+                    }
                 }
-                try
+            }
+            treatmentReport.TreatmentReportDrugs = treatmentReportDrugs;
+            if (treatmentReportViewModel.DeleteTreatmentReportId != null)
+            {
+                foreach (var item in treatmentReportViewModel.DeleteTreatmentReportId)
                 {
-                    _appDbContext.Update(treatmentReport);
-                    _appDbContext.SaveChanges();
-                    return true;
+                    TreatmentReportDrug treatmentReportDrug = _appDbContext.TreatmentReportDrugs.Find(item);
+                    treatmentReportDrug.IsDeleted = true;
+                    _appDbContext.TreatmentReportDrugs.Update(treatmentReportDrug);
                 }
-                catch (DbUpdateException)
-                {
-                    return false;
-                }
+            }
+            try
+            {
+                _appDbContext.Update(treatmentReport);
+                _appDbContext.SaveChanges();
+                return true;
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }
         }
 
         public bool checkNurseCapacity(int nurseId)
@@ -707,8 +711,8 @@ namespace Surgery_1.Services.Implementations
                 var response = await http.PostAsync("https://fcm.googleapis.com/fcm/send", content);
                 return response;
             });
-           
-           
+
+
         }
 
         public string getAndroidMessage(int shiftId, object objData, string regId)
@@ -723,7 +727,7 @@ namespace Surgery_1.Services.Implementations
                     click_action = ".activity.FirebaseClickActionActivity",
                     body = "New PostOp Surgery Shift - ID: " + shiftId,
                     title = "eBSMS",
-                    badge = 1   
+                    badge = 1
                 },
                 data = objData,
             };
@@ -844,14 +848,14 @@ namespace Surgery_1.Services.Implementations
 
             var file = _converter.Convert(pdf);
             return file;
-            
+
         }
 
         public Dictionary<string, List<TreatmentTimelineViewModel>> GetDrugTimelineByShiftIdAndDate(int shiftId)
         {
             int today = UtilitiesDate.ConvertDateToNumber(DateTime.Now);
             var drugs = _appDbContext.TreatmentReportDrugs
-                .Where(s => 
+                .Where(s =>
                     UtilitiesDate.ConvertDateToNumber(s.DateCreated.Value).Equals(today)
                     && !s.IsDeleted
                     && s.TreatmentReport.SurgeryShiftId == shiftId).ToArray();
@@ -879,7 +883,8 @@ namespace Surgery_1.Services.Implementations
                             Quantity = int.Parse(quantity),
                             IsUsed = int.Parse(isUsed),
                         });
-                    } else
+                    }
+                    else
                     {
                         var value = new List<TreatmentTimelineViewModel>();
                         value.Add(new TreatmentTimelineViewModel
@@ -925,18 +930,40 @@ namespace Surgery_1.Services.Implementations
                 shift.WoundConditionDescription = lastHealthcareReport.WoundConditionDescription;
                 shift.DrugAllergy = lastHealthcareReport.DrugAllergy;
                 shift.DrugAllergyDescription = lastHealthcareReport.DrugAllergyDescription;
+                shift.ClosestDate = lastHealthcareReport.DateCreated.Value;
                 rs.Add(shift);
             }
             return rs;
         }
 
-        public List<PostOpViewModel> GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId)
+        #region Statistical
+        public List<PostOpViewModel> GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId, bool? isPostOp)
         {
             var surgeryShitfs = _appDbContext.SurgeryShifts.Where(s => s.StatusId == ConstantVariable.POST_STATUS_NUM
                                                                   || s.StatusId == ConstantVariable.RECOVERY_STATUS_NUM).ToList();
             var rs = new List<PostOpViewModel>();
-            if (actualEnd == DateTime.MinValue && speacialtyId == 0 && surgeryId == 0 && doctorId == 0)
+
+            if (actualEnd == DateTime.MinValue && speacialtyId == 0 && surgeryId == 0 && doctorId == 0 && !isPostOp.HasValue)
             {
+                var shifts = surgeryShitfs.Select(s => new PostOpViewModel()
+                {
+                    Id = s.Id,
+                    Gender = s.Patient.Gender,
+                    PatientName = s.Patient.FullName,
+                    Yob = s.Patient.YearOfBirth,
+                    SurgeryName = s.SurgeryCatalog.Name,
+                    StatusName = s.Status.Name,
+                    SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
+                });
+                rs.AddRange(shifts);
+                return rs;
+            }
+
+            if (isPostOp.HasValue)
+            {
+                if (isPostOp.Value)
+                {
+                    surgeryShitfs = surgeryShitfs.Where(s => s.StatusId == ConstantVariable.POST_STATUS_NUM).ToList();
                     rs.AddRange(surgeryShitfs.Select(s => new PostOpViewModel()
                     {
                         Id = s.Id,
@@ -945,11 +972,24 @@ namespace Surgery_1.Services.Implementations
                         Yob = s.Patient.YearOfBirth,
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
+                        SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
                     }));
-                return rs;
+                }
+                else
+                {
+                    surgeryShitfs = surgeryShitfs.Where(s => s.StatusId == ConstantVariable.RECOVERY_STATUS_NUM).ToList();
+                    rs.AddRange(surgeryShitfs.Select(s => new PostOpViewModel()
+                    {
+                        Id = s.Id,
+                        Gender = s.Patient.Gender,
+                        PatientName = s.Patient.FullName,
+                        Yob = s.Patient.YearOfBirth,
+                        SurgeryName = s.SurgeryCatalog.Name,
+                        StatusName = s.Status.Name,
+                        SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
+                    }));
+                }
             }
-
-
             if (actualEnd != DateTime.MinValue)
             {
                 var surgeryShiftsRs = surgeryShitfs.Where(s => s.ActualEndDateTime.Value.Date == actualEnd.Date).ToList();
@@ -963,6 +1003,7 @@ namespace Surgery_1.Services.Implementations
                         Yob = s.Patient.YearOfBirth,
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
+                        SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
                     }));
                 }
             }
@@ -979,6 +1020,7 @@ namespace Surgery_1.Services.Implementations
                         Yob = s.Patient.YearOfBirth,
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
+                        SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
                     }));
                 }
             }
@@ -995,6 +1037,7 @@ namespace Surgery_1.Services.Implementations
                         Yob = s.Patient.YearOfBirth,
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
+                        SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
                     }));
                 }
             }
@@ -1011,11 +1054,125 @@ namespace Surgery_1.Services.Implementations
                         Yob = s.Patient.YearOfBirth,
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
+                        SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
                     }));
                 }
             }
             rs = rs.DistinctBy(x => x.Id).ToList();
             return rs;
         }
+
+        public List<DoctorSearchViewModel> GetDoctors(string name)
+        {
+            var doctors = new List<Doctor>();
+            if (!name.IsNullOrEmpty())
+            {
+                doctors = _appDbContext.Doctors.Where(d => !d.IsDeleted && d.FullName.Contains(name, StringComparison.CurrentCultureIgnoreCase)).ToList();
+            }
+            else
+            {
+                doctors = _appDbContext.Doctors.Where(d => !d.IsDeleted).ToList();
+            }
+            if (doctors.Any())
+            {
+                return doctors.Select(d => new DoctorSearchViewModel()
+                {
+                    Id = d.Id,
+                    Name = d.FullName
+                }).ToList();
+            }
+            return new List<DoctorSearchViewModel>();
+        }
+
+        public List<SpecialtySearchViewModel> GetSpecialties(string name)
+        {
+            var specialties = new List<Specialty>();
+            if (!name.IsNullOrEmpty())
+            {
+                specialties = _appDbContext.Specialties.Where(s => !s.IsDeleted && s.Name.Contains(name, StringComparison.CurrentCultureIgnoreCase)).ToList();
+            }
+            else
+            {
+                specialties = _appDbContext.Specialties.Where(s => !s.IsDeleted).ToList();
+            }
+            if (specialties.Any())
+            {
+                return specialties.Select(s => new SpecialtySearchViewModel()
+                {
+                    Id = s.Id,
+                    Name = s.Name
+                }).ToList();
+            }
+            return new List<SpecialtySearchViewModel>();
+        }
+
+        public List<SurgeryCatalogSearchViewModel> GetSurgeryCatalogs(string name, int specialtyId)
+        {
+            if (specialtyId == 0)
+            {
+                var catalogs = new List<SurgeryCatalog>();
+
+                if (!name.IsNullOrEmpty())
+                {
+                    catalogs = _appDbContext.SurgeryCatalogs.Where(sc => !sc.IsDeleted && (sc.Code.Contains(name, StringComparison.CurrentCultureIgnoreCase) || sc.Name.Contains(name, StringComparison.CurrentCultureIgnoreCase))).ToList();
+
+                }
+                else
+                {
+                    catalogs = _appDbContext.SurgeryCatalogs.Where(sc => !sc.IsDeleted).ToList();
+                }
+
+                if (catalogs.Any())
+                {
+                    return catalogs.Select(sc => new SurgeryCatalogSearchViewModel()
+                    {
+                        Id = sc.Id,
+                        Name = $"{sc.Code} - {sc.Name}"
+                    }).ToList();
+                }
+            }
+            else
+            {
+
+                var catalogs = _appDbContext.SurgeryCatalogs.Where(sc => !sc.IsDeleted && sc.SpecialtyId == specialtyId);
+                if (catalogs.Any())
+                {
+                    if (name.IsNullOrEmpty())
+                    {
+                        catalogs = catalogs.Where(sc => (sc.Code.Contains(name, StringComparison.CurrentCultureIgnoreCase) || sc.Name.Contains(name, StringComparison.CurrentCultureIgnoreCase)));
+                    }
+                    if (catalogs.Any())
+                    {
+                        return catalogs.Select(sc => new SurgeryCatalogSearchViewModel()
+                        {
+                            Id = sc.Id,
+                            Name = $"{sc.Code} - {sc.Name}"
+                        }).ToList();
+                    }
+                }
+            }
+
+            return new List<SurgeryCatalogSearchViewModel>();
+        }
+        #endregion
+
+        #region Processing
+        private string CombineString(List<string> names)
+        {
+            var result = "";
+            for (int i = 0; i < names.Count; i++)
+            {
+                if (i == names.Count - 1)
+                {
+                    result += $"{names[i]}.";
+                }
+                else
+                {
+                    result += $"{names[i]}; ";
+                }
+            }
+            return result;
+        }
+        #endregion
     }
 }

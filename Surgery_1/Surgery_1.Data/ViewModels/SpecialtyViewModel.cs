@@ -61,4 +61,16 @@ namespace Surgery_1.Data.ViewModels
         public int GroupId { get; set; }
         public string GroupName { get; set; }
     }
+
+    public class SpecialtySearchViewModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class SurgeryCatalogSearchViewModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
 }
