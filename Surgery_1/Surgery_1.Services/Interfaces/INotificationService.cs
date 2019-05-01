@@ -15,5 +15,7 @@ namespace Surgery_1.Services.Interfaces
 
         string HandleSmsForSurgeon(List<SmsShiftViewModel> smsShiftDate);
         void AddNotificationForTechnicalStaff(List<SmsShiftViewModel> notiList);
+
+        string AddNotificationForUrgent(SmsShiftViewModel shiftViewModel);
     }
 }
