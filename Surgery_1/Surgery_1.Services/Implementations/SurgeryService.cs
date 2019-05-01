@@ -148,7 +148,7 @@ namespace Surgery_1.Services.Implementations
                                 DateTime endEstimatedTime = startEstimatedTime + duration;
                                 InsertDateTimeToSurgeryShift(shift.SurgeryShiftId, startEstimatedTime, endEstimatedTime, roomEmptyId);
                             }
-                            else if (timeConfirm + duration <= endPMWorkingHour)
+                            else if (timeConfirm + duration <= endPMWorkingHour) //17h
                             {
 
                                 var endTmpTime = timeConfirm + duration;
@@ -158,7 +158,7 @@ namespace Surgery_1.Services.Implementations
                                     DateTime endEstimatedTime = startEstimatedTime + duration;
                                     InsertDateTimeToSurgeryShift(shift.SurgeryShiftId, startEstimatedTime, endEstimatedTime, roomEmptyId);
                                 }
-                                if ((timeConfirm >= endAMWorkingHour && timeConfirm < startPMWorkingHour) //buổi trưa trở đi
+                                else if ((timeConfirm >= endAMWorkingHour && timeConfirm < startPMWorkingHour) //buổi trưa trở đi
                                     || (endTmpTime > endAMWorkingHour && endTmpTime <= startPMWorkingHour))
                                 {
                                     DateTime startEstimatedTime = shift.ScheduleDate + startPMWorkingHour;
@@ -191,6 +191,7 @@ namespace Surgery_1.Services.Implementations
                         if (availableSlotRooms.ElementAt(index).StartDateTime < shift.ConfirmDate)
                         {
                             availableSlotRooms.ElementAt(index).StartDateTime = shift.ConfirmDate;
+                            availableSlotRooms.ElementAt(index).ExpectedSurgeryDuration = (availableSlotRooms.ElementAt(index).EndDateTime - availableSlotRooms.ElementAt(index).StartDateTime).TotalHours;
                         }
                     }
 
