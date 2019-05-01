@@ -33,6 +33,12 @@ namespace Surgery_1.Services.Interfaces
         Dictionary<string, List<TreatmentTimelineViewModel>> GetDrugTimelineByShiftIdAndDate(int shiftId);
         bool ConfirmTakeMedicine(int treatmentReportDrugId, string time);
         List<HealthcareSurgeryShiftViewModel> GetHealthcareSurgeryShift();
-        List<PostOpViewModel> GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId);
+
+        #region Statistical
+        List<PostOpViewModel> GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId, bool? isPostOp);
+        List<DoctorSearchViewModel> GetDoctors(string name);
+        List<SpecialtySearchViewModel> GetSpecialties(string name);
+        List<SurgeryCatalogSearchViewModel> GetSurgeryCatalogs(string name, int specialtyId);
+        #endregion
     }
 }

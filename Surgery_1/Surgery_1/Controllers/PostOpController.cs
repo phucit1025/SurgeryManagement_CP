@@ -136,7 +136,7 @@ namespace Surgery_1.Controllers
             }
             return BadRequest();
         }
-       
+
         [HttpPost]
         public IActionResult CreateTreatmenReport(TreatmentReportViewModel treatmentReportViewModel)
         {
@@ -158,9 +158,9 @@ namespace Surgery_1.Controllers
             }
             return BadRequest();
         }
-        
 
-       [HttpPost]
+
+        [HttpPost]
         public IActionResult CreateTreatmentReportDrugs([FromBody]ICollection<TreatmentReportDrugViewModel> treatmentReportDrugs)
         {
             var result = _postOpService.CreateTreatmentReportDrugs(treatmentReportDrugs);
@@ -181,7 +181,7 @@ namespace Surgery_1.Controllers
             }
             return Ok(result);
         }
-        
+
         [HttpGet]
         public IActionResult GetTodayTreatmentReportByShiftId(int surgeryShiftId)
         {
@@ -214,7 +214,7 @@ namespace Surgery_1.Controllers
             }
             return Ok(result);
         }
-       
+
         [HttpGet]
         public IActionResult AssignNurse(int shiftId, int nurseId)
         {
@@ -247,7 +247,7 @@ namespace Surgery_1.Controllers
             }
             return Ok(result);
         }
-       
+
         [HttpGet]
         public IActionResult CreateSurgeryPdf(int id, int type)
         {
@@ -293,16 +293,67 @@ namespace Surgery_1.Controllers
             }
             return NotFound();
         }
+        #region Statistical
+        [HttpGet]
+        public IActionResult GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId, bool? isPostOp, int pageSize = 10, int pageIndex = 0)
+        {
+            try
+            {
+                var results = _postOpService.GetPostOpSurgeryShift(actualEnd, speacialtyId, surgeryId, doctorId, isPostOp);
+                var totalPage = Math.Ceiling((double)results.Count / pageSize);
+                results = results.Skip(pageSize * (pageIndex)).Take(pageSize).ToList();
+
+                return StatusCode(200,
+                    new
+                    {
+                        results = results,
+                        totalPage = totalPage,
+                        total = results.Count,
+                        totalPostop = results.Where(r => r.StatusName.Contains("Postoperative", StringComparison.CurrentCultureIgnoreCase)).Count(),
+                        totalRecovery = results.Where(r => r.StatusName.Contains("Recovery", StringComparison.CurrentCultureIgnoreCase)).Count(),
+                    });
+            }
+            catch (Exception)
+            {
+                return StatusCode(400);
+            }
+
+
+        }
 
         [HttpGet]
-        public IActionResult GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId)
+        public IActionResult GetDoctors(string name, int pageSize = 10, int pageIndex = 0)
         {
-            var result = _postOpService.GetPostOpSurgeryShift(actualEnd, speacialtyId, surgeryId, doctorId);
-            if (!result.IsNullOrEmpty())
-            {
-                return Ok(result);
-            }
-            return NotFound();
+            var results = _postOpService.GetDoctors(name);
+
+            var totalPage = Math.Ceiling((double)results.Count / pageSize);
+            results = results.Skip(pageSize * (pageIndex)).Take(pageSize).ToList();
+
+            return StatusCode(200, new { doctors = results, totalPage });
         }
+
+        [HttpGet]
+        public IActionResult GetSpecialties(string name, int pageSize = 10, int pageIndex = 0)
+        {
+            var results = _postOpService.GetSpecialties(name);
+
+            var totalPage = Math.Ceiling((double)(results.Count / pageSize));
+            results = results.Skip(pageSize * (pageIndex)).Take(pageSize).ToList();
+
+            return StatusCode(200, new { specialties = results, totalPage });
+        }
+
+        [HttpGet]
+        public IActionResult GetCatalogs(string name, int specialtyId = 0, int pageSize = 10, int pageIndex = 0)
+        {
+            var results = _postOpService.GetSurgeryCatalogs(name, specialtyId);
+
+            var totalPage = Math.Ceiling((double)(results.Count / pageSize));
+            results = results.Skip(pageSize * (pageIndex)).Take(pageSize).ToList();
+
+            return StatusCode(200, new { catalogs = results, totalPage });
+        }
+        #endregion
+
     }
 }
