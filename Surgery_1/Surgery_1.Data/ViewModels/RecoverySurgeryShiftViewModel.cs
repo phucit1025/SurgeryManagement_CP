@@ -20,6 +20,7 @@ namespace Surgery_1.Data.ViewModels
     {
         public int Id { get; set; }
         public string DateCreated { get; set; }
+        public DateTime ClosestDate { get; set; }
         public string VisitReason { get; set; }
         public string EventContent { get; set; }
         public string CareContent { get; set; }
@@ -29,5 +30,7 @@ namespace Surgery_1.Data.ViewModels
         public string DrugAllergyDescription { get; set; }
         public int SurgeryShiftId { get; set; }
         public string NurseName { get; set; }
+        public string PatientName { get; set; }
+        public string SurgeryName { get; set; }
     }
 }

@@ -61,6 +61,7 @@ namespace Surgery_1.Services.Implementations
                 {
                     Id = healthCareRerport.Id,
                     DateCreated = healthCareRerport.DateCreated.Value.ToString("dd-MM-yyyy HH:mm:ss"),
+                    ClosestDate = healthCareRerport.DateCreated.Value,
                     VisitReason = healthCareRerport.CareReason,
                     EventContent = healthCareRerport.EventContent,
                     CareContent = healthCareRerport.CareContent,
@@ -70,7 +71,9 @@ namespace Surgery_1.Services.Implementations
                     DrugAllergyDescription = healthCareRerport.DrugAllergyDescription,
                     SurgeryShiftId = healthCareRerport.SurgeryShiftId,
                     NurseName = _appDbContext.UserInfo.Find(healthCareRerport.NurseId).FullName,
-                });
+                    SurgeryName = healthCareRerport.SurgeryShift.SurgeryCatalog.Name,
+                    PatientName = healthCareRerport.SurgeryShift.Patient.FullName,
+            });
             }
             return results;
         }
@@ -914,24 +917,22 @@ namespace Surgery_1.Services.Implementations
             return true;
         }
 
-        public List<HealthcareSurgeryShiftViewModel> GetHealthcareSurgeryShift()
+        public List<HealthcareSurgeryShiftViewModel> GetHealthcareSurgeryShifts()
         {
-            var healthcareReports = _appDbContext.HealthCareReports
-                .Where(s => !s.IsDeleted)
-                .OrderByDescending(s => s.DateCreated)
-                .ToList();
+            var surgeryShifts = _appDbContext.SurgeryShifts.Where(s => s.StatusId == ConstantVariable.RECOVERY_STATUS_NUM).ToList();
             var rs = new List<HealthcareSurgeryShiftViewModel>();
-            foreach (var healthcareReport in healthcareReports)
+            foreach (var surgeryShift in surgeryShifts)
             {
                 var shift = new HealthcareSurgeryShiftViewModel();
-                shift.ShiftId = healthcareReport.SurgeryShiftId;
-                shift.SurgeryName = healthcareReport.SurgeryShift.SurgeryCatalog.Name;
-                shift.PatientName = healthcareReport.SurgeryShift.Patient.FullName;
-                shift.WoundCondition = healthcareReport.WoundCondition;
-                shift.WoundConditionDescription = healthcareReport.WoundConditionDescription;
-                shift.DrugAllergy = healthcareReport.DrugAllergy;
-                shift.DrugAllergyDescription = healthcareReport.DrugAllergyDescription;
-                shift.ClosestDate = healthcareReport.DateCreated.Value;
+                shift.ShiftId = surgeryShift.Id;
+                shift.SurgeryName = surgeryShift.SurgeryCatalog.Name;
+                shift.PatientName = surgeryShift.Patient.FullName;
+                var lastHealthcareReport = surgeryShift.HealthCareReports.LastOrDefault();
+                shift.WoundCondition = lastHealthcareReport.WoundCondition;
+                shift.WoundConditionDescription = lastHealthcareReport.WoundConditionDescription;
+                shift.DrugAllergy = lastHealthcareReport.DrugAllergy;
+                shift.DrugAllergyDescription = lastHealthcareReport.DrugAllergyDescription;
+                shift.ClosestDate = lastHealthcareReport.DateCreated.Value;
                 rs.Add(shift);
             }
             return rs;

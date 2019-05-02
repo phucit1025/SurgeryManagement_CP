@@ -286,7 +286,7 @@ namespace Surgery_1.Controllers
         [HttpGet]
         public IActionResult GetHealthcareSurgeryShift()
         {
-            var result = _postOpService.GetHealthcareSurgeryShift();
+            var result = _postOpService.GetHealthcareSurgeryShifts();
             if (!result.IsNullOrEmpty())
             {
                 return Ok(result);
