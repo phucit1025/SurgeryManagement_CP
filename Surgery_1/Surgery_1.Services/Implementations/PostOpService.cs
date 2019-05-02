@@ -916,21 +916,22 @@ namespace Surgery_1.Services.Implementations
 
         public List<HealthcareSurgeryShiftViewModel> GetHealthcareSurgeryShift()
         {
-            var surgeryShifts = _appDbContext.SurgeryShifts.Where(s => s.StatusId == ConstantVariable.RECOVERY_STATUS_NUM
-                                                     && s.HealthCareReports.Count > 0).ToList();
+            var healthcareReports = _appDbContext.HealthCareReports
+                .Where(s => !s.IsDeleted)
+                .OrderByDescending(s => s.DateCreated)
+                .ToList();
             var rs = new List<HealthcareSurgeryShiftViewModel>();
-            foreach (var surgeryShift in surgeryShifts)
+            foreach (var healthcareReport in healthcareReports)
             {
                 var shift = new HealthcareSurgeryShiftViewModel();
-                shift.ShiftId = surgeryShift.Id;
-                shift.SurgeryName = surgeryShift.SurgeryCatalog.Name;
-                shift.PatientName = surgeryShift.Patient.FullName;
-                var lastHealthcareReport = surgeryShift.HealthCareReports.LastOrDefault();
-                shift.WoundCondition = lastHealthcareReport.WoundCondition;
-                shift.WoundConditionDescription = lastHealthcareReport.WoundConditionDescription;
-                shift.DrugAllergy = lastHealthcareReport.DrugAllergy;
-                shift.DrugAllergyDescription = lastHealthcareReport.DrugAllergyDescription;
-                shift.ClosestDate = lastHealthcareReport.DateCreated.Value;
+                shift.ShiftId = healthcareReport.SurgeryShiftId;
+                shift.SurgeryName = healthcareReport.SurgeryShift.SurgeryCatalog.Name;
+                shift.PatientName = healthcareReport.SurgeryShift.Patient.FullName;
+                shift.WoundCondition = healthcareReport.WoundCondition;
+                shift.WoundConditionDescription = healthcareReport.WoundConditionDescription;
+                shift.DrugAllergy = healthcareReport.DrugAllergy;
+                shift.DrugAllergyDescription = healthcareReport.DrugAllergyDescription;
+                shift.ClosestDate = healthcareReport.DateCreated.Value;
                 rs.Add(shift);
             }
             return rs;
