@@ -153,7 +153,7 @@ namespace Surgery_1.Services.Implementations
                     }
                 }
                 var smsSender = new SpeedSMS();
-                //resultSms = smsSender.SendSms(phoneList.ToArray(), content);
+                resultSms = smsSender.SendSms(phoneList.ToArray(), content);
             }
             return resultSms;
         }

@@ -953,7 +953,7 @@ namespace Surgery_1.Services.Implementations
                     Id = s.Id,
                     Gender = s.Patient.Gender,
                     PatientName = s.Patient.FullName,
-                    Duration = (double)decimal.Round((decimal)(DateTime.Now - s.DateUpdated.Value).TotalDays, 1),
+                    Duration = GetDuration(s.DateUpdated.Value),
                     SurgeryName = s.SurgeryCatalog.Name,
                     StatusName = s.Status.Name,
                     SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -972,7 +972,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Duration = (double)decimal.Round((decimal)(DateTime.Now - s.DateUpdated.Value).TotalDays, 1),
+                        Duration = GetDuration(s.DateUpdated.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -986,7 +986,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Duration = (double)decimal.Round((decimal)(DateTime.Now - s.DateUpdated.Value).TotalDays, 1),
+                        Duration = GetDuration(s.DateUpdated.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1003,7 +1003,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Duration = (double)decimal.Round((decimal)(DateTime.Now - s.DateUpdated.Value).TotalDays, 1),
+                        Duration = GetDuration(s.DateUpdated.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1020,7 +1020,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Duration = (double)decimal.Round((decimal)(DateTime.Now - s.DateUpdated.Value).TotalDays, 1),
+                        Duration = GetDuration(s.DateUpdated.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1037,7 +1037,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Duration = (double)decimal.Round((decimal)(DateTime.Now - s.DateUpdated.Value).TotalDays, 1),
+                        Duration = GetDuration(s.DateUpdated.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1054,7 +1054,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Duration = (double)decimal.Round((decimal)(DateTime.Now - s.DateUpdated.Value).TotalDays, 1),
+                        Duration = GetDuration(s.DateUpdated.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1175,6 +1175,12 @@ namespace Surgery_1.Services.Implementations
                 }
             }
             return result;
+        }
+
+        private string GetDuration(DateTime date)
+        {
+            var duration = DateTime.Now - date;
+            return $"{(double)decimal.Round((decimal)duration.TotalHours, 0)}";
         }
         #endregion
     }
