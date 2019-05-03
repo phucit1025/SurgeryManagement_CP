@@ -952,7 +952,7 @@ namespace Surgery_1.Services.Implementations
                     Id = s.Id,
                     Gender = s.Patient.Gender,
                     PatientName = s.Patient.FullName,
-                    Yob = s.Patient.YearOfBirth,
+                    Duration = (s.DateUpdated.Value - DateTime.Now).TotalDays,
                     SurgeryName = s.SurgeryCatalog.Name,
                     StatusName = s.Status.Name,
                     SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -971,7 +971,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Yob = s.Patient.YearOfBirth,
+                        Duration = (s.DateUpdated.Value - DateTime.Now).TotalDays,
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -985,7 +985,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Yob = s.Patient.YearOfBirth,
+                        Duration = (s.DateUpdated.Value - DateTime.Now).TotalDays,
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1002,7 +1002,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Yob = s.Patient.YearOfBirth,
+                        Duration = (s.DateUpdated.Value - DateTime.Now).TotalDays,
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1019,7 +1019,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Yob = s.Patient.YearOfBirth,
+                        Duration = (s.DateUpdated.Value - DateTime.Now).TotalDays,
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1036,7 +1036,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Yob = s.Patient.YearOfBirth,
+                        Duration = (s.DateUpdated.Value - DateTime.Now).TotalDays,
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1053,7 +1053,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Yob = s.Patient.YearOfBirth,
+                        Duration = (s.DateUpdated.Value - DateTime.Now).TotalDays,
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
