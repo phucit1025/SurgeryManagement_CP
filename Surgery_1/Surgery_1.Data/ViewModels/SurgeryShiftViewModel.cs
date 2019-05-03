@@ -219,7 +219,7 @@ namespace Surgery_1.Data.ViewModels
         public int Id { get; set; }
         public string PatientName { get; set; }
         public int Gender { get; set; }
-        public int Yob { get; set; }
+        public double Duration { get; set; }
         public string SurgeryName { get; set; }
         public string StatusName { get; set; }
         public string SurgeonName { get; set; }
