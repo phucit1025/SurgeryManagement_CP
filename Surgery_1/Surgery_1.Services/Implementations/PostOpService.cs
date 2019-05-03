@@ -919,7 +919,8 @@ namespace Surgery_1.Services.Implementations
 
         public List<HealthcareSurgeryShiftViewModel> GetHealthcareSurgeryShifts()
         {
-            var surgeryShifts = _appDbContext.SurgeryShifts.Where(s => s.StatusId == ConstantVariable.RECOVERY_STATUS_NUM).ToList();
+            var surgeryShifts = _appDbContext.SurgeryShifts.Where(s => s.StatusId == ConstantVariable.RECOVERY_STATUS_NUM
+                                                                    && s.HealthCareReports.Count > 0).ToList();
             var rs = new List<HealthcareSurgeryShiftViewModel>();
             foreach (var surgeryShift in surgeryShifts)
             {
