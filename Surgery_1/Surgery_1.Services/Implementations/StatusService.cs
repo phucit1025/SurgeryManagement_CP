@@ -37,6 +37,7 @@ namespace Surgery_1.Services.Implementations
                 shift.StatusId = statusId;
                 shift.PostRoomName = roomPost;
                 shift.PostBedName = bedPost;
+                shift.DateUpdated = DateTime.Now;
                 if (actualEndDateTime != null)
                 {
                     shift.ActualEndDateTime = DateTime.ParseExact(actualEndDateTime, "yyyy-MM-dd HH:mm",
