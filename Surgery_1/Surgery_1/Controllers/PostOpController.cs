@@ -295,12 +295,18 @@ namespace Surgery_1.Controllers
         }
         #region Statistical
         [HttpGet]
-        public IActionResult GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId, bool? isPostOp, int pageSize = 10, int pageIndex = 0)
+        public IActionResult GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId, int? status, int pageSize = 10, int pageIndex = 0)
         {
             try
             {
-                var results = _postOpService.GetPostOpSurgeryShift(actualEnd, speacialtyId, surgeryId, doctorId, isPostOp);
+                var results = _postOpService.GetPostOpSurgeryShift(actualEnd, speacialtyId, surgeryId, doctorId, status);
                 var totalPage = Math.Ceiling((double)results.Count / pageSize);
+                var total = results.Count;
+                var totalPreop = results.Where(r => r.StatusName.Contains("Preoperative", StringComparison.CurrentCultureIgnoreCase)).Count();
+                var totalPostop = results.Where(r => r.StatusName.Contains("Postoperative", StringComparison.CurrentCultureIgnoreCase)).Count();
+                var totalRecovery = results.Where(r => r.StatusName.Contains("Recovery", StringComparison.CurrentCultureIgnoreCase)).Count();
+                var totalIntra = results.Where(r => r.StatusName.Contains("Intraoperative", StringComparison.CurrentCultureIgnoreCase)).Count();
+                var totalFinished = results.Where(r => r.StatusName.Contains("Finished", StringComparison.CurrentCultureIgnoreCase)).Count();
                 results = results.Skip(pageSize * (pageIndex)).Take(pageSize).ToList();
 
                 return StatusCode(200,
@@ -308,9 +314,12 @@ namespace Surgery_1.Controllers
                     {
                         results = results,
                         totalPage = totalPage,
-                        total = results.Count,
-                        totalPostop = results.Where(r => r.StatusName.Contains("Postoperative", StringComparison.CurrentCultureIgnoreCase)).Count(),
-                        totalRecovery = results.Where(r => r.StatusName.Contains("Recovery", StringComparison.CurrentCultureIgnoreCase)).Count(),
+                        total,
+                        totalPreop,
+                        totalPostop,
+                        totalRecovery,
+                        totalIntra,
+                        totalFinished
                     });
             }
             catch (Exception)

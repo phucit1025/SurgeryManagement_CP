@@ -73,7 +73,7 @@ namespace Surgery_1.Services.Implementations
                     NurseName = _appDbContext.UserInfo.Find(healthCareRerport.NurseId).FullName,
                     SurgeryName = healthCareRerport.SurgeryShift.SurgeryCatalog.Name,
                     PatientName = healthCareRerport.SurgeryShift.Patient.FullName,
-            });
+                });
             }
             return results;
         }
@@ -940,45 +940,44 @@ namespace Surgery_1.Services.Implementations
         }
 
         #region Statistical
-        public List<PostOpViewModel> GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId, bool? isPostOp)
+        public List<PostOpViewModel> GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId, int? status)
         {
-            var surgeryShitfs = _appDbContext.SurgeryShifts.Where(s => s.StatusId == ConstantVariable.POST_STATUS_NUM
-                                                                  || s.StatusId == ConstantVariable.RECOVERY_STATUS_NUM).ToList();
+            var surgeryShitfs = _appDbContext.SurgeryShifts.Where(s => !s.IsDeleted).ToList();
             var rs = new List<PostOpViewModel>();
 
-            if (actualEnd == DateTime.MinValue && speacialtyId == 0 && surgeryId == 0 && doctorId == 0 && !isPostOp.HasValue)
+            if (actualEnd == DateTime.MinValue && speacialtyId == 0 && surgeryId == 0 && doctorId == 0 && !status.HasValue)
             {
                 var shifts = surgeryShitfs.Select(s => new PostOpViewModel()
                 {
                     Id = s.Id,
                     Gender = s.Patient.Gender,
                     PatientName = s.Patient.FullName,
-                    Duration = GetDuration(s.DateUpdated.Value),
+                    Duration = s.StatusId == 2 ? GetDuration(s.ActualStartDateTime.Value, s.StatusId.Value) : GetDuration(s.DateUpdated.Value, s.StatusId.Value),
                     SurgeryName = s.SurgeryCatalog.Name,
                     StatusName = s.Status.Name,
                     SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
-                });
+                }).ToList();
                 rs.AddRange(shifts);
                 return rs;
             }
 
-            if (isPostOp.HasValue)
+            if (status.HasValue)
             {
-                if (isPostOp.Value)
+                if (status.Value == 1)
                 {
-                    surgeryShitfs = surgeryShitfs.Where(s => s.StatusId == ConstantVariable.POST_STATUS_NUM).ToList();
+                    surgeryShitfs = surgeryShitfs.Where(s => s.StatusId == ConstantVariable.PREOP_STATUS_NUM).ToList();
                     rs.AddRange(surgeryShitfs.Select(s => new PostOpViewModel()
                     {
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Duration = GetDuration(s.DateUpdated.Value),
+                        Duration = GetDuration(s.DateUpdated.Value, status.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
                     }));
                 }
-                else
+                else if (status.Value == 2)
                 {
                     surgeryShitfs = surgeryShitfs.Where(s => s.StatusId == ConstantVariable.RECOVERY_STATUS_NUM).ToList();
                     rs.AddRange(surgeryShitfs.Select(s => new PostOpViewModel()
@@ -986,7 +985,49 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Duration = GetDuration(s.DateUpdated.Value),
+                        Duration = GetDuration(s.ActualStartDateTime.Value, status.Value),
+                        SurgeryName = s.SurgeryCatalog.Name,
+                        StatusName = s.Status.Name,
+                        SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
+                    }));
+                }
+                else if (status.Value == 3)
+                {
+                    surgeryShitfs = surgeryShitfs.Where(s => s.StatusId == ConstantVariable.RECOVERY_STATUS_NUM).ToList();
+                    rs.AddRange(surgeryShitfs.Select(s => new PostOpViewModel()
+                    {
+                        Id = s.Id,
+                        Gender = s.Patient.Gender,
+                        PatientName = s.Patient.FullName,
+                        Duration = GetDuration(s.DateUpdated.Value, status.Value),
+                        SurgeryName = s.SurgeryCatalog.Name,
+                        StatusName = s.Status.Name,
+                        SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
+                    }));
+                }
+                else if (status.Value == 4)
+                {
+                    surgeryShitfs = surgeryShitfs.Where(s => s.StatusId == ConstantVariable.RECOVERY_STATUS_NUM).ToList();
+                    rs.AddRange(surgeryShitfs.Select(s => new PostOpViewModel()
+                    {
+                        Id = s.Id,
+                        Gender = s.Patient.Gender,
+                        PatientName = s.Patient.FullName,
+                        Duration = GetDuration(s.DateUpdated.Value, status.Value),
+                        SurgeryName = s.SurgeryCatalog.Name,
+                        StatusName = s.Status.Name,
+                        SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
+                    }));
+                }
+                else if (status.Value == 5)
+                {
+                    surgeryShitfs = surgeryShitfs.Where(s => s.StatusId == ConstantVariable.RECOVERY_STATUS_NUM).ToList();
+                    rs.AddRange(surgeryShitfs.Select(s => new PostOpViewModel()
+                    {
+                        Id = s.Id,
+                        Gender = s.Patient.Gender,
+                        PatientName = s.Patient.FullName,
+                        Duration = GetDuration(s.DateUpdated.Value, status.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1003,7 +1044,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Duration = GetDuration(s.DateUpdated.Value),
+                        Duration = GetDuration(s.DateUpdated.Value, status.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1020,7 +1061,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Duration = GetDuration(s.DateUpdated.Value),
+                        Duration = GetDuration(s.DateUpdated.Value, status.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1037,7 +1078,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Duration = GetDuration(s.DateUpdated.Value),
+                        Duration = GetDuration(s.DateUpdated.Value, status.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1054,7 +1095,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Duration = GetDuration(s.DateUpdated.Value),
+                        Duration = GetDuration(s.DateUpdated.Value, status.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1177,10 +1218,18 @@ namespace Surgery_1.Services.Implementations
             return result;
         }
 
-        private string GetDuration(DateTime date)
+        private string GetDuration(DateTime date, int statusId)
         {
-            var duration = DateTime.Now - date;
-            return $"{(double)decimal.Round((decimal)duration.TotalHours, 0)}";
+            var duration = new TimeSpan();
+            if (statusId == 2 || statusId == 3 || statusId == 4)
+            {
+                duration = DateTime.Now - date;
+                return $"{(double)decimal.Round((decimal)duration.TotalHours, 0)}";
+            }
+            else
+            {
+                return "N/A";
+            }
         }
         #endregion
     }

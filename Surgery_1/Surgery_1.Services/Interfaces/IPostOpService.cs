@@ -35,7 +35,7 @@ namespace Surgery_1.Services.Interfaces
         List<HealthcareSurgeryShiftViewModel> GetHealthcareSurgeryShifts();
 
         #region Statistical
-        List<PostOpViewModel> GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId, bool? isPostOp);
+        List<PostOpViewModel> GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId, int? status);
         List<DoctorSearchViewModel> GetDoctors(string name);
         List<SpecialtySearchViewModel> GetSpecialties(string name);
         List<SurgeryCatalogSearchViewModel> GetSurgeryCatalogs(string name, int specialtyId);
