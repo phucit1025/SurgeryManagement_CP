@@ -979,7 +979,7 @@ namespace Surgery_1.Services.Implementations
                 }
                 else if (status.Value == 2)
                 {
-                    surgeryShitfs = surgeryShitfs.Where(s => s.StatusId == ConstantVariable.RECOVERY_STATUS_NUM).ToList();
+                    surgeryShitfs = surgeryShitfs.Where(s => s.StatusId == ConstantVariable.INTRA_STATUS_NUM).ToList();
                     rs.AddRange(surgeryShitfs.Select(s => new PostOpViewModel()
                     {
                         Id = s.Id,
@@ -993,7 +993,7 @@ namespace Surgery_1.Services.Implementations
                 }
                 else if (status.Value == 3)
                 {
-                    surgeryShitfs = surgeryShitfs.Where(s => s.StatusId == ConstantVariable.RECOVERY_STATUS_NUM).ToList();
+                    surgeryShitfs = surgeryShitfs.Where(s => s.StatusId == ConstantVariable.POST_STATUS_NUM).ToList();
                     rs.AddRange(surgeryShitfs.Select(s => new PostOpViewModel()
                     {
                         Id = s.Id,
@@ -1021,7 +1021,7 @@ namespace Surgery_1.Services.Implementations
                 }
                 else if (status.Value == 5)
                 {
-                    surgeryShitfs = surgeryShitfs.Where(s => s.StatusId == ConstantVariable.RECOVERY_STATUS_NUM).ToList();
+                    surgeryShitfs = surgeryShitfs.Where(s => s.StatusId == ConstantVariable.FINISHED_STATUS_NUM).ToList();
                     rs.AddRange(surgeryShitfs.Select(s => new PostOpViewModel()
                     {
                         Id = s.Id,
@@ -1224,7 +1224,7 @@ namespace Surgery_1.Services.Implementations
             if (statusId == 2 || statusId == 3 || statusId == 4)
             {
                 duration = DateTime.Now - date;
-                return $"{(double)decimal.Round((decimal)duration.TotalHours, 0)}";
+                return $"{Math.Floor(duration.TotalDays)} Day(s) - {duration.Hours} Hour(s) - {duration.Minutes} Minute(s)";
             }
             else
             {

@@ -297,6 +297,10 @@ namespace Surgery_1.Controllers
         [HttpGet]
         public IActionResult GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId, int? status, int pageSize = 10, int pageIndex = 0)
         {
+            if (pageIndex != 0)
+            {
+                pageIndex -= 1;
+            }
             try
             {
                 var results = _postOpService.GetPostOpSurgeryShift(actualEnd, speacialtyId, surgeryId, doctorId, status);
