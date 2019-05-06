@@ -302,13 +302,9 @@ namespace Surgery_1.Controllers
             {
                 pageIndex -= 1;
             }
-            //try
-            //{
-<<<<<<< HEAD
-                var results = _postOpService.GetPostOpSurgeryShift(actualEnd, speacialtyId, surgeryId, doctorId, status);
-=======
+            try
+            {
                 var results = _postOpService.GetPostOpSurgeryShift(actualEnd, specialtyId, surgeryId, doctorId, status);
->>>>>>> 8245efbb610212fc6508f7b7a2020ebf615cea4a
                 var totalPage = Math.Ceiling((double)results.Count / pageSize);
                 var total = results.Count;
                 var totalPreop = results.Where(r => r.StatusName.Contains("Preoperative", StringComparison.CurrentCultureIgnoreCase)).Count();
@@ -330,16 +326,13 @@ namespace Surgery_1.Controllers
                         totalIntra,
                         totalFinished
                     });
-            //}
-            //catch (Exception)
-            //{
-            //    return StatusCode(400);
-            //}
-<<<<<<< HEAD
-=======
+            }
+            catch (Exception)
+            {
+                return StatusCode(400);
+            }
 
 
->>>>>>> 8245efbb610212fc6508f7b7a2020ebf615cea4a
         }
 
         [HttpGet]
