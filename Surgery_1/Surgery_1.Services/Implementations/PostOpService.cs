@@ -950,7 +950,8 @@ namespace Surgery_1.Services.Implementations
         #region Statistical
         public List<PostOpViewModel> GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId, int? status)
         {
-            var surgeryShitfs = _appDbContext.SurgeryShifts.Where(s => !s.IsDeleted).ToList();
+            var surgeryShitfs = _appDbContext.SurgeryShifts.Where(s => !s.IsDeleted && s.Patient != null).ToList();
+            var eMerShift = _appDbContext.SurgeryShifts.Where(s => !s.IsDeleted && s.Patient == null).ToList();
             var rs = new List<PostOpViewModel>();
 
             if (actualEnd == DateTime.MinValue && speacialtyId == 0 && surgeryId == 0 && doctorId == 0 && !status.HasValue)
@@ -966,6 +967,17 @@ namespace Surgery_1.Services.Implementations
                     SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
                 }).ToList();
                 rs.AddRange(shifts);
+                var eMerShifts = eMerShift.Select(s => new PostOpViewModel()
+                {
+                    Id = s.Id,
+                    Gender = s.Patient != null ? s.Patient.Gender : 0,
+                    PatientName = s.Patient != null ? s.Patient.FullName : "N/A",
+                    Duration = s.StatusId == 2 ? GetDuration(s.ActualStartDateTime.Value, s.StatusId.Value) : GetDuration(s.DateUpdated.Value, s.StatusId.Value),
+                    SurgeryName = s.SurgeryCatalog != null ? s.SurgeryCatalog.Name : "N/A",
+                    StatusName = s.Status.Name,
+                    SurgeonName = s.SurgeryShiftSurgeons != null ? CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList()) : "N/A"
+                }).ToList();
+                rs.AddRange(eMerShifts);
                 return rs;
             }
 
