@@ -272,6 +272,7 @@ namespace Surgery_1.Controllers
             return Ok(result);
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult ConfirmTakeMedicine(int treatmentReportDrugId, string time)
         {
