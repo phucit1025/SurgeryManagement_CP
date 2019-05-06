@@ -296,7 +296,7 @@ namespace Surgery_1.Controllers
         }
         #region Statistical
         [HttpGet]
-        public IActionResult GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId, int? status, int pageSize = 10, int pageIndex = 0)
+        public IActionResult GetPostOpSurgeryShift(DateTime actualEnd, int specialtyId, int surgeryId, int doctorId, int? status, int pageSize = 10, int pageIndex = 0)
         {
             if (pageIndex != 0)
             {
@@ -304,7 +304,11 @@ namespace Surgery_1.Controllers
             }
             //try
             //{
+<<<<<<< HEAD
                 var results = _postOpService.GetPostOpSurgeryShift(actualEnd, speacialtyId, surgeryId, doctorId, status);
+=======
+                var results = _postOpService.GetPostOpSurgeryShift(actualEnd, specialtyId, surgeryId, doctorId, status);
+>>>>>>> 8245efbb610212fc6508f7b7a2020ebf615cea4a
                 var totalPage = Math.Ceiling((double)results.Count / pageSize);
                 var total = results.Count;
                 var totalPreop = results.Where(r => r.StatusName.Contains("Preoperative", StringComparison.CurrentCultureIgnoreCase)).Count();
@@ -331,6 +335,11 @@ namespace Surgery_1.Controllers
             //{
             //    return StatusCode(400);
             //}
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 8245efbb610212fc6508f7b7a2020ebf615cea4a
         }
 
         [HttpGet]
