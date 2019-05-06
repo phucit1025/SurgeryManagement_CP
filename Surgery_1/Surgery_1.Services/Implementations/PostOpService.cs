@@ -1044,7 +1044,7 @@ namespace Surgery_1.Services.Implementations
             }
             if (actualEnd != DateTime.MinValue)
             {
-                var surgeryShiftsRs = surgeryShitfs.Where(s => s.ActualEndDateTime.Value.Date == actualEnd.Date).ToList();
+                var surgeryShiftsRs = surgeryShitfs.Where(s => s.ActualEndDateTime != null &&s.ActualEndDateTime.Value.Date == actualEnd.Date).ToList();
                 if (surgeryShiftsRs.Any())
                 {
                     rs.AddRange(surgeryShiftsRs.Select(s => new PostOpViewModel()
@@ -1052,7 +1052,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Duration = GetDuration(s.DateUpdated.Value, status.Value),
+                        Duration = s.StatusId == 2 ? GetDuration(s.ActualStartDateTime.Value, s.StatusId.Value) : GetDuration(s.DateUpdated.Value, s.StatusId.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1069,7 +1069,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Duration = GetDuration(s.DateUpdated.Value, status.Value),
+                        Duration = s.StatusId == 2 ? GetDuration(s.ActualStartDateTime.Value, s.StatusId.Value) : GetDuration(s.DateUpdated.Value, s.StatusId.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1086,7 +1086,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Duration = GetDuration(s.DateUpdated.Value, status.Value),
+                        Duration = s.StatusId == 2 ? GetDuration(s.ActualStartDateTime.Value, s.StatusId.Value) : GetDuration(s.DateUpdated.Value, s.StatusId.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
@@ -1103,7 +1103,7 @@ namespace Surgery_1.Services.Implementations
                         Id = s.Id,
                         Gender = s.Patient.Gender,
                         PatientName = s.Patient.FullName,
-                        Duration = GetDuration(s.DateUpdated.Value, status.Value),
+                        Duration = s.StatusId == 2 ? GetDuration(s.ActualStartDateTime.Value, s.StatusId.Value) : GetDuration(s.DateUpdated.Value, s.StatusId.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
                         SurgeonName = CombineString(s.SurgeryShiftSurgeons.Where(sg => !sg.IsDeleted).Select(sg => sg.Surgeon.FullName).ToList())
