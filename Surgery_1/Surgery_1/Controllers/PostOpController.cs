@@ -330,8 +330,6 @@ namespace Surgery_1.Controllers
             {
                 return StatusCode(400);
             }
-
-
         }
 
         [HttpGet]
