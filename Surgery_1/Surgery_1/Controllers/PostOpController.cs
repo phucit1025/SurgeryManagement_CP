@@ -302,8 +302,8 @@ namespace Surgery_1.Controllers
             {
                 pageIndex -= 1;
             }
-            try
-            {
+            //try
+            //{
                 var results = _postOpService.GetPostOpSurgeryShift(actualEnd, speacialtyId, surgeryId, doctorId, status);
                 var totalPage = Math.Ceiling((double)results.Count / pageSize);
                 var total = results.Count;
@@ -326,11 +326,11 @@ namespace Surgery_1.Controllers
                         totalIntra,
                         totalFinished
                     });
-            }
-            catch (Exception)
-            {
-                return StatusCode(400);
-            }
+            //}
+            //catch (Exception)
+            //{
+            //    return StatusCode(400);
+            //}
         }
 
         [HttpGet]

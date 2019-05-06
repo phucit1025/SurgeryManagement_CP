@@ -942,18 +942,17 @@ namespace Surgery_1.Services.Implementations
         }
 
         #region Statistical
-        public List<PostOpViewModel> GetPostOpSurgeryShift(DateTime actualEnd, int speacialtyId, int surgeryId, int doctorId, int? status)
+        public List<PostOpViewModel> GetPostOpSurgeryShift(DateTime actualEnd, int specialtyId, int surgeryId, int doctorId, int? status)
         {
             var surgeryShitfs = _appDbContext.SurgeryShifts.Where(s => !s.IsDeleted).ToList();
             var rs = new List<PostOpViewModel>();
 
-            if (actualEnd == DateTime.MinValue && speacialtyId == 0 && surgeryId == 0 && doctorId == 0 && !status.HasValue)
+            if (actualEnd == DateTime.MinValue && specialtyId == 0 && surgeryId == 0 && doctorId == 0 && !status.HasValue)
             {
                 var shifts = surgeryShitfs.Select(s => new PostOpViewModel()
                 {
                     Id = s.Id,
-                    Gender = s.Patient.Gender,
-                    PatientName = s.Patient.FullName,
+                    PatientName = s.Patient.FullName != null ? s.Patient.FullName : "N/A",
                     Duration = s.StatusId == 2 ? GetDuration(s.ActualStartDateTime.Value, s.StatusId.Value) : GetDuration(s.DateUpdated.Value, s.StatusId.Value),
                     SurgeryName = s.SurgeryCatalog.Name,
                     StatusName = s.Status.Name,
@@ -971,8 +970,7 @@ namespace Surgery_1.Services.Implementations
                     rs.AddRange(surgeryShitfs.Select(s => new PostOpViewModel()
                     {
                         Id = s.Id,
-                        Gender = s.Patient.Gender,
-                        PatientName = s.Patient.FullName,
+                        PatientName = s.Patient.FullName != null ? s.Patient.FullName : "N/A",
                         Duration = GetDuration(s.DateUpdated.Value, status.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
@@ -985,8 +983,7 @@ namespace Surgery_1.Services.Implementations
                     rs.AddRange(surgeryShitfs.Select(s => new PostOpViewModel()
                     {
                         Id = s.Id,
-                        Gender = s.Patient.Gender,
-                        PatientName = s.Patient.FullName,
+                        PatientName = s.Patient.FullName != null ? s.Patient.FullName : "N/A",
                         Duration = GetDuration(s.ActualStartDateTime.Value, status.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
@@ -999,8 +996,7 @@ namespace Surgery_1.Services.Implementations
                     rs.AddRange(surgeryShitfs.Select(s => new PostOpViewModel()
                     {
                         Id = s.Id,
-                        Gender = s.Patient.Gender,
-                        PatientName = s.Patient.FullName,
+                        PatientName = s.Patient.FullName != null ? s.Patient.FullName : "N/A",
                         Duration = GetDuration(s.DateUpdated.Value, status.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
@@ -1013,8 +1009,7 @@ namespace Surgery_1.Services.Implementations
                     rs.AddRange(surgeryShitfs.Select(s => new PostOpViewModel()
                     {
                         Id = s.Id,
-                        Gender = s.Patient.Gender,
-                        PatientName = s.Patient.FullName,
+                        PatientName = s.Patient.FullName != null ? s.Patient.FullName : "N/A",
                         Duration = GetDuration(s.DateUpdated.Value, status.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
@@ -1027,8 +1022,7 @@ namespace Surgery_1.Services.Implementations
                     rs.AddRange(surgeryShitfs.Select(s => new PostOpViewModel()
                     {
                         Id = s.Id,
-                        Gender = s.Patient.Gender,
-                        PatientName = s.Patient.FullName,
+                        PatientName = s.Patient.FullName != null ? s.Patient.FullName : "N/A",
                         Duration = GetDuration(s.DateUpdated.Value, status.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
@@ -1044,8 +1038,7 @@ namespace Surgery_1.Services.Implementations
                     rs.AddRange(surgeryShiftsRs.Select(s => new PostOpViewModel()
                     {
                         Id = s.Id,
-                        Gender = s.Patient.Gender,
-                        PatientName = s.Patient.FullName,
+                        PatientName = s.Patient.FullName != null ? s.Patient.FullName : "N/A",
                         Duration = GetDuration(s.DateUpdated.Value, status.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
@@ -1053,16 +1046,15 @@ namespace Surgery_1.Services.Implementations
                     }));
                 }
             }
-            if (speacialtyId != 0)
+            if (specialtyId != 0)
             {
-                var surgeryShiftsRs = surgeryShitfs.Where(s => s.SurgeryCatalog.SpecialtyId == speacialtyId).ToList();
+                var surgeryShiftsRs = surgeryShitfs.Where(s => s.SurgeryCatalog.SpecialtyId == specialtyId).ToList();
                 if (surgeryShiftsRs.Any())
                 {
                     rs.AddRange(surgeryShiftsRs.Select(s => new PostOpViewModel()
                     {
                         Id = s.Id,
-                        Gender = s.Patient.Gender,
-                        PatientName = s.Patient.FullName,
+                        PatientName = s.Patient.FullName != null ? s.Patient.FullName : "N/A",
                         Duration = GetDuration(s.DateUpdated.Value, status.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
@@ -1078,8 +1070,7 @@ namespace Surgery_1.Services.Implementations
                     rs.AddRange(surgeryShiftsRs.Select(s => new PostOpViewModel()
                     {
                         Id = s.Id,
-                        Gender = s.Patient.Gender,
-                        PatientName = s.Patient.FullName,
+                        PatientName = s.Patient.FullName != null ? s.Patient.FullName : "N/A",
                         Duration = GetDuration(s.DateUpdated.Value, status.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
@@ -1095,8 +1086,7 @@ namespace Surgery_1.Services.Implementations
                     rs.AddRange(surgeryShiftsRs.Select(s => new PostOpViewModel()
                     {
                         Id = s.Id,
-                        Gender = s.Patient.Gender,
-                        PatientName = s.Patient.FullName,
+                        PatientName = s.Patient.FullName != null ? s.Patient.FullName : "N/A",
                         Duration = GetDuration(s.DateUpdated.Value, status.Value),
                         SurgeryName = s.SurgeryCatalog.Name,
                         StatusName = s.Status.Name,
